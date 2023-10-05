@@ -1,15 +1,23 @@
-export interface SessionData {
-    isAuthed: boolean;
+export interface SessionUser {
     userId: string;
-    userName: string;
+    displayName: string;
     avatar: string;
 }
 
+export interface ProviderProfile {
+    name: string; //"Pinta"
+    id: string; //19735646
+    avatar_url?: string; //"https://avatars.githubusercontent.com/u/19735646?v=4"
+}
+
+export type SupportedProviders = "github"; //Add more providers.. google and apple?
+
 export interface DBUser {
-    login: string; //"Pinta365",
-    name: string; //"Pinta",
-    id: string; //19735646,
-    avatar_url: string; //"https://avatars.githubusercontent.com/u/19735646?v=4",
-    url: string; //"https://api.github.com/users/Pinta365",
-    html_url: string; //"https://github.com/Pinta365",;
-  }
+    userId: string | undefined;
+    displayName: string;
+    avatar?: string;
+    primaryProvider?: SupportedProviders;
+    providers: {
+        [key in SupportedProviders]?: ProviderProfile;
+    };
+}

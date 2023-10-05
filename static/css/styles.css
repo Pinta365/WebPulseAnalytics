@@ -1,28 +1,28 @@
 :root {
-  --svg-color-inverted: invert(0%) sepia(100%) saturate(20%) hue-rotate(39deg) brightness(93%) contrast(107%);
-  --svg-color: invert(100%) sepia(89%) saturate(0%) hue-rotate(172deg) brightness(105%) contrast(105%);
+  --svg-color-inverted: brightness(0) saturate(100%) invert(11%) sepia(13%) saturate(1681%) hue-rotate(163deg) brightness(92%) contrast(89%);
+  --svg-color: invert(70%) sepia(89%) saturate(0%) hue-rotate(172deg) brightness(105%) contrast(105%);
+
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme]) {
-      --svg-color-inverted: invert(100%) sepia(89%) saturate(0%) hue-rotate(172deg) brightness(105%) contrast(105%);
-      --svg-color: invert(0%) sepia(100%) saturate(20%) hue-rotate(39deg) brightness(93%) contrast(107%);
+    --svg-color-inverted: invert(70%) sepia(89%) saturate(0%) hue-rotate(172deg) brightness(105%) contrast(105%);
+    --svg-color: brightness(0) saturate(100%) invert(11%) sepia(13%) saturate(1681%) hue-rotate(163deg) brightness(92%) contrast(89%);
   }
 }
 
 [data-theme="light"] {
-  --svg-color-inverted: invert(100%) sepia(89%) saturate(0%) hue-rotate(172deg) brightness(105%) contrast(105%);
-  --svg-color: invert(0%) sepia(100%) saturate(20%) hue-rotate(39deg) brightness(93%) contrast(107%);
+  --svg-color-inverted: invert(70%) sepia(89%) saturate(0%) hue-rotate(172deg) brightness(105%) contrast(105%);
+  --svg-color: brightness(0) saturate(100%) invert(11%) sepia(13%) saturate(1681%) hue-rotate(163deg) brightness(92%) contrast(89%);
 }
 
-/* Grid */
-body>main {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: calc(100vh - 7rem);
-  padding: 1rem 0;
-}
+  /* Main */
+  @media (min-width: 992px) {
+    main .grid {
+      grid-column-gap: var(--spacing-company);
+      grid-template-columns: 25% auto;
+    }
+  }
 
 article {
   padding: 0;
@@ -33,12 +33,7 @@ article div {
   padding: 1rem;
 }
 
-.bogus-stats {
-  display: flex;  
-  justify-content: center;
-}
-
-nav .user-avatar{
+nav .user-avatar {
   height: 2em;
   border-radius: 50%;
   border-style: solid;
@@ -46,16 +41,34 @@ nav .user-avatar{
   border-color: var(--contrast);
 }
 
+nav .top-logo {
+  height: 2.1rem;
+  filter: var(--svg-color);
+}
+
 .icon {
   height: 2.1rem;
   filter: var(--svg-color);
-  
+}
+
+.loginGrid {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100vh - 9rem);
+  padding: 1rem 0;
 }
 
 .login a img {
   height: 1.5rem;
   padding-right: 1rem;
   filter: var(--svg-color-inverted);
+}
+
+ .logo {
+  width: 25rem;
+  padding-bottom: 2rem;
+  filter: var(--svg-color);
 }
 
 @media (min-width: 576px) {
@@ -104,6 +117,7 @@ summary[role="link"].secondary:is([aria-current], :hover, :active, :focus) {
   color: var(--secondary-hover);
 }
 
+
 /* Hero Image */
 article div:nth-of-type(2) {
   display: none;
@@ -114,60 +128,160 @@ article div:nth-of-type(2) {
 }
 
 @media (min-width: 992px) {
-  .grid>div:nth-of-type(2) {    
+  .grid>div:nth-of-type(2) {
     display: block;
   }
 }
 
 /* Footer */
 body>footer {
-  padding: 1rem;  
+  padding: 1rem 0;
 }
 
 body>footer img {
   vertical-align: bottom;
- }
+  height: 1.5rem;
+  filter: var(--svg-color);
+}
 
 body>footer a {
   --color: var(--contrast);
- }
- body>footer a:hover {
-  --color: var(--contrast-hover);
- }
+}
 
-body>footer div:nth-of-type(2) {
-  text-align: right;
+body>footer a:hover {
+  --color: var(--contrast-hover);
+}
+
+body>footer div{
+  text-align: center;
 }
 
 a.button {
   margin: 0;
-    overflow: visible;
-    font-family: inherit;
-    text-transform: none;
-    display: block;
-    width: 100%;
-    margin-bottom: var(--spacing);
-    display: inline-block;
-    text-decoration: none;
-    --background-color: var(--contrast);
-    --border-color: var(--contrast);
-    --color: var(--contrast-inverse);
-    --box-shadow: var(--button-box-shadow, 0 0 0 rgba(0, 0, 0, 0));
-    padding: var(--form-element-spacing-vertical) var(--form-element-spacing-horizontal);
-    border: var(--border-width) solid var(--border-color);
-    border-radius: var(--border-radius);
-    outline: 0;
-    background-color: var(--background-color);
-    box-shadow: var(--box-shadow);
-    color: var(--color);
-    font-weight: var(--font-weight);
-    font-size: 1rem;
-    line-height: var(--line-height);
-    text-align: center;
-    cursor: pointer;
-    transition: background-color var(--transition), border-color var(--transition), color var(--transition), box-shadow var(--transition)
+  overflow: visible;
+  font-family: inherit;
+  text-transform: none;
+  display: block;
+  width: 100%;
+  margin-bottom: var(--spacing);
+  text-decoration: none;
+  --background-color: var(--contrast);
+  --border-color: var(--contrast);
+  --color: var(--contrast-inverse);
+  --box-shadow: var(--button-box-shadow, 0 0 0 rgba(0, 0, 0, 0));
+  padding: var(--form-element-spacing-vertical) var(--form-element-spacing-horizontal);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius);
+  outline: 0;
+  background-color: var(--background-color);
+  box-shadow: var(--box-shadow);
+  color: var(--color);
+  font-weight: var(--font-weight);
+  font-size: 1rem;
+  line-height: var(--line-height);
+  text-align: center;
+  cursor: pointer;
+  transition: background-color var(--transition), border-color var(--transition), color var(--transition), box-shadow var(--transition)
 }
 
 a.button:hover {
   background-color: var(--contrast-hover);
+}
+
+/* ASIDE NAV */
+
+main > div > aside nav {
+  width: 100%;
+  padding-bottom: var(--block-spacing-vertical);
+}
+@media (min-width: 992px) {
+  main > div > aside nav {
+    position: fixed;
+    width: 200px;
+    max-height: calc(100vh - 5.5rem);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}
+main > div > aside nav a#toggle-docs-navigation {
+  display: block;
+  margin: 0;
+  margin-bottom: var(--spacing);
+  padding: 0;
+  padding-bottom: var(--spacing);
+  border-bottom: var(--border-width) solid var(--accordion-border-color);
+}
+main > div > aside nav a#toggle-docs-navigation svg {
+  margin-right: calc(var(--spacing) * 0.5);
+  vertical-align: -3px;
+}
+@media (min-width: 992px) {
+  main > div > aside nav a#toggle-docs-navigation {
+    display: none;
+  }
+}
+main > div > aside nav.closed-on-mobile a#toggle-docs-navigation svg.collapse {
+  display: none;
+}
+main > div > aside nav.closed-on-mobile details {
+  display: none;
+}
+@media (min-width: 992px) {
+  main > div > aside nav.closed-on-mobile details {
+    display: block;
+  }
+  main > div > aside nav.closed-on-mobile > a#toggle-docs-navigation {
+    display: none;
+  }
+}
+main > div > aside nav.open a#toggle-docs-navigation svg.expand {
+  display: none;
+}
+main > div > aside details {
+  padding-bottom: 0;
+}
+main > div > aside details summary {
+  padding-bottom: 0.5rem;
+}
+main > div > aside li,
+main > div > aside summary {
+  padding-top: 0;
+  padding-bottom: 0;
+  font-size: 16px;
+}
+main > div > aside ul {
+  padding-left: 0.25rem;
+}
+main > div > aside li a {
+  --nav-link-spacing-vertical: 0.25rem;
+  --nav-link-spacing-horizontal: 0.75rem;
+}
+main > div > aside li a svg {
+  vertical-align: middle;
+}
+main > div > aside a.secondary:focus {
+  background-color: transparent;
+  color: var(--primary-hover);
+}
+main > div > aside a[aria-current],
+main > div > aside a[aria-current]:hover {
+  color: var(--primary);
+}
+main > div > aside details {
+  border-bottom: none;
+}
+main > div > aside details summary {
+  color: var(--h1-color);
+  font-weight: 300;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+main > div > aside details summary::after {
+  display: none;
+}
+main > div > aside details[open] > summary {
+  margin-bottom: 0;
+}
+main > div > aside details[open] > summary:not([role=button], :focus) {
+  color: var(--h1-color);
 }

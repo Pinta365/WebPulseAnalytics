@@ -4,9 +4,12 @@
 .env.test.local
 .env.production.local
 .env.local
+.env_deno-deploy
 
 # Fresh build directory
 _fresh/
 
 /db/*
 !/db/db.ts
+
+dbtest.ts

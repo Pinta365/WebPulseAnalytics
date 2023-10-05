@@ -4,22 +4,33 @@
 
 import * as $0 from "./routes/_404.tsx";
 import * as $1 from "./routes/_app.tsx";
-import * as $2 from "./routes/api/callback.ts";
-import * as $3 from "./routes/api/login.ts";
-import * as $4 from "./routes/index.tsx";
-import * as $5 from "./routes/logout.ts";
+import * as $2 from "./routes/_middleware.ts";
+import * as $3 from "./routes/api/callback.ts";
+import * as $4 from "./routes/api/login.ts";
+import * as $5 from "./routes/dashboard/_middleware.ts";
+import * as $6 from "./routes/dashboard/index.tsx";
+import * as $7 from "./routes/dashboard/test.tsx";
+import * as $8 from "./routes/index.tsx";
+import * as $9 from "./routes/logout.ts";
+import * as $$0 from "./islands/NavSide.tsx";
 
 const manifest = {
-  routes: {
-    "./routes/_404.tsx": $0,
-    "./routes/_app.tsx": $1,
-    "./routes/api/callback.ts": $2,
-    "./routes/api/login.ts": $3,
-    "./routes/index.tsx": $4,
-    "./routes/logout.ts": $5,
-  },
-  islands: {},
-  baseUrl: import.meta.url,
+    routes: {
+        "./routes/_404.tsx": $0,
+        "./routes/_app.tsx": $1,
+        "./routes/_middleware.ts": $2,
+        "./routes/api/callback.ts": $3,
+        "./routes/api/login.ts": $4,
+        "./routes/dashboard/_middleware.ts": $5,
+        "./routes/dashboard/index.tsx": $6,
+        "./routes/dashboard/test.tsx": $7,
+        "./routes/index.tsx": $8,
+        "./routes/logout.ts": $9,
+    },
+    islands: {
+        "./islands/NavSide.tsx": $$0,
+    },
+    baseUrl: import.meta.url,
 };
 
 export default manifest;
