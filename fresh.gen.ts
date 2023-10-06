@@ -11,7 +11,8 @@ import * as $5 from "./routes/dashboard/_middleware.ts";
 import * as $6 from "./routes/dashboard/index.tsx";
 import * as $7 from "./routes/dashboard/test.tsx";
 import * as $8 from "./routes/index.tsx";
-import * as $9 from "./routes/logout.ts";
+import * as $9 from "./routes/info/privacy.tsx";
+import * as $10 from "./routes/logout.ts";
 import * as $$0 from "./islands/NavSide.tsx";
 
 const manifest = {
@@ -25,7 +26,8 @@ const manifest = {
         "./routes/dashboard/index.tsx": $6,
         "./routes/dashboard/test.tsx": $7,
         "./routes/index.tsx": $8,
-        "./routes/logout.ts": $9,
+        "./routes/info/privacy.tsx": $9,
+        "./routes/logout.ts": $10,
     },
     islands: {
         "./islands/NavSide.tsx": $$0,

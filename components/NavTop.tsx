@@ -1,11 +1,12 @@
 import { SessionUser } from "lib/commonTypes.ts";
+import { config } from "lib/config.ts";
 
 export function NavTop(data: SessionUser) {
     return (
         <nav class="container-fluid">
             <ul>
                 <li>
-                    <a href="./" class="contrast">
+                    <a href={config.common.websiteBaseURL} class="contrast">
                         <img src="/img/svg/logo-top.svg" class="top-logo" alt="the webpulse logo" />
                     </a>
                 </li>

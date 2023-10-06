@@ -16,7 +16,6 @@ export const handler: Handlers = {
 export default function Home() {
     return (
         <body>
-            
             <Login />
 
             <Footer />

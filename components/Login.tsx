@@ -1,7 +1,7 @@
 export function Login() {
     return (
         <div class="container loginGrid">
-            <img src="/img/svg/logo-top-slogan.svg" class="logo" alt="the webpulse logo" />                      
+            <img src="/img/svg/logo-top-slogan.svg" class="logo" alt="the webpulse logo" />
             <article class="grid">
                 <div class="login">
                     <hgroup>

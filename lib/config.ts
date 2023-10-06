@@ -35,6 +35,6 @@ export const config = {
         cookieName: getOrThrow(JWT_COOKIE, "JWT_COOKIE", "webpulse_sess"),
     },
     common: {
-        websiteBaseURL: getOrThrow(WEBSITE_BASE_URL, "WEBSITE_BASE_URL", "http://localhost:8000")
-    }
+        websiteBaseURL: getOrThrow(WEBSITE_BASE_URL, "WEBSITE_BASE_URL", "http://localhost:8000"),
+    },
 };
