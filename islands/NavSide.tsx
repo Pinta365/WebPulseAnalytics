@@ -47,7 +47,7 @@ export function NavSide() {
                     Page menu
                 </a>
                 <details>
-                    <summary>Menu 1</summary>
+                    <summary>Real-Time Analysis</summary>
                     <ul>
                         <li>
                             <a href="#" id="start-link" onClick={handleClick} class="secondary">subMenu 1.1</a>
@@ -61,7 +61,7 @@ export function NavSide() {
                     </ul>
                 </details>
                 <details>
-                    <summary>Menu 2</summary>
+                    <summary>Insights</summary>
                     <ul>
                         <li>
                             <a href="#" onClick={handleClick} class="secondary">subMenu 2.1</a>
@@ -75,16 +75,13 @@ export function NavSide() {
                     </ul>
                 </details>
                 <details>
-                    <summary>Menu 3</summary>
+                    <summary>Manage Settings</summary>
                     <ul>
                         <li>
-                            <a href="#" onClick={handleClick} class="secondary">subMenu 3.1</a>
+                            <a href="#" onClick={handleClick} class="secondary">Manage Realms</a>
                         </li>
                         <li>
-                            <a href="#" onClick={handleClick} class="secondary">subMenu 3.2</a>
-                        </li>
-                        <li>
-                            <a href="#" onClick={handleClick} class="secondary">subMenu 3.3</a>
+                            <a href="#" onClick={handleClick} class="secondary">Manage Projects</a>
                         </li>
                     </ul>
                 </details>

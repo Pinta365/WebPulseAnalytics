@@ -34,7 +34,7 @@ export function NavTop(data: SessionUser) {
                             </summary>
                             <ul role="listbox">
                                 <li>
-                                    <a href="#">Settings</a>
+                                    <a href="#">User Settings</a>
                                     <a href="/logout">Logout {data.displayName}</a>
                                 </li>
                             </ul>

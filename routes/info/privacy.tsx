@@ -4,7 +4,6 @@ import { config } from "lib/config.ts";
 import { NavTop } from "components/NavTop.tsx";
 import { SessionUser } from "lib/commonTypes.ts";
 
-
 export const handler: Handlers = {
     GET(_req, ctx) {
         return ctx.render(ctx.state);
@@ -27,9 +26,9 @@ export default function Privacy({ data }: PageProps<SessionUser>) {
                     <h4>Your Privacy is Our Priority</h4>
 
                     <p>
-                        At WebPulse Analytics, we hold a strong commitment to safeguarding user privacy. Our administrative dashboard
-                        operates solely on functional cookies for essential purposes such as retaining language
-                        preferences and maintaining active sessions.
+                        At WebPulse Analytics, we hold a strong commitment to safeguarding user privacy. Our
+                        administrative dashboard operates solely on functional cookies for essential purposes such as
+                        retaining language preferences and maintaining active sessions.
 
                         No cookies are being created by the client-side script that you implement on your tracked
                         projects. This ensures no bloat or unnecessary data being stored.

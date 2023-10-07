@@ -134,6 +134,8 @@ article div:nth-of-type(2) {
 
 /* Footer */
 body>footer {
+  /*position: fixed;
+  bottom: 0;*/
   background-color: var(--muted-border-color);
   padding: 0.5rem 0;
 }

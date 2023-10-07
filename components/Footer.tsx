@@ -29,9 +29,9 @@ export function Footer() {
                             Discord Server
                         </a>
                     </small>
-                </div>                
+                </div>
                 <div class="footer-section">
-                <h6>About</h6>
+                    <h6>About</h6>
                     <small>
                         <a href="/docs">Documentation</a>
                     </small>

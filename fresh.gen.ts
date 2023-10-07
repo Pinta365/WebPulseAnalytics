@@ -9,10 +9,11 @@ import * as $3 from "./routes/api/callback.ts";
 import * as $4 from "./routes/api/login.ts";
 import * as $5 from "./routes/dashboard/_middleware.ts";
 import * as $6 from "./routes/dashboard/index.tsx";
-import * as $7 from "./routes/dashboard/test.tsx";
-import * as $8 from "./routes/index.tsx";
-import * as $9 from "./routes/info/privacy.tsx";
-import * as $10 from "./routes/logout.ts";
+import * as $7 from "./routes/dashboard/realms.tsx";
+import * as $8 from "./routes/dashboard/test.tsx";
+import * as $9 from "./routes/index.tsx";
+import * as $10 from "./routes/info/privacy.tsx";
+import * as $11 from "./routes/logout.ts";
 import * as $$0 from "./islands/NavSide.tsx";
 
 const manifest = {
@@ -24,10 +25,11 @@ const manifest = {
         "./routes/api/login.ts": $4,
         "./routes/dashboard/_middleware.ts": $5,
         "./routes/dashboard/index.tsx": $6,
-        "./routes/dashboard/test.tsx": $7,
-        "./routes/index.tsx": $8,
-        "./routes/info/privacy.tsx": $9,
-        "./routes/logout.ts": $10,
+        "./routes/dashboard/realms.tsx": $7,
+        "./routes/dashboard/test.tsx": $8,
+        "./routes/index.tsx": $9,
+        "./routes/info/privacy.tsx": $10,
+        "./routes/logout.ts": $11,
     },
     islands: {
         "./islands/NavSide.tsx": $$0,
