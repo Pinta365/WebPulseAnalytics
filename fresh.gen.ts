@@ -7,13 +7,14 @@ import * as $1 from "./routes/_app.tsx";
 import * as $2 from "./routes/_middleware.ts";
 import * as $3 from "./routes/api/callback.ts";
 import * as $4 from "./routes/api/login.ts";
-import * as $5 from "./routes/dashboard/_middleware.ts";
-import * as $6 from "./routes/dashboard/index.tsx";
-import * as $7 from "./routes/dashboard/realms.tsx";
-import * as $8 from "./routes/dashboard/test.tsx";
-import * as $9 from "./routes/index.tsx";
-import * as $10 from "./routes/info/privacy.tsx";
-import * as $11 from "./routes/logout.ts";
+import * as $5 from "./routes/closedBeta.tsx";
+import * as $6 from "./routes/dashboard/_middleware.ts";
+import * as $7 from "./routes/dashboard/index.tsx";
+import * as $8 from "./routes/dashboard/projects.tsx";
+import * as $9 from "./routes/dashboard/realms.tsx";
+import * as $10 from "./routes/index.tsx";
+import * as $11 from "./routes/info/privacy.tsx";
+import * as $12 from "./routes/logout.ts";
 import * as $$0 from "./islands/NavSide.tsx";
 
 const manifest = {
@@ -23,13 +24,14 @@ const manifest = {
         "./routes/_middleware.ts": $2,
         "./routes/api/callback.ts": $3,
         "./routes/api/login.ts": $4,
-        "./routes/dashboard/_middleware.ts": $5,
-        "./routes/dashboard/index.tsx": $6,
-        "./routes/dashboard/realms.tsx": $7,
-        "./routes/dashboard/test.tsx": $8,
-        "./routes/index.tsx": $9,
-        "./routes/info/privacy.tsx": $10,
-        "./routes/logout.ts": $11,
+        "./routes/closedBeta.tsx": $5,
+        "./routes/dashboard/_middleware.ts": $6,
+        "./routes/dashboard/index.tsx": $7,
+        "./routes/dashboard/projects.tsx": $8,
+        "./routes/dashboard/realms.tsx": $9,
+        "./routes/index.tsx": $10,
+        "./routes/info/privacy.tsx": $11,
+        "./routes/logout.ts": $12,
     },
     islands: {
         "./islands/NavSide.tsx": $$0,

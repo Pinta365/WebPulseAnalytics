@@ -50,13 +50,7 @@ export function NavSide() {
                     <summary>Real-Time Analysis</summary>
                     <ul>
                         <li>
-                            <a href="#" id="start-link" onClick={handleClick} class="secondary">subMenu 1.1</a>
-                        </li>
-                        <li>
-                            <a href="#" id="start-link2" onClick={handleClick} class="secondary">subMenu 1.2</a>
-                        </li>
-                        <li>
-                            <a href="#" id="start-link3" onClick={handleClick} class="secondary">subMenu 1.3</a>
+                            <a href="#" id="start-link" onClick={handleClick} class="secondary">Real-Time Dashboard</a>
                         </li>
                     </ul>
                 </details>
@@ -78,10 +72,10 @@ export function NavSide() {
                     <summary>Manage Settings</summary>
                     <ul>
                         <li>
-                            <a href="#" onClick={handleClick} class="secondary">Manage Realms</a>
+                            <a href="/dashboard/realms" onClick={handleClick} class="secondary">Manage Realms</a>
                         </li>
                         <li>
-                            <a href="#" onClick={handleClick} class="secondary">Manage Projects</a>
+                            <a href="/dashboard/projects" onClick={handleClick} class="secondary">Manage Projects</a>
                         </li>
                     </ul>
                 </details>

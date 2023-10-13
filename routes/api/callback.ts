@@ -37,7 +37,16 @@ export const handler: Handlers = {
             );
 
             const githubProfile: ProviderProfile = await profile(auth.access_token);
-
+            
+            // closed beta check :P
+            
+            const betaAllowedAccounts = ["19735646"]
+            if (!betaAllowedAccounts.includes(githubProfile.id)) {
+                console.log("Login:", githubProfile.id, githubProfile.html_url);
+                headers.set("location", "/closedBeta");
+                return new Response("", { status: 303, headers });
+            }
+            
             const alreadyUser: DBUser = await getUserFromProviderId("github", githubProfile.id);
             const sessionUser = {} as DBUser;
             const providerProfile: ProviderProfile = {
