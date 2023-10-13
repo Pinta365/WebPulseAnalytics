@@ -30,7 +30,6 @@ interface Project {
 }
 
 async function getProjects(userId: string) {
-    
     const database = await Deno.openKv(Deno.env.get("WEBPULSE_STAT_DATABASE"));
     // Need an index to get user projects. Will filter on userId in the for loop for now.
     const projectList = database.list({ prefix: ["projects"] });
@@ -40,7 +39,6 @@ async function getProjects(userId: string) {
         if (proj.ownerId === userId) {
             projects.push(proj as Project);
         }
-        
     }
 
     return projects;
@@ -49,7 +47,7 @@ async function getProjects(userId: string) {
 export const handler: Handlers = {
     async GET(_req, ctx) {
         const projects = await getProjects(ctx.state.userId as string);
-        return ctx.render({state: ctx.state, projects: projects});
+        return ctx.render({ state: ctx.state, projects: projects });
     },
 };
 export default function Projects({ data }: PageProps) {
@@ -61,7 +59,7 @@ export default function Projects({ data }: PageProps) {
             <main class="container">
                 <div class="grid">
                     <NavSide />
-                    <ProjectView projects={projects}/>
+                    <ProjectView projects={projects} />
                 </div>
             </main>
 

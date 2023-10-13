@@ -15,8 +15,8 @@ export default function Error404() {
                 <div class="container">
                     <h1>403 - closed Beta</h1>
                     <p>
-                WebPulse Analytics is currently in closed beta.
-            </p>
+                        WebPulse Analytics is currently in closed beta.
+                    </p>
                 </div>
             </div>
         </>

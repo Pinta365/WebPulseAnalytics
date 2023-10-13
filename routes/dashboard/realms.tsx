@@ -13,7 +13,6 @@ interface Realm {
 }
 
 async function getRealms(userId: string) {
-    
     const database = await Deno.openKv(Deno.env.get("WEBPULSE_STAT_DATABASE"));
     // Need an index to get user realms. Will filter on userId in the for loop for now.
     const realmList = database.list({ prefix: ["realms"] });
@@ -23,7 +22,6 @@ async function getRealms(userId: string) {
         if (rlm.ownerId === userId) {
             realms.push(rlm as Realm);
         }
-        
     }
 
     return realms;
@@ -32,10 +30,9 @@ async function getRealms(userId: string) {
 export const handler: Handlers = {
     async GET(_req, ctx) {
         const realms = await getRealms(ctx.state.userId as string);
-        return ctx.render({state: ctx.state, realms: realms});
+        return ctx.render({ state: ctx.state, realms: realms });
     },
 };
-
 
 export default function Realms({ data }: PageProps) {
     const { state, realms } = data;
@@ -46,7 +43,7 @@ export default function Realms({ data }: PageProps) {
             <main class="container">
                 <div class="grid">
                     <NavSide />
-                    <RealmView realms={realms}/>
+                    <RealmView realms={realms} />
                 </div>
             </main>
 

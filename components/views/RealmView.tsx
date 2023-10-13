@@ -10,17 +10,13 @@ interface Realms {
 }
 
 export function RealmView(data: Realms) {
-    const {realms} = data;
+    const { realms } = data;
     return (
         <section>
             <h1>Realms</h1>
-            {realms.length === 0 ? (
-                <p>No realms</p>
-            ) : (
+            {realms.length === 0 ? <p>No realms</p> : (
                 <ul>
-                    {realms.map((realm) => (
-                        <li key={realm.id}>{realm.name}</li>
-                    ))}
+                    {realms.map((realm) => <li key={realm.id}>{realm.name}</li>)}
                 </ul>
             )}
         </section>

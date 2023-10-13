@@ -24,17 +24,13 @@ interface Projects {
     }[];
 }
 export function ProjectView(data: Projects) {
-    const {projects} = data;
+    const { projects } = data;
     return (
         <section>
             <h1>Projects</h1>
-            {projects.length === 0 ? (
-                <p>No projects</p>
-            ) : (
+            {projects.length === 0 ? <p>No projects</p> : (
                 <ul>
-                    {projects.map((project) => (
-                        <li key={project.id}>{project.name}</li>
-                    ))}
+                    {projects.map((project) => <li key={project.id}>{project.name}</li>)}
                 </ul>
             )}
         </section>
