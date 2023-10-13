@@ -5,7 +5,7 @@ const database = await Deno.openKv(Deno.env.get("DENO_KV_LOCAL_DATABASE") || und
 
 export { database };
 
-export async function getUserFromProviderId(provider: SupportedProviders, id: string): Promise<DBUser> {
+export async function getUserFromProviderId(provider: SupportedProviders, id: number): Promise<DBUser> {
     try {
         const providerLink = await database.get(["users", provider, id]);
         if (providerLink?.value) {

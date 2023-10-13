@@ -6,7 +6,7 @@ export interface SessionUser {
 
 export interface ProviderProfile {
     name: string; //"Pinta"
-    id: string; //19735646
+    id: number; //19735646
     avatar_url?: string; //"https://avatars.githubusercontent.com/u/19735646?v=4"
 }
 
