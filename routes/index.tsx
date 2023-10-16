@@ -1,6 +1,6 @@
 import type { Handlers, PageProps } from "$fresh/server.ts";
 import { Login } from "components/Login.tsx";
-import { Footer } from "components/Footer.tsx";
+import { Footer } from "components/layout/Footer.tsx";
 import { config } from "lib/config.ts";
 
 export const handler: Handlers = {

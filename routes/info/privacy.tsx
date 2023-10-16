@@ -1,7 +1,7 @@
 import type { Handlers, PageProps } from "$fresh/server.ts";
-import { Footer } from "components/Footer.tsx";
+import { Footer } from "components/layout/Footer.tsx";
 import { config } from "lib/config.ts";
-import { NavTop } from "components/NavTop.tsx";
+import { NavTop } from "components/layout/NavTop.tsx";
 import { SessionUser } from "lib/commonTypes.ts";
 
 export const handler: Handlers = {

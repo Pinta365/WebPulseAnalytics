@@ -27,50 +27,8 @@ html {
   }
 }
 
-article {
-  padding: 0;
-  overflow: hidden;
-}
-
-article div {
-  padding: 1rem;
-}
-
-nav .user-avatar {
-  height: 2em;
-  border-radius: 50%;
-  border-style: solid;
-  border-width: 0.1em;
-  border-color: var(--contrast);
-}
-
-nav .top-logo {
-  height: 2.1rem;
-  filter: var(--svg-color);
-}
-
 .icon {
   height: 2.1rem;
-  filter: var(--svg-color);
-}
-
-.loginGrid {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: calc(100vh - 9rem);
-  padding: 1rem 0;
-}
-
-.login a img {
-  height: 1.5rem;
-  padding-right: 1rem;
-  filter: var(--svg-color-inverted);
-}
-
-.logo {
-  width: 25rem;
-  padding-bottom: 2rem;
   filter: var(--svg-color);
 }
 
@@ -114,25 +72,24 @@ nav .top-logo {
   }
 }
 
-/* Nav */
-summary[role="link"].secondary:is([aria-current], :hover, :active, :focus) {
-  background-color: transparent;
-  color: var(--secondary-hover);
+.h-25 {
+  height: 25%;
 }
 
-
-/* Hero Image */
-article div:nth-of-type(2) {
-  display: none;
-  background-image: url("/img/login.webp");
-  background-position: center;
-  background-size: cover;
+.w-25 {
+  width: 25%;
 }
 
-@media (min-width: 992px) {
-  .grid>div:nth-of-type(2) {
-    display: block;
-  }
+.w-50 {
+  width: 50%;
+}
+
+.w-75 {
+  width: 75%;
+}
+
+.w-100 {
+  width: 100%;
 }
 
 /* Footer */
@@ -161,154 +118,46 @@ body>footer a:hover {
   --color: var(--contrast-hover);
 }
 
-a.button {
-  margin: 0;
-  overflow: visible;
-  font-family: inherit;
-  text-transform: none;
-  display: block;
-  width: 100%;
-  margin-bottom: var(--spacing);
-  text-decoration: none;
-  --background-color: var(--contrast);
-  --border-color: var(--contrast);
-  --color: var(--contrast-inverse);
-  --box-shadow: var(--button-box-shadow, 0 0 0 rgba(0, 0, 0, 0));
-  padding: var(--form-element-spacing-vertical) var(--form-element-spacing-horizontal);
-  border: var(--border-width) solid var(--border-color);
-  border-radius: var(--border-radius);
-  outline: 0;
-  background-color: var(--background-color);
-  box-shadow: var(--box-shadow);
-  color: var(--color);
-  font-weight: var(--font-weight);
-  font-size: 1rem;
-  line-height: var(--line-height);
-  text-align: center;
-  cursor: pointer;
-  transition: background-color var(--transition), border-color var(--transition), color var(--transition), box-shadow var(--transition)
+/* Login page*/
+
+.loginGrid {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100vh - 9rem);
+  padding: 1rem 0;
 }
 
-a.button:hover {
-  background-color: var(--contrast-hover);
-}
-
-/* ASIDE NAV */
-
-main>div>aside nav {
-  width: 100%;
-  padding-bottom: var(--block-spacing-vertical);
-}
-
-@media (min-width: 992px) {
-  main>div>aside nav {
-    position: fixed;
-    width: 200px;
-    max-height: calc(100vh - 5.5rem);
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-}
-
-main>div>aside nav a#toggle-docs-navigation {
-  display: block;
-  margin: 0;
-  margin-bottom: var(--spacing);
-  padding: 0;
-  padding-bottom: var(--spacing);
-  border-bottom: var(--border-width) solid var(--accordion-border-color);
-}
-
-main>div>aside nav a#toggle-docs-navigation svg {
-  margin-right: calc(var(--spacing) * 0.5);
-  vertical-align: -3px;
-}
-
-@media (min-width: 992px) {
-  main>div>aside nav a#toggle-docs-navigation {
-    display: none;
-  }
-}
-
-main>div>aside nav.closed-on-mobile a#toggle-docs-navigation svg.collapse {
+.loginGrid div:nth-of-type(2) {
   display: none;
-}
-
-main>div>aside nav.closed-on-mobile details {
-  display: none;
+  background-image: url("/img/login.webp");
+  background-position: center;
+  background-size: cover;
 }
 
 @media (min-width: 992px) {
-  main>div>aside nav.closed-on-mobile details {
+  .loginGrid div:nth-of-type(2) {
     display: block;
   }
-
-  main>div>aside nav.closed-on-mobile>a#toggle-docs-navigation {
-    display: none;
-  }
 }
 
-main>div>aside nav.open a#toggle-docs-navigation svg.expand {
-  display: none;
+.loginGrid article {
+  padding: 0;
+  overflow: hidden;
 }
 
-main>div>aside details {
-  padding-bottom: 0;
+.loginGrid article div {
+  padding: 1rem;
 }
 
-main>div>aside details summary {
-  padding-bottom: 0.5rem;
+.loginGrid a img {
+  height: 1.5rem;
+  padding-right: 1rem;
+  filter: var(--svg-color-inverted);
 }
 
-main>div>aside li,
-main>div>aside summary {
-  padding-top: 0;
-  padding-bottom: 0;
-  font-size: 16px;
-}
-
-main>div>aside ul {
-  padding-left: 0.25rem;
-}
-
-main>div>aside li a {
-  --nav-link-spacing-vertical: 0.25rem;
-  --nav-link-spacing-horizontal: 0.75rem;
-}
-
-main>div>aside li a svg {
-  vertical-align: middle;
-}
-
-main>div>aside a.secondary:focus {
-  background-color: transparent;
-  color: var(--primary-hover);
-}
-
-main>div>aside a[aria-current],
-main>div>aside a[aria-current]:hover {
-  color: var(--primary);
-}
-
-main>div>aside details {
-  border-bottom: none;
-}
-
-main>div>aside details summary {
-  color: var(--h1-color);
-  font-weight: 300;
-  font-size: 14px;
-  text-transform: uppercase;
-}
-
-main>div>aside details summary::after {
-  display: none;
-}
-
-main>div>aside details[open]>summary {
-  margin-bottom: 0;
-}
-
-main>div>aside details[open]>summary:not([role=button], :focus) {
-  color: var(--h1-color);
+.loginGrid .logo {
+  width: 25rem;
+  padding-bottom: 2rem;
+  filter: var(--svg-color);
 }

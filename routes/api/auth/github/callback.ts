@@ -1,5 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
-import { authToken, profile } from "lib/github.ts";
+import { GitHubProvider } from "lib/auth/github.ts";
 import { deleteCookie, getCookies, setCookie } from "$std/http/cookie.ts";
 import { createJWT, genKey } from "lib/jwt.ts";
 import { createUser, getUserFromProviderId, updateUser } from "db/db.ts";
@@ -29,20 +29,20 @@ export const handler: Handlers = {
         });
 
         try {
-            const auth = await authToken(
+            const auth = await GitHubProvider.authToken(
                 config.github.callbackUrl,
                 config.github.clientId,
                 config.github.clientSecret,
                 code,
             );
 
-            const githubProfile: ProviderProfile = await profile(auth.access_token);
+            const githubProfile: ProviderProfile = await GitHubProvider.profile(auth.access_token);
 
             // closed beta check :P
 
             const betaAllowedAccounts = [19735646];
             if (!betaAllowedAccounts.includes(githubProfile.id)) {
-                console.log("Failed login:", githubProfile.id, githubProfile.html_url);
+                console.log("Failed login:", githubProfile.id, githubProfile.name);
                 headers.set("location", "/closedBeta");
                 return new Response("", { status: 303, headers });
             }

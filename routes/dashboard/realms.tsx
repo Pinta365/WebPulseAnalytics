@@ -1,8 +1,8 @@
 import type { Handlers, PageProps } from "$fresh/server.ts";
-import { NavTop } from "components/NavTop.tsx";
+import { NavTop } from "components/layout/NavTop.tsx";
 import { NavSide } from "islands/NavSide.tsx";
-import { RealmView } from "components/views/RealmView.tsx";
-import { Footer } from "components/Footer.tsx";
+import { RealmView } from "components/RealmView.tsx";
+import { Footer } from "components/layout/Footer.tsx";
 
 interface Realm {
     id: string;

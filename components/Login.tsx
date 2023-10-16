@@ -12,7 +12,7 @@ export function Login() {
                             understanding, it offers deeper insight into user behavior.
                         </p>
                     </hgroup>
-                    <a class="button" href="/api/login">
+                    <a class="contrast w-100" role="button" href="/api/auth/github/login">
                         <img src="/img/svg/github.svg" alt="the GitHub logo" /> Sign in with GitHub
                     </a>
                 </div>
