@@ -2,6 +2,11 @@ html {
   font-size: 16px;
 }
 
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 :root {
   --svg-color-inverted: brightness(0) saturate(100%) invert(11%) sepia(13%) saturate(1681%) hue-rotate(163deg) brightness(92%) contrast(89%);
   --svg-color: invert(70%) sepia(89%) saturate(0%) hue-rotate(172deg) brightness(105%) contrast(105%);
@@ -92,6 +97,7 @@ html {
 body>footer {
   position:sticky;
   bottom: 0;
+  margin-top: auto;
   background-color: var(--muted-border-color);
   padding: 0.5rem 0;
 }
