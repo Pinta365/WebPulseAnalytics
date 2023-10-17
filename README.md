@@ -28,23 +28,7 @@ DENO_KV_LOCAL_DATABASE=./db/database
 
 #### Creating a new JWT Secret
 
-Copy, modify to preference, and paste the following code in a Deno REPL
-
-```ts
-
-import { create } from "https://deno.land/x/djwt@v2.9.1/mod.ts";
-
-// Create a key
-const key = await crypto.subtle.generateKey(
-  { name: "HMAC", hash: "SHA-512" },
-  true,
-  ["sign", "verify"],
-);
-
-// Create jwt
-console.log(await create({ alg: "HS512", typ: "JWT" }, { foo: "bar" }, key));
-
-```
+The JWT secret is used as a base to create the cryptographic key for signing the JWT. For development any string works but for a production environment you want a strong string and rotate it periodically.
 
 #### Creating a new GitHub OAuth application
 
