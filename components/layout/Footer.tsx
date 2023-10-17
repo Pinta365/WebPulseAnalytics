@@ -1,6 +1,6 @@
 export function Footer() {
     return (
-        <footer class="container-fluid">
+        <footer>
             <div class="grid">
                 <div class="footer-section">
                     <h6>Contact</h6>
@@ -34,6 +34,10 @@ export function Footer() {
                     <h6>About</h6>
                     <small>
                         <a href="/docs">Documentation</a>
+                    </small>
+                    <br />
+                    <small>
+                        <a href="https://developer.webpulseanalytics.com">Developer Docs</a>
                     </small>
                     <br />
                     <small>

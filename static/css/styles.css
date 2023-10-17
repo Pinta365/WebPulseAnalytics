@@ -90,7 +90,7 @@ html {
 
 /* Footer */
 body>footer {
-  position:absolute;
+  position:sticky;
   bottom: 0;
   background-color: var(--muted-border-color);
   padding: 0.5rem 0;
