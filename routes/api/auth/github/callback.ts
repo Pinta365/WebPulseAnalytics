@@ -40,7 +40,7 @@ export const handler: Handlers = {
 
             // closed beta check :P
 
-            const betaAllowedAccounts = [19735646];
+            const betaAllowedAccounts = [19735646, 419737];
             if (!betaAllowedAccounts.includes(githubProfile.id)) {
                 console.log("Failed login:", githubProfile.id, githubProfile.name);
                 headers.set("location", "/closedBeta");

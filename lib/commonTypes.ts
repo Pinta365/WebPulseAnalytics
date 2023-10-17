@@ -21,3 +21,40 @@ export interface DBUser {
         [key in SupportedProviders]?: ProviderProfile;
     };
 }
+
+export interface Realm {
+    id: string;
+    ownerId: string;
+    name: string;
+    description?: string;
+    allowedOrigins?: string[];
+}
+
+export interface ProjectOptions {
+    pageLoads: {
+        enabled: boolean;
+        storeUserAgent: boolean;
+    };
+    pageClicks: {
+        enabled: boolean;
+        capureAllClicks: boolean;
+    };
+    pageScrolls: {
+        enabled: boolean;
+    };
+}
+
+export interface Project {
+    id: string;
+    realmId: string;
+    ownerId: string;
+    name: string;
+    description?: string;
+    allowedOrigins?: string[];
+    options?: ProjectOptions;
+}
+
+export interface ProjectConfiguration {
+    realm: Realm;
+    project: Project;
+}

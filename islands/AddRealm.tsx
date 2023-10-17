@@ -1,12 +1,35 @@
 import { useState } from "preact/hooks";
 
 export function AddRealm() {
-    const [title, setTitle] = useState("");
+    const [name, setName] = useState("");
     const [description, setDescription] = useState("");
 
-    const addRealm = () => {
-        console.log({ title: title, description: description });
+    const addRealmButton = async () => {
+        const options = {
+            method: "POST",
+            body: new URLSearchParams({
+                name,
+                description,
+            }),
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "application/json",
+            },
+        };
+        const response = await fetch("/dashboard/realms", options);
+        if (response.ok) {
+            window.location.href = "/dashboard/realms";
+        } else {
+            //Poppa varningsruta med fel
+            console.error("Post failed");
+        }
+    };
+
+    const cancelButton = () => {
         window.location.href = "/dashboard/realms";
+        // Rensa formuläret
+        //setName("");
+        //setDescription("");
     };
 
     return (
@@ -14,20 +37,20 @@ export function AddRealm() {
             <summary>+ Add Realm</summary>
             <input
                 type="text"
-                placeholder="Project Title"
-                onChange={(e) => setTitle((e.target as HTMLInputElement).value)}
+                placeholder="Realm name"
+                onChange={(e) => setName((e.target as HTMLInputElement).value)}
                 class=""
             />
             <textarea
                 type="text"
-                placeholder="Project Description"
+                placeholder="Realm Description"
                 onChange={(e) => setDescription((e.target as HTMLInputElement).value)}
                 rows={4}
                 class=""
             />
             <footer>
-                <button class="">Cancel</button>
-                <button onClick={() => addRealm()} class="">Add</button>
+                <button onClick={() => cancelButton()} class="">Cancel</button>
+                <button onClick={() => addRealmButton()} class="">Add</button>
             </footer>
         </details>
     );

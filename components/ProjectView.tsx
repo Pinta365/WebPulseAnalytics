@@ -1,28 +1,6 @@
 import { AddProject } from "islands/AddProject.tsx";
-
-interface ProjectOptions {
-    pageLoads: {
-        enabled: boolean;
-        storeUserAgent: boolean;
-    };
-    pageClicks: {
-        enabled: boolean;
-        capureAllClicks: boolean;
-    };
-    pageScrolls: {
-        enabled: boolean;
-    };
-}
-
-interface Project {
-    id: string;
-    realmId: string;
-    ownerId?: string;
-    name: string;
-    description?: string;
-    allowedOrigins?: string[];
-    options?: ProjectOptions;
-}
+import { DelProjectButton } from "islands/DelProjectButton.tsx";
+import { Project } from "lib/commonTypes.ts";
 
 interface Projects {
     projects: Project[];
@@ -31,27 +9,32 @@ interface Projects {
 function printProject(project: Project) {
     return (
         <details class="w-50">
-            <summary class="secondary" role="button">{project.name}</summary>
-
+            <summary class="secondary">{project.name}</summary>
+            <small>Id: {project.id}</small>
+            {project.realmId &&
+                <div>RealmId: {project.realmId}</div>}
             {project.description &&
                 <div>Description: {project.description}</div>}
+            {project.options &&
+                <div>Options: {JSON.stringify(project.options)}</div>}
             {project.allowedOrigins &&
                 <div>Allowed Origins: {project.allowedOrigins}</div>}
             <p>
                 <br />
                 <a href="#" role="button" class="secondary outline w-25">Edit</a>
-                <a href="#" role="button" class="secondary outline w-25">Delete</a>
+                <DelProjectButton id={project.id} />
             </p>
         </details>
     );
 }
 export function ProjectView(data: Projects) {
     const { projects } = data;
+
     return (
         <section>
             <h1>Projects</h1>
             <AddProject />
-            {projects.length === 0 ? <p>No projects</p> : projects.map((project) => printProject(project))}
+            {projects?.length > 0 ? projects.map((project) => printProject(project)) : <p>No projects</p>}
         </section>
     );
 }

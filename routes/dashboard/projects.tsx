@@ -3,53 +3,60 @@ import { NavTop } from "components/layout/NavTop.tsx";
 import { NavSide } from "islands/NavSide.tsx";
 import { ProjectView } from "components/ProjectView.tsx";
 import { Footer } from "components/layout/Footer.tsx";
-import { SessionUser } from "lib/commonTypes.ts";
-
-interface ProjectOptions {
-    pageLoads: {
-        enabled: boolean;
-        storeUserAgent: boolean;
-    };
-    pageClicks: {
-        enabled: boolean;
-        capureAllClicks: boolean;
-    };
-    pageScrolls: {
-        enabled: boolean;
-    };
-}
-
-interface Project {
-    id: string;
-    realmId: string;
-    ownerId?: string;
-    name: string;
-    description?: string;
-    allowedOrigins?: string[];
-    options?: ProjectOptions;
-}
-
-async function getProjects(userId: string) {
-    const database = await Deno.openKv(Deno.env.get("WEBPULSE_STAT_DATABASE"));
-    // Need an index to get user projects. Will filter on userId in the for loop for now.
-    const projectList = database.list({ prefix: ["projects"] });
-    const projects: Project[] = [];
-    for await (const project of projectList) {
-        const proj = project.value as Project;
-        if (proj.ownerId === userId) {
-            projects.push(proj as Project);
-        }
-    }
-
-    return projects;
-}
+import { deleteProject, getProjects, insertProject } from "db/db.ts";
+import { genULID } from "lib/helper.ts";
 
 export const handler: Handlers = {
     async GET(_req, ctx) {
         const projects = await getProjects(ctx.state.userId as string);
         return ctx.render({ state: ctx.state, projects: projects });
     },
+    async POST(req, ctx) {
+        const params = new URLSearchParams(await req.text());
+
+        const name = params.get("name");
+        const description = params.get("description") || "";
+        const ownerId = ctx.state.userId as string;
+        const realmId = params.get("realmId");
+        const id = genULID();
+        if (name && realmId && ownerId) {
+            const insert = await insertProject({
+                id,
+                realmId,
+                ownerId,
+                name,
+                description,
+            });
+
+            if (insert) {
+                return new Response("Ok", { status: 201 });
+            } else {
+                return new Response("Not insterted.", { status: 422 });
+            }
+        }
+
+        return new Response("Bad Request", { status: 400 });
+    },
+
+    async DELETE(req, ctx) {
+        const params = new URLSearchParams(await req.text());
+        const ownerId = ctx.state.userId as string;
+        const id = params.get("id");
+        if (ownerId && id) {
+            const del = await deleteProject(ownerId, id);
+
+            if (del) {
+                return new Response("Ok", { status: 200 });
+            } else {
+                return new Response("Not deleted.", { status: 422 });
+            }
+        }
+
+        return new Response("Bad Request", { status: 400 });
+    },
+    //async PUT(req, ctx){}, /* Uppdatera ett proj */
 };
+
 export default function Projects({ data }: PageProps) {
     const { state, projects } = data;
     return (

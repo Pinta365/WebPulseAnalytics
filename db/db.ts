@@ -1,4 +1,4 @@
-import { DBUser, ProviderProfile, SupportedProviders } from "lib/commonTypes.ts";
+import { DBUser, Project, ProviderProfile, Realm, SupportedProviders } from "lib/commonTypes.ts";
 import { genULID } from "lib/helper.ts";
 
 const database = await Deno.openKv(Deno.env.get("DENO_KV_LOCAL_DATABASE") || undefined);
@@ -87,6 +87,70 @@ async function addOrUpdateProvider(user: DBUser, provider: SupportedProviders, p
         return false;
     } catch (error) {
         console.error(error);
+        return false;
+    }
+}
+
+export async function insertRealm(realm: Realm): Promise<boolean> {
+    try {
+        console.log("insert realm", realm);
+        await database.set(["realms", realm.ownerId!, realm.id], realm);
+        return true;
+    } catch (error) {
+        console.error("Error writing realms", error);
+        return false;
+    }
+}
+
+export async function getRealms(userId: string): Promise<Realm[]> {
+    const realmList = database.list({ prefix: ["realms", userId] });
+    const realms: Realm[] = [];
+    for await (const realm of realmList) {
+        realms.push(realm.value as Realm);
+    }
+
+    return realms;
+}
+
+export async function deleteRealm(userId: string, realmId: string): Promise<boolean> {
+    try {
+        console.log("delete realm", userId, realmId);
+        await database.delete(["realms", userId, realmId]);
+        return true;
+    } catch (error) {
+        console.error("Error deleting realm", error);
+        return false;
+    }
+}
+
+export async function insertProject(project: Project): Promise<boolean> {
+    try {
+        console.log("insert prj", project);
+        await database.set(["projects", project.ownerId!, project.id], project);
+        return true;
+    } catch (error) {
+        console.error("Error writing project", error);
+        return false;
+    }
+}
+
+export async function getProjects(userId: string): Promise<Project[]> {
+    const projectList = database.list({ prefix: ["projects", userId] });
+    const projects: Project[] = [];
+    for await (const project of projectList) {
+        projects.push(project.value as Project);
+    }
+
+    return projects;
+}
+
+export async function deleteProject(userId: string, projectId: string): Promise<boolean> {
+    try {
+        console.log("delete proj", userId, projectId);
+        await database.delete(["projects", userId, projectId]);
+        return true;
+    } catch (error) {
+        console.error("Error deleting project", error);
         return false;
     }
 }

@@ -17,7 +17,9 @@ import * as $11 from "./routes/info/privacy.tsx";
 import * as $12 from "./routes/logout.ts";
 import * as $$0 from "./islands/AddProject.tsx";
 import * as $$1 from "./islands/AddRealm.tsx";
-import * as $$2 from "./islands/NavSide.tsx";
+import * as $$2 from "./islands/DelProjectButton.tsx";
+import * as $$3 from "./islands/DelRealmButton.tsx";
+import * as $$4 from "./islands/NavSide.tsx";
 
 const manifest = {
     routes: {
@@ -38,7 +40,9 @@ const manifest = {
     islands: {
         "./islands/AddProject.tsx": $$0,
         "./islands/AddRealm.tsx": $$1,
-        "./islands/NavSide.tsx": $$2,
+        "./islands/DelProjectButton.tsx": $$2,
+        "./islands/DelRealmButton.tsx": $$3,
+        "./islands/NavSide.tsx": $$4,
     },
     baseUrl: import.meta.url,
 };
