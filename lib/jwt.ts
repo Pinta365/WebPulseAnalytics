@@ -12,6 +12,8 @@ function textDecode(data: Uint8Array): string {
 
 // Generates a cryptographic key using the given string.
 export async function genKey(keyStr: string): Promise<CryptoKey> {
+    // Require a string of at least 32 characters
+    if (keyStr.length < 32) throw new Error("JWT Secret String must be at least 32 bytes long");
     return await crypto.subtle.importKey(
         "raw",
         textEncode(keyStr),
