@@ -1,0 +1,26 @@
+body>footer {
+    background-color: var(--muted-border-color);
+    padding: 0.5rem 0;
+    /* Sticky footer pattern */
+    position:sticky;
+    bottom: 0;
+    margin-top: auto;
+}
+
+body>footer .footer-section {
+    transform: scale(0.8);
+}
+
+body>footer img {
+    vertical-align: bottom;
+    height: 1.5rem;
+    filter: var(--svg-color);
+}
+
+body>footer a {
+    --color: var(--contrast);
+}
+
+body>footer a:hover {
+    --color: var(--contrast-hover);
+}
