@@ -7,10 +7,6 @@ body>footer {
     margin-top: auto;
 }
 
-body>footer .footer-section {
-    transform: scale(0.8);
-}
-
 body>footer img {
     vertical-align: bottom;
     height: 1.5rem;

@@ -15,12 +15,6 @@ export async function handler(
     if (cookies[cookieName]) {
         const jwtSecret = await genKey(secret);
         const jwt = await parseJWT(jwtSecret, cookies[cookieName]) as unknown as SessionUser;
-        /*const dbUser: DBUser = await getUser(jwt.userId);
-        ctx.state = {
-            userId: dbUser.userId!,
-            displayName: dbUser.displayName,
-            avatar: dbUser.avatar,
-        };*/
         ctx.state = jwt;
     }
 

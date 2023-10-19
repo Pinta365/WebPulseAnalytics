@@ -22,14 +22,6 @@ export interface DBUser {
     };
 }
 
-export interface Realm {
-    id: string;
-    ownerId: string;
-    name: string;
-    description?: string;
-    allowedOrigins?: string[];
-}
-
 export interface ProjectOptions {
     pageLoads: {
         enabled: boolean;
@@ -46,15 +38,9 @@ export interface ProjectOptions {
 
 export interface Project {
     id: string;
-    realmId: string;
     ownerId: string;
     name: string;
     description?: string;
     allowedOrigins?: string[];
     options?: ProjectOptions;
-}
-
-export interface ProjectConfiguration {
-    realm: Realm;
-    project: Project;
 }

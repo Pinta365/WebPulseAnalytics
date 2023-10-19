@@ -72,9 +72,6 @@ export function NavSide() {
                     <summary>Manage Settings</summary>
                     <ul>
                         <li>
-                            <a href="/dashboard/realms" onClick={handleClick} class="secondary">Manage Realms</a>
-                        </li>
-                        <li>
                             <a href="/dashboard/projects" onClick={handleClick} class="secondary">Manage Projects</a>
                         </li>
                     </ul>

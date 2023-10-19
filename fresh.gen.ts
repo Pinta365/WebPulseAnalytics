@@ -11,15 +11,13 @@ import * as $5 from "./routes/closedBeta.tsx";
 import * as $6 from "./routes/dashboard/_middleware.ts";
 import * as $7 from "./routes/dashboard/index.tsx";
 import * as $8 from "./routes/dashboard/projects.tsx";
-import * as $9 from "./routes/dashboard/realms.tsx";
-import * as $10 from "./routes/index.tsx";
-import * as $11 from "./routes/info/privacy.tsx";
-import * as $12 from "./routes/logout.ts";
+import * as $9 from "./routes/index.tsx";
+import * as $10 from "./routes/info/privacy.tsx";
+import * as $11 from "./routes/logout.ts";
 import * as $$0 from "./islands/AddProject.tsx";
-import * as $$1 from "./islands/AddRealm.tsx";
-import * as $$2 from "./islands/DelProjectButton.tsx";
-import * as $$3 from "./islands/DelRealmButton.tsx";
-import * as $$4 from "./islands/NavSide.tsx";
+import * as $$1 from "./islands/DelProjectButton.tsx";
+import * as $$2 from "./islands/EditProject.tsx";
+import * as $$3 from "./islands/NavSide.tsx";
 
 const manifest = {
     routes: {
@@ -32,17 +30,15 @@ const manifest = {
         "./routes/dashboard/_middleware.ts": $6,
         "./routes/dashboard/index.tsx": $7,
         "./routes/dashboard/projects.tsx": $8,
-        "./routes/dashboard/realms.tsx": $9,
-        "./routes/index.tsx": $10,
-        "./routes/info/privacy.tsx": $11,
-        "./routes/logout.ts": $12,
+        "./routes/index.tsx": $9,
+        "./routes/info/privacy.tsx": $10,
+        "./routes/logout.ts": $11,
     },
     islands: {
         "./islands/AddProject.tsx": $$0,
-        "./islands/AddRealm.tsx": $$1,
-        "./islands/DelProjectButton.tsx": $$2,
-        "./islands/DelRealmButton.tsx": $$3,
-        "./islands/NavSide.tsx": $$4,
+        "./islands/DelProjectButton.tsx": $$1,
+        "./islands/EditProject.tsx": $$2,
+        "./islands/NavSide.tsx": $$3,
     },
     baseUrl: import.meta.url,
 };

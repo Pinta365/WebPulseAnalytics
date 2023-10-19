@@ -13,19 +13,36 @@ export const handler: Handlers = {
     },
     async POST(req, ctx) {
         const params = new URLSearchParams(await req.text());
-
+        const id = genULID();
         const name = params.get("name");
         const description = params.get("description") || "";
         const ownerId = ctx.state.userId as string;
-        const realmId = params.get("realmId");
-        const id = genULID();
-        if (name && realmId && ownerId) {
+        const pageLoadsChecked = params.get("pageLoadsChecked") === "true";
+        const storeUA = params.get("storeUA") === "true";
+        const pageClicksChecked = params.get("pageClicksChecked") === "true";
+        const captureAllClicks = params.get("captureAllClicks") === "true";
+        const pageScrollsChecked = params.get("pageScrollsChecked") === "true";
+
+        if (name && ownerId) {
             const insert = await insertProject({
                 id,
-                realmId,
                 ownerId,
                 name,
                 description,
+                //allowedOrigins,
+                options: {
+                    pageLoads: {
+                        enabled: pageLoadsChecked,
+                        storeUserAgent: storeUA,
+                    },
+                    pageClicks: {
+                        enabled: pageClicksChecked,
+                        capureAllClicks: captureAllClicks,
+                    },
+                    pageScrolls: {
+                        enabled: pageScrollsChecked,
+                    },
+                },
             });
 
             if (insert) {

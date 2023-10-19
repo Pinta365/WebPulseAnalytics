@@ -11,7 +11,7 @@ export const handler: Handlers = {
     },
 };
 
-export default function Realms({ data }: PageProps<SessionUser>) {
+export default function DashboardLanding({ data }: PageProps<SessionUser>) {
     return (
         <body>
             <NavTop {...data} />

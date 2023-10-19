@@ -11,8 +11,6 @@ function printProject(project: Project) {
         <details class="w-50">
             <summary class="secondary">{project.name}</summary>
             <small>Id: {project.id}</small>
-            {project.realmId &&
-                <div>RealmId: {project.realmId}</div>}
             {project.description &&
                 <div>Description: {project.description}</div>}
             {project.options &&
@@ -21,7 +19,7 @@ function printProject(project: Project) {
                 <div>Allowed Origins: {project.allowedOrigins}</div>}
             <p>
                 <br />
-                <a href="#" role="button" class="secondary outline w-25">Edit</a>
+                <a href="#" role="button" class="secondary outline">Edit</a>
                 <DelProjectButton id={project.id} />
             </p>
         </details>
@@ -32,8 +30,8 @@ export function ProjectView(data: Projects) {
 
     return (
         <section>
-            <h1>Projects</h1>
             <AddProject />
+            <h1>Projects</h1>
             {projects?.length > 0 ? projects.map((project) => printProject(project)) : <p>No projects</p>}
         </section>
     );

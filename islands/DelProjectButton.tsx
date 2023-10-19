@@ -23,5 +23,5 @@ export function DelProjectButton(data: ProjectData) {
         }
     };
 
-    return <button onClick={() => delButtonClick(data.id)} class="secondary outline w-25">Delete</button>;
+    return <button onClick={() => delButtonClick(data.id)} class="secondary outline  w-25">Delete</button>;
 }
