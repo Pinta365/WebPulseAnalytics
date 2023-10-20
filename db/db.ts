@@ -101,6 +101,11 @@ export async function insertProject(project: Project): Promise<boolean> {
     }
 }
 
+export async function getProject(userId: string, projectId: string): Promise<Project> {
+    const project = await database.get(["projects", userId, projectId]);
+    return project.value as Project;
+}
+
 export async function getProjects(userId: string): Promise<Project[]> {
     const projectList = database.list({ prefix: ["projects", userId] });
     const projects: Project[] = [];

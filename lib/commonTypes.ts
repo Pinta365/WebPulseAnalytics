@@ -42,5 +42,5 @@ export interface Project {
     name: string;
     description?: string;
     allowedOrigins?: string[];
-    options?: ProjectOptions;
+    options: ProjectOptions;
 }

@@ -19,7 +19,7 @@ function printProject(project: Project) {
                 <div>Allowed Origins: {project.allowedOrigins}</div>}
             <p>
                 <br />
-                <a href="#" role="button" class="secondary outline">Edit</a>
+                <a href={"/dashboard/projects?edit=" + project.id} role="button" class="secondary outline">Edit</a>
                 <DelProjectButton id={project.id} />
             </p>
         </details>

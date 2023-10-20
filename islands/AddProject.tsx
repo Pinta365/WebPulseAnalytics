@@ -1,5 +1,4 @@
 import { useState } from "preact/hooks";
-import { Project } from "lib/commonTypes.ts";
 
 export function AddProject() {
     const [name, setName] = useState("");
