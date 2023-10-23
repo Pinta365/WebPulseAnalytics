@@ -152,11 +152,14 @@ export function AddProject() {
                     </li>
                 </ul>
             </fieldset>
-            <br />
-            <footer>
-                <button onClick={() => clearForm()} class="">Cancel</button>
-                <button onClick={() => addProjectButton()} class="">Add</button>
-            </footer>
+            <div class="grid">
+                <div>
+                    <button onClick={() => clearForm()} class="secondary">Cancel</button>
+                </div>
+                <div>
+                    <button onClick={() => addProjectButton()} class="">Add</button>
+                </div>
+            </div>            
         </details>
     );
 }
