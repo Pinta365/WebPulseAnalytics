@@ -1,28 +1,29 @@
-interface AnalysisData {
+interface AnalysisBoxData {
     measure: string;
-    value: string;
-    submeasure: string;
-    subvalue: string;
+    value: number;
+    submeasure?: string;
+    subvalue?: string;
+    lastBox: boolean;
 }
 
-export function AnalysisBox(data: AnalysisData) {
+export function AnalysisBox(data: AnalysisBoxData) {
     return (
-        <div class="analysis-box container">
-            <div class="analysis-total">
-                { data.value }
+        <div class={`analysis-box container${!data.lastBox ? " analysis-box-br" : ""}`}>
+            <div class={`analysis-${data.submeasure ? "total" : "full"}`}>
+                {data.value}
             </div>
             <div class="small">
-                { data.measure }
+                {data.measure}
             </div>
-            { data.submeasure && (
+            {data.submeasure && (
                 <>
                     <div class="analysis-details">
-                        { data.subvalue }
+                        {data.subvalue}
                     </div>
                     <div class="small">
-                        { data.submeasure }
+                        {data.submeasure}
                     </div>
-                </>    
+                </>
             )}
         </div>
     );

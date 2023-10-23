@@ -5,7 +5,8 @@ Source code of https://webpulseanalytics.com/ , which could be leveraged to crea
 
 ## Getting started
 
-For instructions on setting up your own front end, or contributing to webpulse, see [developer.webpulseanalytics.com/](https://developer.webpulseanalytics.com/frontend/).
+For instructions on setting up your own front end, or contributing to webpulse, see
+[developer.webpulseanalytics.com/](https://developer.webpulseanalytics.com/frontend/).
 
 **Short version:**
 
@@ -30,6 +31,7 @@ WEBSITE_BASE_URL=http://localhost:8000
 # Deno key-value (KV) database configuration
 DENO_KV_LOCAL_DATABASE=./db/database
 ```
+
 ... and starting the server using this command:
 
 ```bash
