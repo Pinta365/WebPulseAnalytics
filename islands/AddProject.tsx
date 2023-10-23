@@ -159,7 +159,7 @@ export function AddProject() {
                 <div>
                     <button onClick={() => addProjectButton()} class="">Add</button>
                 </div>
-            </div>            
+            </div>
         </details>
     );
 }
