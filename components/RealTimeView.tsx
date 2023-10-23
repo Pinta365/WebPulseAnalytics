@@ -2,7 +2,8 @@ import { AnalysisBox } from "islands/analysis/AnalysisBox.tsx";
 import { Project } from "lib/commonTypes.ts";
 
 interface Projects {
-    projects: Project;
+    projects: Project[];
+    project: Project;
 }
 
 function printProject(project?: Project) {
@@ -54,10 +55,22 @@ function printProject(project?: Project) {
         </section>
     );
 }
+
+
+function printProjectMenuEntry(project?: Project) {
+    const projectName = project ? project.name : "Total";
+    const projectUrl = `/dashboard/realtime/${project ? project.id : "all"}`;
+    return (<div><a href={projectUrl}>{projectName}</a></div>);
+}
+
 export function RealTimeView(data: Projects) {
-    const { project } = data;
+    const { project, projects } = data;
     return (
         <section>
+            <div class="grid">
+                {printProjectMenuEntry()}
+                {projects?.length > 0 ? projects.map((projectEntry) => printProjectMenuEntry(projectEntry)) : <p>No projects</p>}
+            </div>
             {printProject(project)}
         </section>
     );

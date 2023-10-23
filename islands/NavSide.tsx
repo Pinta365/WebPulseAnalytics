@@ -50,7 +50,7 @@ export function NavSide() {
                     <summary>Real-Time Analysis</summary>
                     <ul>
                         <li>
-                            <a href="/dashboard/realtime" id="start-link" onClick={handleClick} class="secondary">Real-Time Dashboard</a>
+                            <a href="/dashboard/realtime/all" id="start-link" onClick={handleClick} class="secondary">Real-Time Dashboard</a>
                         </li>
                     </ul>
                 </details>

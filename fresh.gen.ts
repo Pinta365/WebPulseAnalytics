@@ -11,7 +11,7 @@ import * as $5 from "./routes/closedBeta.tsx";
 import * as $6 from "./routes/dashboard/_middleware.ts";
 import * as $7 from "./routes/dashboard/index.tsx";
 import * as $8 from "./routes/dashboard/projects.tsx";
-import * as $9 from "./routes/dashboard/realtime.tsx";
+import * as $9 from "./routes/dashboard/realtime/[project].tsx";
 import * as $10 from "./routes/index.tsx";
 import * as $11 from "./routes/info/privacy.tsx";
 import * as $12 from "./routes/logout.ts";
@@ -32,7 +32,7 @@ const manifest = {
         "./routes/dashboard/_middleware.ts": $6,
         "./routes/dashboard/index.tsx": $7,
         "./routes/dashboard/projects.tsx": $8,
-        "./routes/dashboard/realtime.tsx": $9,
+        "./routes/dashboard/realtime/[project].tsx": $9,
         "./routes/index.tsx": $10,
         "./routes/info/privacy.tsx": $11,
         "./routes/logout.ts": $12,
