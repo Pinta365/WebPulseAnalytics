@@ -19,7 +19,7 @@
 
 /* Responsive reactions */
 @media (min-width: 992px) {
-  main .grid {
+  main>.grid {
     grid-column-gap: var(--spacing-company);
     grid-template-columns: 25% auto;
   }
@@ -77,8 +77,31 @@ body {
 .w-50  { max-width: 50%;  }
 .w-75  { max-width: 75%;  }
 .w-100 { max-width: 100%; }
-
+.mt-1 { margin-top: 1rem; }
+.strong { font-weight: bold; }
+.block { display: block; }
 .icon {
   height: 2.1rem;
   filter: var(--svg-color);
+}
+
+/* Analysis */
+.analysis-box {
+  text-align: center;
+}
+.analysis-total {
+  font-size: 3rem;
+  font-weight: bold;
+}
+.analysis-details {
+  font-size: 2rem;
+}
+.small {
+  font-size: 0.8rem;
+  font-style: italic;
+}
+.history-graph {
+  background-color: #000;
+  width: 100%;
+  height: 15rem;
 }

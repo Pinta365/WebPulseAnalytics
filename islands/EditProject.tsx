@@ -147,11 +147,14 @@ export function EditProject(data: ProjectData) {
                     </li>
                 </ul>
             </fieldset>
-            <br />
-            <footer>
-                <button onClick={() => clearForm()} class="">Cancel</button>
-                <button onClick={() => updateProjectButton()} class="">Update</button>
-            </footer>
+            <div class="grid">
+                <div>
+                    <button onClick={() => clearForm()} class="secondary">Cancel</button>
+                </div>
+                <div>
+                    <button onClick={() => updateProjectButton()} class="">Update</button>
+                </div>
+            </div>
         </div>
     );
 }

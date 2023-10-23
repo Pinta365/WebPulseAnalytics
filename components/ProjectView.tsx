@@ -10,18 +10,32 @@ function printProject(project: Project) {
     return (
         <details class="w-50">
             <summary class="secondary">{project.name}</summary>
-            <small>Id: {project.id}</small>
-            {project.description &&
-                <div>Description: {project.description}</div>}
-            {project.options &&
-                <div>Options: {JSON.stringify(project.options)}</div>}
-            {project.allowedOrigins &&
-                <div>Allowed Origins: {project.allowedOrigins}</div>}
-            <p>
-                <br />
-                <a href={"/dashboard/projects?edit=" + project.id} role="button" class="secondary outline">Edit</a>
-                <DelProjectButton id={project.id} />
-            </p>
+            <table>
+                <tr>
+                    <td class="strong">Id</td>
+                    <td>{project.id}</td>
+                </tr>
+                <tr>
+                    <td class="strong">Description</td>
+                    <td>{project.description || ""}</td>
+                </tr>
+                <tr>
+                    <td class="strong">Options</td>
+                    <td>{JSON.stringify(project.options)}</td>
+                </tr>
+                <tr>
+                    <td class="strong">Allowed Origins</td>
+                    <td>{project.allowedOrigins}</td>
+                </tr>
+            </table>
+            <div class="grid mt-1">
+                <div>
+                    <a href={"/dashboard/projects?edit=" + project.id} role="button" class="block primary">Edit</a>
+                </div>
+                <div>
+                    <DelProjectButton id={project.id} />
+                </div>
+            </div>
         </details>
     );
 }
