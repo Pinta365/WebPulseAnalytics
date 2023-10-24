@@ -1,7 +1,7 @@
 import { DBUser, Project, ProviderProfile, SupportedProviders } from "lib/commonTypes.ts";
 import { genULID } from "lib/helper.ts";
 
-const database = await Deno.openKv(Deno.env.get("DENO_KV_LOCAL_DATABASE") || undefined);
+const database = await Deno.openKv(Deno.env.get("DENO_KV_DATABASE") || undefined);
 
 export { database };
 
