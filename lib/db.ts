@@ -11,7 +11,7 @@ export interface ProviderProfile {
 export type SupportedProviders = "github"; //Add more providers.. google and apple?
 
 export interface DBUser {
-    userId: string | undefined;
+    _id?: ObjectId;
     displayName: string;
     avatar?: string;
     primaryProvider?: SupportedProviders;
@@ -36,7 +36,6 @@ export interface ProjectOptions {
 
 export interface Project {
     _id?: ObjectId;
-    id: string;
     ownerId: string;
     name: string;
     description?: string;
@@ -44,7 +43,7 @@ export interface Project {
     options: ProjectOptions;
 }
 
-const mongoClient = new MongoClient(config.MongoUri!);
+const mongoClient = new MongoClient(config.mongo.mongoUri!);
 let mongoDatabase: Db | null = null;
 
 export async function getDatabase(): Promise<Db> {
@@ -135,7 +134,7 @@ export async function getProjectConfiguration(projectId: string, origin: string)
 
 // User-related functions
 
-async function getUserFromProviderId(provider: SupportedProviders, id: number): Promise<DBUser | null> {
+export async function getUserFromProviderId(provider: SupportedProviders, id: number): Promise<DBUser | null> {
     try {
         const collection = (await getDatabase()).collection('users');
         const userDoc = await collection.findOne({ [`providers.${provider}.id`]: id });
@@ -158,7 +157,7 @@ async function getUser(userId: string): Promise<DBUser | null> {
     }
 }
 
-async function updateUser(userId: string, user: DBUser, provider?: SupportedProviders, providerProfile?: ProviderProfile): Promise<boolean> {
+export async function updateUser(userId: string, user: DBUser, provider?: SupportedProviders, providerProfile?: ProviderProfile): Promise<boolean> {
     try {
         const collection = (await getDatabase()).collection('users');
         const idObject = new ObjectId(userId);

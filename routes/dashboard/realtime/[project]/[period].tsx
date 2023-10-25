@@ -4,7 +4,7 @@ import { NavTop } from "components/layout/NavTop.tsx";
 import { NavSide } from "islands/NavSide.tsx";
 import { RealTimeView } from "components/RealTimeView.tsx";
 import { Footer } from "components/layout/Footer.tsx";
-import { getProjects } from "db/db.ts";
+import { getProjects } from "lib/db.ts";
 import { RealTimePeriod, RealTimePeriods, RealTimeStats } from "lib/commonTypes.ts";
 
 export const handler: Handlers = {
