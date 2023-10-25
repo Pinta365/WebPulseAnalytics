@@ -23,7 +23,6 @@ export const handler: Handlers = {
     },
     async POST(req, ctx) {
         const params = new URLSearchParams(await req.text());
-        const id = genULID();
         const name = params.get("name");
         const description = params.get("description") || "";
         const ownerId = ctx.state.userId as string;
@@ -35,7 +34,6 @@ export const handler: Handlers = {
 
         if (name && ownerId) {
             const insert = await insertProject({
-                id,
                 ownerId,
                 name,
                 description,
@@ -47,7 +45,7 @@ export const handler: Handlers = {
                     },
                     pageClicks: {
                         enabled: pageClicksChecked,
-                        capureAllClicks: captureAllClicks,
+                        captureAllClicks: captureAllClicks,
                     },
                     pageScrolls: {
                         enabled: pageScrollsChecked,
@@ -107,7 +105,7 @@ export const handler: Handlers = {
                     },
                     pageClicks: {
                         enabled: pageClicksChecked,
-                        capureAllClicks: captureAllClicks,
+                        captureAllClicks: captureAllClicks,
                     },
                     pageScrolls: {
                         enabled: pageScrollsChecked,
