@@ -106,17 +106,12 @@ export async function getProject(projectId: string): Promise<Project> {
     const collection = (await getDatabase()).collection('projects');
     const idObject = new ObjectId(projectId);
     const project = await collection.findOne({ _id: idObject });
-    project.id = projectId;
     return project;
 }
 
 export async function getProjects(): Promise<Project[]> {
     const collection = (await getDatabase()).collection('projects');
     const projects = await collection.find({}).toArray();
-    projects.forEach(project => {
-        const idObject = new ObjectId(project._id);
-        project.id = idObject.toString();
-    });
     return projects;
 }
 
