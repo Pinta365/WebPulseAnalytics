@@ -28,14 +28,8 @@ GITHUB_CALLBACK_URL=http://localhost:8000/api/auth/github/callback
 # Base URL for your website
 WEBSITE_BASE_URL=http://localhost:8000
 
-# Deno key-value (KV) database configuration. Not required if deploying to Deno Deploy
-#
-# For Local development, or a custom setup, choose one of these alternatives.
-# 
-# - Local Database
-DENO_KV_DATABASE=./db/database
-# - Deno Deploy Remote Access
-# DENO_KV_DATABASE="https://api.deno.com/databases/<project-id>/connect"
+# MongoDBconfiguration
+MONGO_URI="https://api.deno.com/databases/<project-id>/connect"
 ```
 
 ... and starting the server using this command:
