@@ -4,7 +4,7 @@ import { NavSide } from "islands/NavSide.tsx";
 import { ProjectView } from "components/ProjectView.tsx";
 import { EditProject } from "islands/EditProject.tsx";
 import { Footer } from "components/layout/Footer.tsx";
-import { deleteProject, getProject, getProjects, insertProject } from "db/db.ts";
+import { deleteProject, getProject, getProjects, insertProject } from "lib/db.ts";
 import { genULID } from "lib/helper.ts";
 
 export const handler: Handlers = {

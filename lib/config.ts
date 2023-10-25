@@ -6,6 +6,7 @@ const {
     JWT_SECRET,
     JWT_COOKIE,
     WEBSITE_BASE_URL,
+    MONGO_URI
 } = Deno.env.toObject();
 
 function getOrThrow(
@@ -37,4 +38,7 @@ export const config = {
     common: {
         websiteBaseURL: getOrThrow(WEBSITE_BASE_URL, "WEBSITE_BASE_URL", "http://localhost:8000"),
     },
+    mongo: {
+        mongoUri: getOrThrow(MONGO_URI, "MONGO_URI"),
+    }
 };

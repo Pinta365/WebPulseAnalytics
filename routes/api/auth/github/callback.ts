@@ -2,7 +2,7 @@ import { Handlers } from "$fresh/server.ts";
 import { GitHubProvider } from "lib/auth/github.ts";
 import { deleteCookie, getCookies, setCookie } from "$std/http/cookie.ts";
 import { createJWT, genKey } from "lib/jwt.ts";
-import { createUser, getUserFromProviderId, updateUser } from "db/db.ts";
+import { createUser, getUserFromProviderId, updateUser } from "lib/db.ts";
 import { DBUser, ProviderProfile } from "lib/commonTypes.ts";
 
 import { config } from "lib/config.ts";
