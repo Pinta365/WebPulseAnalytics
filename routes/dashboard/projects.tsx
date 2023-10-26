@@ -5,7 +5,7 @@ import { ProjectView } from "components/ProjectView.tsx";
 import { EditProject } from "islands/EditProject.tsx";
 import { Footer } from "components/layout/Footer.tsx";
 import { deleteProject, getProject, getProjects, insertProject } from "lib/db.ts";
-import { genULID } from "lib/helper.ts";
+import { ObjectId } from "npm:mongodb";
 
 export const handler: Handlers = {
     async GET(req, ctx) {
@@ -81,7 +81,7 @@ export const handler: Handlers = {
     },
     async PUT(req, ctx) {
         const params = new URLSearchParams(await req.text());
-        const id = params.get("id");
+        const _id = params.get("id");
         const name = params.get("name");
         const description = params.get("description") || "";
         const ownerId = ctx.state.userId as string;
@@ -91,9 +91,9 @@ export const handler: Handlers = {
         const captureAllClicks = params.get("captureAllClicks") === "true";
         const pageScrollsChecked = params.get("pageScrollsChecked") === "true";
 
-        if (id && name && ownerId) {
+        if (_id && name && ownerId) {
             const insert = await insertProject({
-                id,
+                _id: new ObjectId(_id),
                 ownerId,
                 name,
                 description,

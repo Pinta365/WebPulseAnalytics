@@ -1,6 +1,6 @@
 import { AddProject } from "islands/AddProject.tsx";
 import { DelProjectButton } from "islands/DelProjectButton.tsx";
-import { Project } from "lib/commonTypes.ts";
+import { Project } from "lib/db.ts";
 
 interface Projects {
     projects: Project[];
@@ -13,7 +13,11 @@ function printProject(project: Project) {
             <table>
                 <tr>
                     <td class="strong">Id</td>
-                    <td>{project.id}</td>
+                    <td>{project._id.toString()}</td>
+                </tr>
+                <tr>
+                    <td class="strong">Owner Id</td>
+                    <td>{project.ownerId}</td>
                 </tr>
                 <tr>
                     <td class="strong">Description</td>
@@ -30,10 +34,10 @@ function printProject(project: Project) {
             </table>
             <div class="grid mt-1">
                 <div>
-                    <a href={"/dashboard/projects?edit=" + project.id} role="button" class="block primary">Edit</a>
+                    <a href={"/dashboard/projects?edit=" + project._id.toString()} role="button" class="block primary">Edit</a>
                 </div>
                 <div>
-                    <DelProjectButton id={project.id} />
+                    <DelProjectButton id={project._id} />
                 </div>
             </div>
         </details>

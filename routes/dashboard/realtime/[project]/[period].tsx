@@ -11,11 +11,10 @@ export const handler: Handlers = {
     async GET(req, ctx) {
         // List projects
         const projects = await getProjects(ctx.state.userId as string);
-
         // Find selected project, or "all"
         let project = null;
         if (ctx.params.project !== "all") {
-            project = projects.find((p) => p.id === ctx.params.project);
+            project = projects.find((p) => p._id.toString() === ctx.params.project);
             if (!project) {
                 // 404!!
                 return ctx.renderNotFound();

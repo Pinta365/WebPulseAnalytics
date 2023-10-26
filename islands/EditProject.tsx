@@ -1,5 +1,5 @@
 import { useState } from "preact/hooks";
-import { Project } from "lib/commonTypes.ts";
+import { Project } from "lib/db.ts";
 
 interface ProjectData {
     project: Project;
@@ -7,7 +7,8 @@ interface ProjectData {
 
 export function EditProject(data: ProjectData) {
     const { project } = data;
-    const id = project.id;
+    console.log(project);
+    const _id = project._id;
     const [name, setName] = useState(project.name);
     const [description, setDescription] = useState(project.description || "");
     const [pageLoadsChecked, setPageLoadsChecked] = useState(project.options.pageLoads.enabled);
@@ -20,7 +21,7 @@ export function EditProject(data: ProjectData) {
         const options = {
             method: "PUT",
             body: new URLSearchParams({
-                id,
+                _id,
                 name,
                 description,
                 pageLoadsChecked: pageLoadsChecked.toString(),

@@ -71,7 +71,7 @@ function printProject(stats: RealTimeStats, period: RealTimePeriod, project?: Pr
 function printProjectMenuEntry(period: string | null, currentProject?: Project, project?: Project) {
     const periodName = period ? period : "30min";
     const projectName = project ? project.name : "Total";
-    const projectUrl = `/dashboard/realtime/${project ? project.id : "all"}/${periodName}`;
+    const projectUrl = `/dashboard/realtime/${project ? project._id : "all"}/${periodName}`;
     const projectTitle = project ? (project.description || project.name) : "Total for all projects.";
     const projectClass = (currentProject === project) || (!currentProject && !project)
         ? "primary"
@@ -85,7 +85,7 @@ function printProjectMenuEntry(period: string | null, currentProject?: Project, 
 
 function printPeriodMenuEntry(currentPeriod: string, period: RealTimePeriod, project?: Project) {
     const periodName = periodTranslations[currentPeriod] ? periodTranslations[currentPeriod] : "Custom period";
-    const periodUrl = currentPeriod ? `/dashboard/realtime/${project ? project.id : "all"}/${currentPeriod}` : "#";
+    const periodUrl = currentPeriod ? `/dashboard/realtime/${project ? project._id : "all"}/${currentPeriod}` : "#";
     const periodTitle = periodTranslations[currentPeriod];
     const periodClass = (currentPeriod === period.name) ? "primary" : "secondary outline";
     return (

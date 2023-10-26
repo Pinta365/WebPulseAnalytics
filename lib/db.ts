@@ -102,10 +102,9 @@ export async function getEvents(projectId: string): Promise<EventPayload[]> {
     return events;
 }*/
 
-export async function getProject(projectId: string): Promise<Project> {
+export async function getProject(userId: string, projectId: string): Promise<Project> {
     const collection = (await getDatabase()).collection('projects');
-    const idObject = new ObjectId(projectId);
-    const project = await collection.findOne({ _id: idObject });
+    const project = await collection.findOne({ _id: new ObjectId(projectId), ownerId: new ObjectId(userId) });
     return project;
 }
 
