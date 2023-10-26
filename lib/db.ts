@@ -109,9 +109,9 @@ export async function getProject(projectId: string): Promise<Project> {
     return project;
 }
 
-export async function getProjects(): Promise<Project[]> {
+export async function getProjects(userId: string): Promise<Project[]> {
     const collection = (await getDatabase()).collection('projects');
-    const projects = await collection.find({}).toArray();
+    const projects = await collection.find({ ownerId: userId }).toArray();
     return projects;
 }
 
