@@ -61,50 +61,9 @@ export async function disconnect(): Promise<void> {
     console.log("MongoDB connection closed.");
 }
 
-/*
-export interface EventPayload {
-    timestamp: number;
-    projectId: string;
-    type: string;
-    pageLoadId: string;
-    sessionId: string;
-    [key: string]: string | number | undefined;
-}
-
-export async function insertEvent(payload: EventPayload) {
-    const collection = (await getDatabase()).collection('events');
-    const insertedId = (await collection.insertOne(payload)).insertedId.toString();
-    console.log(payload.type, insertedId);
-
-    if (payload.type === "pageLoad") {
-        const sessionData: EventPayload = {
-            type: "pageSession",
-            projectId: payload.projectId,
-            sessionId: payload.sessionId,
-            pageLoadId: payload.pageLoadId,
-            timestamp: payload.timestamp,
-            firstEventAt: payload.timestamp,
-            lastEventAt: payload.timestamp,
-        };
-
-        if (payload.userAgent) {
-            sessionData.userAgent = payload.userAgent;
-        }
-
-        const insertedSessionId = (await collection.insertOne(sessionData)).insertedId.toString();
-        console.log(sessionData.type, insertedSessionId);
-    }          
-}
-
-export async function getEvents(projectId: string): Promise<EventPayload[]> {
-    const collection = (await getDatabase()).collection('events');
-    const events = await collection.find({ projectId }).toArray();
-    return events;
-}*/
-
 export async function getProject(userId: string, projectId: string): Promise<Project> {
     const collection = (await getDatabase()).collection('projects');
-    const project = await collection.findOne({ _id: new ObjectId(projectId), ownerId: new ObjectId(userId) });
+    const project = await collection.findOne({ _id: new ObjectId(projectId), ownerId: userId });
     return project;
 }
 
@@ -120,30 +79,25 @@ export async function insertProject(project: Project): Promise<string> {
     return projectReturned.insertedId.toString();
 }
 
-export async function getProjectConfiguration(projectId: string, origin: string): Promise<false | Project> {
-    const project = await getProject(projectId);
-    if (!project) return false;
-    return project;
-}
+export async function deleteProject(projectId: string): Promise<boolean> {
+    try {
+        const collection = (await getDatabase()).collection('projects');
+        const idObject = new ObjectId(projectId);
+        const result = await collection.deleteOne({ _id: idObject });
 
+        // Ensure that a document was deleted
+        return result.deletedCount === 1;
+    } catch (error) {
+        logError("Error deleting project", error);
+        return false;
+    }
+}
 // User-related functions
 
 export async function getUserFromProviderId(provider: SupportedProviders, id: number): Promise<DBUser | null> {
     try {
         const collection = (await getDatabase()).collection('users');
         const userDoc = await collection.findOne({ [`providers.${provider}.id`]: id });
-        return userDoc;
-    } catch (error) {
-        logError("Error retrieving user", error);
-        return null;
-    }
-}
-
-async function getUser(userId: string): Promise<DBUser | null> {
-    try {
-        const collection = (await getDatabase()).collection('users');
-        const idObject = new ObjectId(userId);
-        const userDoc = await collection.findOne({ _id: idObject });
         return userDoc;
     } catch (error) {
         logError("Error retrieving user", error);
@@ -179,19 +133,5 @@ export async function createUser(user: DBUser, provider?: SupportedProviders, pr
     } catch (error) {
         logError("Error creating user", error);
         return null;
-    }
-}
-
-export async function deleteProject(projectId: string): Promise<boolean> {
-    try {
-        const collection = (await getDatabase()).collection('projects');
-        const idObject = new ObjectId(projectId);
-        const result = await collection.deleteOne({ _id: idObject });
-
-        // Ensure that a document was deleted
-        return result.deletedCount === 1;
-    } catch (error) {
-        logError("Error deleting project", error);
-        return false;
     }
 }

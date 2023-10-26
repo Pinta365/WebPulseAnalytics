@@ -10,7 +10,6 @@ import { ObjectId } from "npm:mongodb";
 export const handler: Handlers = {
     async GET(req, ctx) {
         const edit = new URL(req.url).searchParams.get("edit");
-
         if (edit) {
             // render for editing a project
             const editProject = await getProject(ctx.state.userId as string, edit);
@@ -31,7 +30,6 @@ export const handler: Handlers = {
         const pageClicksChecked = params.get("pageClicksChecked") === "true";
         const captureAllClicks = params.get("captureAllClicks") === "true";
         const pageScrollsChecked = params.get("pageScrollsChecked") === "true";
-
         if (name && ownerId) {
             const insert = await insertProject({
                 ownerId,
@@ -66,9 +64,9 @@ export const handler: Handlers = {
     async DELETE(req, ctx) {
         const params = new URLSearchParams(await req.text());
         const ownerId = ctx.state.userId as string;
-        const id = params.get("id");
-        if (ownerId && id) {
-            const del = await deleteProject(ownerId, id);
+        const _id = params.get("_id");
+        if (ownerId && _id) {
+            const del = await deleteProject(ownerId, _id);
 
             if (del) {
                 return new Response("Ok", { status: 200 });
@@ -81,7 +79,7 @@ export const handler: Handlers = {
     },
     async PUT(req, ctx) {
         const params = new URLSearchParams(await req.text());
-        const _id = params.get("id");
+        const _id = params.get("_id");
         const name = params.get("name");
         const description = params.get("description") || "";
         const ownerId = ctx.state.userId as string;
@@ -90,7 +88,6 @@ export const handler: Handlers = {
         const pageClicksChecked = params.get("pageClicksChecked") === "true";
         const captureAllClicks = params.get("captureAllClicks") === "true";
         const pageScrollsChecked = params.get("pageScrollsChecked") === "true";
-
         if (_id && name && ownerId) {
             const insert = await insertProject({
                 _id: new ObjectId(_id),

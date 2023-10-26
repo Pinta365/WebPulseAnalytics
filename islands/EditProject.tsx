@@ -14,7 +14,7 @@ export function EditProject(data: ProjectData) {
     const [pageLoadsChecked, setPageLoadsChecked] = useState(project.options.pageLoads.enabled);
     const [storeUA, setStoreUA] = useState(project.options.pageLoads.storeUserAgent);
     const [pageClicksChecked, setPageClicksChecked] = useState(project.options.pageClicks.enabled);
-    const [captureAllClicks, setCaptureAllClicks] = useState(project.options.pageClicks.capureAllClicks);
+    const [captureAllClicks, setCaptureAllClicks] = useState(project.options.pageClicks.captureAllClicks);
     const [pageScrollsChecked, setPageScrollsChecked] = useState(project.options.pageScrolls.enabled);
 
     const updateProjectButton = async () => {
