@@ -4,7 +4,7 @@ import { NavSide } from "islands/NavSide.tsx";
 import { ProjectView } from "components/ProjectView.tsx";
 import { EditProject } from "islands/EditProject.tsx";
 import { Footer } from "components/layout/Footer.tsx";
-import { deleteProject, getProject, getProjects, insertProject } from "lib/db.ts";
+import { deleteProject, getProject, getProjects, upsertProject } from "lib/db.ts";
 import { ObjectId } from "npm:mongodb";
 
 export const handler: Handlers = {
@@ -31,7 +31,7 @@ export const handler: Handlers = {
         const captureAllClicks = params.get("captureAllClicks") === "true";
         const pageScrollsChecked = params.get("pageScrollsChecked") === "true";
         if (name && ownerId) {
-            const insert = await insertProject({
+            const insert = await upsertProject({
                 ownerId,
                 name,
                 description,
@@ -67,7 +67,7 @@ export const handler: Handlers = {
         const _id = params.get("_id");
         if (ownerId && _id) {
             const del = await deleteProject(ownerId, _id);
-
+            console.log(del);
             if (del) {
                 return new Response("Ok", { status: 200 });
             } else {
@@ -89,7 +89,7 @@ export const handler: Handlers = {
         const captureAllClicks = params.get("captureAllClicks") === "true";
         const pageScrollsChecked = params.get("pageScrollsChecked") === "true";
         if (_id && name && ownerId) {
-            const insert = await insertProject({
+            const insert = await upsertProject({
                 _id: new ObjectId(_id),
                 ownerId,
                 name,

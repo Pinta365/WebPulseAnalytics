@@ -1,4 +1,4 @@
-import { MongoClient, Db, ObjectId } from 'npm:mongodb';
+import { MongoClient, Db, ObjectId, UpdateResult, InsertOneResult } from 'npm:mongodb';
 import { logError } from "./debug_logger.ts";
 import { config } from "./config.ts";
 
@@ -73,17 +73,46 @@ export async function getProjects(userId: string): Promise<Project[]> {
     return projects;
 }
 
-export async function insertProject(project: Project): Promise<string> {
-    const collection = (await getDatabase()).collection('projects');
-    const projectReturned = await collection.insertOne(project);
-    return projectReturned.insertedId.toString();
-}
-
-export async function deleteProject(projectId: string): Promise<boolean> {
+export async function upsertProject(project: Project): Promise<boolean> {
     try {
         const collection = (await getDatabase()).collection('projects');
-        const idObject = new ObjectId(projectId);
-        const result = await collection.deleteOne({ _id: idObject });
+
+        // If the project doesn't have an _id, MongoDB will automatically insert one
+        let idFilter = {};
+        if (project._id) {
+            idFilter = { _id: new ObjectId(project._id)  };
+            // Use the upsert option
+            await collection.updateOne(
+                idFilter,
+                { $set: project }
+            );
+        } else {
+            await collection.insertOne(project);
+        }
+
+        return true;
+    } catch (error) {
+        logError("Error upserting project", error);
+        return false;
+    }
+}
+
+export async function deleteProject(ownerId: string, projectId: string): Promise<boolean> {
+    try {
+        const collection = (await getDatabase()).collection('projects');
+        const filter: {
+            _id?: ObjectId | undefined;
+            ownerId: string;
+        } = {
+            ownerId
+        };
+        if (projectId && projectId !== "undefined") {
+            filter._id = new ObjectId(projectId);
+        } else {
+            filter._id = undefined;
+        }
+    
+        const result = await collection.deleteOne(filter);
 
         // Ensure that a document was deleted
         return result.deletedCount === 1;

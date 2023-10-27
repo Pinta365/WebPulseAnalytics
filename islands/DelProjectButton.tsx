@@ -7,7 +7,7 @@ export function DelProjectButton(data: ProjectData) {
         const options = {
             method: "DELETE",
             body: new URLSearchParams({
-                id,
+                _id: id,
             }),
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",

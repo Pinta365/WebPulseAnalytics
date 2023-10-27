@@ -13,7 +13,7 @@ function printProject(project: Project) {
             <table>
                 <tr>
                     <td class="strong">Id</td>
-                    <td>{project._id.toString()}</td>
+                    <td>{project._id?.toString()}</td>
                 </tr>
                 <tr>
                     <td class="strong">Owner Id</td>
@@ -34,10 +34,10 @@ function printProject(project: Project) {
             </table>
             <div class="grid mt-1">
                 <div>
-                    <a href={"/dashboard/projects?edit=" + project._id.toString()} role="button" class="block primary">Edit</a>
+                    <a href={"/dashboard/projects?edit=" + project._id?.toString()} role="button" class="block primary">Edit</a>
                 </div>
                 <div>
-                    <DelProjectButton id={project._id} />
+                    <DelProjectButton id={project._id?.toString()} />
                 </div>
             </div>
         </details>
