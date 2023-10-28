@@ -12,11 +12,11 @@ export const handler: Handlers = {
         const edit = new URL(req.url).searchParams.get("edit");
         if (edit) {
             // render for editing a project
-            const editProject = await getProject(ctx.state.userId as string, edit);
+            const editProject = await getProject(ctx.state._id as string, edit);
             return ctx.render({ state: ctx.state, editProject: editProject });
         } else {
             // render for listing projects
-            const projects = await getProjects(ctx.state.userId as string);
+            const projects = await getProjects(ctx.state._id as string);
             return ctx.render({ state: ctx.state, projects: projects });
         }
     },
@@ -24,7 +24,7 @@ export const handler: Handlers = {
         const params = new URLSearchParams(await req.text());
         const name = params.get("name");
         const description = params.get("description") || "";
-        const ownerId = ctx.state.userId as string;
+        const ownerId = ctx.state._id as string;
         const pageLoadsChecked = params.get("pageLoadsChecked") === "true";
         const storeUA = params.get("storeUA") === "true";
         const pageClicksChecked = params.get("pageClicksChecked") === "true";
@@ -63,7 +63,7 @@ export const handler: Handlers = {
 
     async DELETE(req, ctx) {
         const params = new URLSearchParams(await req.text());
-        const ownerId = ctx.state.userId as string;
+        const ownerId = ctx.state._id as string;
         const _id = params.get("_id");
         if (ownerId && _id) {
             const del = await deleteProject(ownerId, _id);
@@ -82,7 +82,7 @@ export const handler: Handlers = {
         const _id = params.get("_id");
         const name = params.get("name");
         const description = params.get("description") || "";
-        const ownerId = ctx.state.userId as string;
+        const ownerId = ctx.state._id as string;
         const pageLoadsChecked = params.get("pageLoadsChecked") === "true";
         const storeUA = params.get("storeUA") === "true";
         const pageClicksChecked = params.get("pageClicksChecked") === "true";

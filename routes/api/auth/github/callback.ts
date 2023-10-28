@@ -48,6 +48,7 @@ export const handler: Handlers = {
             }
 
             const alreadyUser: DBUser = await getUserFromProviderId("github", githubProfile.id);
+
             const sessionUser = {} as DBUser;
             const providerProfile: ProviderProfile = {
                 id: githubProfile.id,
@@ -58,28 +59,27 @@ export const handler: Handlers = {
             sessionUser.displayName = providerProfile.name;
             sessionUser.avatar = providerProfile.avatar_url;
 
-            if (alreadyUser?.userId) {
-                sessionUser.userId = alreadyUser.userId;
+            if (alreadyUser?._id) {
+                sessionUser._id = alreadyUser._id;
                 alreadyUser.displayName = providerProfile.name;
                 alreadyUser.avatar = providerProfile.avatar_url;
-                await updateUser(alreadyUser.userId, alreadyUser, "github", providerProfile);
+                await updateUser(alreadyUser._id, alreadyUser, "github", providerProfile);
             } else {
                 const createdId = await createUser(sessionUser, "github", providerProfile);
+                console.log(createdId);
                 if (createdId) {
-                    sessionUser.userId = createdId;
+                    sessionUser._id = createdId;
                 } else {
                     return new Response("Error processing authentication", { status: 500 });
                 }
             }
-
             const jwtSecret = await genKey(config.jwt.secret);
             const jwtContent = {
-                userId: sessionUser.userId!,
+                _id: sessionUser._id!.toString(),
                 displayName: sessionUser.displayName!,
                 avatar: sessionUser.avatar!,
             };
             const jwt = await createJWT(jwtSecret, jwtContent);
-
             setCookie(headers, {
                 name: config.jwt.cookieName,
                 value: jwt,
@@ -91,7 +91,6 @@ export const handler: Handlers = {
             console.error(error);
             return new Response("Error processing authentication", { status: 500 });
         }
-
         headers.set("location", "/");
         return new Response("", { status: 303, headers });
     },

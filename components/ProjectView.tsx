@@ -31,6 +31,10 @@ function printProject(project: Project) {
                     <td class="strong">Allowed Origins</td>
                     <td>{project.allowedOrigins}</td>
                 </tr>
+                <tr>
+                    <td class="strong">Snippet</td>
+                    <td><code>{`<script src="https://track.webpulseanalytics.com/client/${project._id.toString()}" type="module"></script>`}</code></td>
+                </tr>
             </table>
             <div class="grid mt-1">
                 <div>

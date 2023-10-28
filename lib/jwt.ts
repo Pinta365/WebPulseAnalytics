@@ -32,7 +32,6 @@ export async function createJWT(
     const payload = `${encodeBase64Url(textEncode(JSON.stringify(header)))}.${
         encodeBase64Url(textEncode(JSON.stringify(data)))
     }`;
-
     const signature = encodeBase64Url(
         new Uint8Array(
             await crypto.subtle.sign({ name: "HMAC" }, key, textEncode(payload)),

@@ -5,7 +5,7 @@ import { config } from "lib/config.ts";
 
 export const handler: Handlers = {
     GET(_req, ctx) {
-        if (ctx.state.userId) {
+        if (ctx.state._id) {
             return Response.redirect(`${config.common.websiteBaseURL}/dashboard`);
         }
 

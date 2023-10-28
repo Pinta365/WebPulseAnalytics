@@ -6,7 +6,7 @@ export function handler(
     _req: Request,
     ctx: MiddlewareHandlerContext<SessionUser>,
 ) {
-    if (!ctx?.state?.userId) {
+    if (!ctx?.state?._id) {
         return Response.redirect(config.common.websiteBaseURL);
     }
 

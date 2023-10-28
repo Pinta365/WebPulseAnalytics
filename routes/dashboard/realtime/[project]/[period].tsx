@@ -10,7 +10,7 @@ import { RealTimePeriod, RealTimePeriods, RealTimeStats } from "lib/commonTypes.
 export const handler: Handlers = {
     async GET(req, ctx) {
         // List projects
-        const projects = await getProjects(ctx.state.userId as string);
+        const projects = await getProjects(ctx.state._id as string);
         // Find selected project, or "all"
         let project = null;
         if (ctx.params.project !== "all") {

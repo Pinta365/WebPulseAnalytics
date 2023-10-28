@@ -12,7 +12,7 @@ export function NavTop(data: SessionUser) {
                 </li>
             </ul>
             <ul>
-                {data.userId && /* If we are logged in, present menu */
+                {data._id && /* If we are logged in, present menu */
                     <li>
                         <details role="list" dir="rtl">
                             <summary aria-haspopup="listbox" role="link" class="secondary">
