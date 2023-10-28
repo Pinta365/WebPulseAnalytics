@@ -33,7 +33,7 @@ function printProject(project: Project) {
                 </tr>
                 <tr>
                     <td class="strong">Snippet</td>
-                    <td><code>{`<script src="https://track.webpulseanalytics.com/client/${project._id.toString()}" type="module"></script>`}</code></td>
+                    <td><code>{`<script async src="https://track.webpulseanalytics.com/client/${project._id.toString()}" type="module"></script>`}</code></td>
                 </tr>
             </table>
             <div class="grid mt-1">
