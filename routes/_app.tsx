@@ -11,9 +11,8 @@ export default function App({ Component }: AppProps) {
                 <link rel="stylesheet" href="/css/nav.css" />
                 <link rel="stylesheet" href="/css/footer.css" />
                 <link rel="stylesheet" href="/css/login.css" />
-                <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
-                </link>
-
+                <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png"/>
+                <script async src="https://track.webpulseanalytics.com/client/653eb35b048754e8b13f0771" type="module"></script>
                 <title>WebPulse Analytics</title>
             </head>
             <body>
