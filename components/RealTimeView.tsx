@@ -144,9 +144,9 @@ export function RealTimeView(data: Projects) {
                 </ul>
             </nav>
             <hr></hr>
-            {printProject(analyticsData[0], period, project)}
-            { analyticsDataPerProject && (
-                <>
+            { analyticsData[0] && analyticsDataPerProject?.length > 0 && (
+                <>  
+                    {printProject(analyticsData[0], period, project)}
                     <hr></hr>
                     {printProjects(analyticsDataPerProject, period, project)}
                 </>
