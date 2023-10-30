@@ -1,10 +1,13 @@
 import { AnalysisBox } from "islands/analysis/AnalysisBox.tsx";
+import { AnalysisRow } from "islands/analysis/AnalysisRow.tsx";
 import { Project, RealTimePeriod, RealTimePeriods, RealTimeStats } from "lib/commonTypes.ts";
+import { getAnalytics } from "lib/db.ts";
 
 interface Projects {
     projects: Project[];
     project: Project;
-    stats: RealTimeStats;
+    analyticsData: RealTimeStats[];
+    analyticsDataPerProject: RealTimeStats[];
     period: RealTimePeriod;
 }
 
@@ -15,6 +18,7 @@ const periodTranslations: Record<string, string> = {
 };
 
 function printProject(stats: RealTimeStats, period: RealTimePeriod, project?: Project) {
+
     // Define example data for AnalysisBoxes
     const analysisData = [
         {
@@ -28,9 +32,9 @@ function printProject(stats: RealTimeStats, period: RealTimePeriod, project?: Pr
             subvalue: (stats.sessions / stats.visitors).toPrecision(2),
         },
         {
-            measure: "Page Views",
+            measure: "Page Loads",
             value: stats.pageLoads,
-            submeasure: "Page Views/Session",
+            submeasure: "Page Loads/Session",
             subvalue: (stats.pageLoads / stats.sessions).toPrecision(2),
         },
         {
@@ -62,8 +66,32 @@ function printProject(stats: RealTimeStats, period: RealTimePeriod, project?: Pr
                     />
                 ))}
             </div>
-            <hr></hr>
-            <div class="history-graph"></div>
+        </section>
+    );
+}
+
+
+function printProjects(stats: RealTimeStats[], period: RealTimePeriod, project?: Project) {
+    return (
+        <section class="analysis-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>Visitors</th>
+                        <th>Sessions</th>
+                        <th>Page Loads</th>
+                        <th>Clicks</th>
+                        <th>Scrolls</th>
+                    </tr>
+                </thead>
+                {stats.map((data, index) => (
+                    <AnalysisRow
+                        key={index}
+                        project={data}
+                    />
+                ))}
+            </table>
         </section>
     );
 }
@@ -96,7 +124,7 @@ function printPeriodMenuEntry(currentPeriod: string, period: RealTimePeriod, pro
 }
 
 export function RealTimeView(data: Projects) {
-    const { project, projects, stats, period } = data;
+    const { project, projects, analyticsData, analyticsDataPerProject, period } = data;
     return (
         <section>
             <nav>
@@ -114,7 +142,13 @@ export function RealTimeView(data: Projects) {
                 </ul>
             </nav>
             <hr></hr>
-            {printProject(stats, period, project)}
+            {printProject(analyticsData[0], period, project)}
+            { analyticsDataPerProject && (
+                <>
+                    <hr></hr>
+                    {printProjects(analyticsDataPerProject, period, project)}
+                </>
+            )}
         </section>
     );
 }

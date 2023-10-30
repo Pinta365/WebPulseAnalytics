@@ -164,3 +164,88 @@ export async function createUser(user: DBUser, provider?: SupportedProviders, pr
         return null;
     }
 }
+
+export async function getAnalytics(
+    projectId: ObjectId | ObjectId[],
+    startDate: number,
+    endDate: number,
+    total: boolean = false
+  ): Promise<any> {
+    const database = await getDatabase();
+    const sessionsCollection = database.collection("sessions");
+  
+    const matchStage = {
+      $match: {
+        projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
+        timestamp: { $gte: startDate, $lte: endDate },
+      },
+    };
+  
+    const groupStage = {
+      $group: {
+        _id: "$projectId",
+        uniqueDevices: { $addToSet: "$deviceId" },
+        clicks: { $sum: "$clicks" },
+        scrolls: { $sum: "$scrolls" },
+        uniqueSessions: { $addToSet: "$_id" },
+        pageLoads: { $sum: "$loads" },
+      },
+    };
+  
+    const lookupDevicesStage = {
+      $lookup: {
+        from: 'devices',
+        localField: 'uniqueDevices',
+        foreignField: '_id',
+        as: 'devices',
+      },
+    };
+  
+    const lookupProjectsStage = {
+      $lookup: {
+        from: 'projects',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'project',
+      },
+    };
+  
+    const projectStage = {
+      $project: {
+        projectName: { $arrayElemAt: ["$project.name", 0] },
+        visitors: { $size: "$uniqueDevices" },
+        clicks: 1,
+        scrolls: 1,
+        sessions: { $size: "$uniqueSessions" },
+        pageLoads: 1,
+      },
+    };
+  
+    const sortStage = {
+      $sort: {
+        visitors: -1,
+        sessions: -1,
+        pageLoads: -1,
+      },
+    };
+  
+    const totalStage = {
+      $group: {
+        _id: null,
+        visitors: { $sum: "$visitors" },
+        clicks: { $sum: "$clicks" },
+        scrolls: { $sum: "$scrolls" },
+        sessions: { $sum: "$sessions" },
+        pageLoads: { $sum: "$pageLoads" },
+      },
+    };
+  
+    const pipeline = [matchStage, groupStage, lookupDevicesStage, lookupProjectsStage, projectStage, sortStage];
+    if (total) {
+      pipeline.push(totalStage);
+    }
+  
+    const results = await sessionsCollection.aggregate(pipeline).toArray();
+  
+    return results;
+  }

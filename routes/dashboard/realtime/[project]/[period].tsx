@@ -4,13 +4,16 @@ import { NavTop } from "components/layout/NavTop.tsx";
 import { NavSide } from "islands/NavSide.tsx";
 import { RealTimeView } from "components/RealTimeView.tsx";
 import { Footer } from "components/layout/Footer.tsx";
-import { getProjects } from "lib/db.ts";
+import { getAnalytics, getProjects } from "lib/db.ts";
 import { RealTimePeriod, RealTimePeriods, RealTimeStats } from "lib/commonTypes.ts";
+import { ObjectId } from "../../../../../../.cache/deno/npm/registry.npmjs.org/bson/6.2.0/bson.d.ts";
 
 export const handler: Handlers = {
     async GET(req, ctx) {
+        
         // List projects
         const projects = await getProjects(ctx.state._id as string);
+
         // Find selected project, or "all"
         let project = null;
         if (ctx.params.project !== "all") {
@@ -36,33 +39,35 @@ export const handler: Handlers = {
             return ctx.renderNotFound();
         }
 
-        // Get stats for selected project/view
-        let fakeFactor = 1;
-        if (period.name === "30min") fakeFactor = 0.1;
-        if (period.name === "yesterday") fakeFactor = 1.1;
-        const stats: RealTimeStats = {
-            /* ToDo: Fill with actual data */
-            pageLoads: 120 * fakeFactor,
-            sessions: 130 * fakeFactor,
-            visitors: 40 * fakeFactor,
-            clicks: 140 * fakeFactor,
-            scrolls: 150 * fakeFactor,
-            history: [],
-        };
+        // Grand Total Stats
+        const projectIds = projects.map(p=>p._id!);
+        let analyticsData;
+        let analyticsDataPerProject;
+        if (project === null) {
+            analyticsData = await getAnalytics(projectIds,Date.now()-3600*1000*24,Date.now(), true);
+            analyticsDataPerProject = await getAnalytics(projectIds,Date.now()-3600*1000*24,Date.now(), false);
+            
+        } else {
+            analyticsData = await getAnalytics([project._id!],Date.now()-3600*1000*24,Date.now(), false);
+        }
 
+        // Per project stats (if applicable)
+        
         // Go!
         return ctx.render({
             state: ctx.state,
             project,
             projects,
             period,
-            stats,
+            analyticsData,
+            analyticsDataPerProject
         });
     },
 };
 
 export default function Projects({ data }: PageProps) {
-    const { state, projects, project, period, stats } = data;
+    const { state, projects, project, period, analyticsData, analyticsDataPerProject } = data;
+
     return (
         <body>
             <NavTop {...state} />
@@ -72,7 +77,8 @@ export default function Projects({ data }: PageProps) {
                     <RealTimeView
                         project={project}
                         projects={projects}
-                        stats={stats}
+                        analyticsData={analyticsData}
+                        analyticsDataPerProject={analyticsDataPerProject}
                         period={period}
                     />
                 </div>

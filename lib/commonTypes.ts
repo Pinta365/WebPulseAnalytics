@@ -1,11 +1,11 @@
 // Get stats for selected project/view
 export interface RealTimeStats {
+    projectName?: string;
     pageLoads: number;
     sessions: number;
     visitors: number;
     clicks: number;
     scrolls: number;
-    history: unknown[]; /* ToDo: Should contain history */
 }
 
 // Period can either be named, or to/from
