@@ -6,7 +6,6 @@ import { RealTimeView } from "components/RealTimeView.tsx";
 import { Footer } from "components/layout/Footer.tsx";
 import { getAnalytics, getProjects } from "lib/db.ts";
 import { RealTimePeriod, RealTimePeriods, RealTimeStats } from "lib/commonTypes.ts";
-import { ObjectId } from "../../../../../../.cache/deno/npm/registry.npmjs.org/bson/6.2.0/bson.d.ts";
 
 export const handler: Handlers = {
     async GET(req, ctx) {
@@ -38,14 +37,30 @@ export const handler: Handlers = {
             // 404!!
             return ctx.renderNotFound();
         }
+        const now = new Date();
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+        const startOfYesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).getTime();        
+        if (period.name === "30min") {
+            period.from = Date.now()-1800*1000;
+            period.to = Date.now();
+        }
+        if (period.name === "today") {
+            const now = new Date();
+            period.from = startOfToday;
+            period.to = Date.now();
+        }
+        if (period.name === "yesterday") {
+            period.from = startOfYesterday;
+            period.to = startOfToday;
+        }
 
         // Grand Total Stats
         const projectIds = projects.map(p=>p._id!);
         let analyticsData;
         let analyticsDataPerProject;
         if (project === null) {
-            analyticsData = await getAnalytics(projectIds,Date.now()-3600*1000*24,Date.now(), true);
-            analyticsDataPerProject = await getAnalytics(projectIds,Date.now()-3600*1000*24,Date.now(), false);
+            analyticsData = await getAnalytics(projectIds,period.from!,period.to!, true);
+            analyticsDataPerProject = await getAnalytics(projectIds,period.from!,period.to!, false);
             
         } else {
             analyticsData = await getAnalytics([project._id!],Date.now()-3600*1000*24,Date.now(), false);

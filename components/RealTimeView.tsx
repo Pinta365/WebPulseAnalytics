@@ -134,6 +134,8 @@ export function RealTimeView(data: Projects) {
                         ? projects.map((projectEntry) => printProjectMenuEntry(period.name, project, projectEntry))
                         : <li>No projects</li>}
                 </ul>
+            </nav>
+            <nav>
                 <ul class="selector-menu">
                     <li class="strong">Period</li>
                     {RealTimePeriods?.length > 0
