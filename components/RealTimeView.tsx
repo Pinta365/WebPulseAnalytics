@@ -96,17 +96,21 @@ function printProjects(stats: RealTimeStats[], period: RealTimePeriod, project?:
     );
 }
 
-function printProjectMenuEntry(period: string | null, currentProject?: Project, project?: Project) {
+function printProjectLink(period: string | null, project?: Project, projectClass?: string) {
     const periodName = period ? period : "30min";
     const projectName = project ? project.name : "Total";
     const projectUrl = `/dashboard/realtime/${project ? project._id : "all"}/${periodName}`;
     const projectTitle = project ? (project.description || project.name) : "Total for all projects.";
+    return (<a href={projectUrl} title={projectTitle} class={projectClass}>{projectName}</a>);
+}
+
+function printProjectMenuEntry(period: string | null, currentProject?: Project, project?: Project) {
     const projectClass = (currentProject === project) || (!currentProject && !project)
         ? "primary"
         : "secondary outline";
     return (
         <li>
-            <a role="button" href={projectUrl} title={projectTitle} class={projectClass}>{projectName}</a>
+            {printProjectLink(period,project,projectClass)}
         </li>
     );
 }
@@ -118,7 +122,7 @@ function printPeriodMenuEntry(currentPeriod: string, period: RealTimePeriod, pro
     const periodClass = (currentPeriod === period.name) ? "primary" : "secondary outline";
     return (
         <li>
-            <a role="button" href={periodUrl} title={periodTitle} class={periodClass}>{periodName}</a>
+            <a href={periodUrl} title={periodTitle} class={periodClass}>{periodName}</a>
         </li>
     );
 }
@@ -127,22 +131,29 @@ export function RealTimeView(data: Projects) {
     const { project, projects, analyticsData, analyticsDataPerProject, period } = data;
     return (
         <section>
-            <nav>
-                <ul class="selector-menu">
-                    {printProjectMenuEntry(period.name, project)}
-                    {projects?.length > 0
-                        ? projects.map((projectEntry) => printProjectMenuEntry(period.name, project, projectEntry))
-                        : <li>No projects</li>}
-                </ul>
-            </nav>
-            <nav>
-                <ul class="selector-menu">
-                    <li class="strong">Period</li>
-                    {RealTimePeriods?.length > 0
-                        ? RealTimePeriods.map((periodEntry) => printPeriodMenuEntry(periodEntry, period, project))
-                        : <li>No periods</li>}
-                </ul>
-            </nav>
+            <div class="grid">
+                <div>
+                    <details class="dropdown" role="list">
+                        <summary>{project ? project.name : "All Projects"}</summary>
+                        <ul>
+                        {printProjectMenuEntry(period.name, project)}
+                        {projects?.length > 0
+                                ? projects.map((projectEntry) => printProjectMenuEntry(period.name, project, projectEntry))
+                                : <li>No projects</li>}
+                        </ul>
+                    </details>
+                </div>
+                <div class="right">
+                    <details class="dropdown" role="list">
+                        <summary>Period: {periodTranslations[period.name]}</summary>
+                        <ul>
+                            {RealTimePeriods?.length > 0
+                                ? RealTimePeriods.map((periodEntry) => printPeriodMenuEntry(periodEntry, period, project))
+                                : <li>No periods</li>}
+                        </ul>
+                    </details>
+                </div>
+            </div>
             <hr></hr>
             { analyticsData[0] && analyticsDataPerProject?.length > 0 && (
                 <>  
