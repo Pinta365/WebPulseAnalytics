@@ -27,6 +27,7 @@ export const handler: Handlers = {
         const ownerId = ctx.state._id as string;
         const pageLoadsChecked = params.get("pageLoadsChecked") === "true";
         const storeUA = params.get("storeUA") === "true";
+        const storeLoc = params.get("storeLoc") === "true";
         const pageClicksChecked = params.get("pageClicksChecked") === "true";
         const captureAllClicks = params.get("captureAllClicks") === "true";
         const pageScrollsChecked = params.get("pageScrollsChecked") === "true";
@@ -37,9 +38,10 @@ export const handler: Handlers = {
                 description,
                 //allowedOrigins,
                 options: {
+                    storeUserAgent: storeUA,
+                    storeLocation: storeLoc,
                     pageLoads: {
-                        enabled: pageLoadsChecked,
-                        storeUserAgent: storeUA,
+                        enabled: pageLoadsChecked,                        
                     },
                     pageClicks: {
                         enabled: pageClicksChecked,
@@ -85,6 +87,7 @@ export const handler: Handlers = {
         const ownerId = ctx.state._id as string;
         const pageLoadsChecked = params.get("pageLoadsChecked") === "true";
         const storeUA = params.get("storeUA") === "true";
+        const storeLoc = params.get("storeLoc") === "true";
         const pageClicksChecked = params.get("pageClicksChecked") === "true";
         const captureAllClicks = params.get("captureAllClicks") === "true";
         const pageScrollsChecked = params.get("pageScrollsChecked") === "true";
@@ -96,9 +99,10 @@ export const handler: Handlers = {
                 description,
                 //allowedOrigins,
                 options: {
+                    storeUserAgent: storeUA,
+                    storeLocation: storeLoc,
                     pageLoads: {
-                        enabled: pageLoadsChecked,
-                        storeUserAgent: storeUA,
+                        enabled: pageLoadsChecked,                        
                     },
                     pageClicks: {
                         enabled: pageClicksChecked,

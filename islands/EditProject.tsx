@@ -7,25 +7,29 @@ interface ProjectData {
 
 export function EditProject(data: ProjectData) {
     const { project } = data;
-    console.log(project);
     const _id = project._id;
     const [name, setName] = useState(project.name);
     const [description, setDescription] = useState(project.description || "");
-    const [pageLoadsChecked, setPageLoadsChecked] = useState(project.options.pageLoads.enabled);
-    const [storeUA, setStoreUA] = useState(project.options.pageLoads.storeUserAgent);
-    const [pageClicksChecked, setPageClicksChecked] = useState(project.options.pageClicks.enabled);
-    const [captureAllClicks, setCaptureAllClicks] = useState(project.options.pageClicks.captureAllClicks);
-    const [pageScrollsChecked, setPageScrollsChecked] = useState(project.options.pageScrolls.enabled);
+    const [pageLoadsChecked, setPageLoadsChecked] = useState(project.options.pageLoads.enabled || false);
+    const [storeUA, setStoreUA] = useState(project.options.storeUserAgent || false);
+    const [storeLoc, setStoreLoc] = useState(project.options.storeLocation || false);
+    const [pageClicksChecked, setPageClicksChecked] = useState(project.options.pageClicks.enabled || false);
+    const [captureAllClicks, setCaptureAllClicks] = useState(project.options.pageClicks.captureAllClicks || false);
+    const [pageScrollsChecked, setPageScrollsChecked] = useState(project.options.pageScrolls.enabled || false);
 
     const updateProjectButton = async () => {
+
+        //Kontroller på indatat?
+
         const options = {
             method: "PUT",
             body: new URLSearchParams({
-                _id,
+                _id: _id?.toString(),
                 name,
                 description,
                 pageLoadsChecked: pageLoadsChecked.toString(),
                 storeUA: storeUA.toString(),
+                storeLoc: storeLoc.toString(),
                 pageClicksChecked: pageClicksChecked.toString(),
                 captureAllClicks: captureAllClicks.toString(),
                 pageScrollsChecked: pageScrollsChecked.toString(),
@@ -74,6 +78,33 @@ export function EditProject(data: ProjectData) {
                 <hr />
                 <ul>
                     <li style="list-style-type: none;">
+                        <label for="StoreUA">
+                            <input
+                                type="checkbox"
+                                id="StoreUA"
+                                name="StoreUA"
+                                checked={storeUA}
+                                disabled={!pageLoadsChecked}
+                                onChange={() => setStoreUA(!storeUA)}
+                            />
+                            Store user agent
+                        </label>
+                    </li>
+                    <li style="list-style-type: none;">
+                        <label for="StoreLoc">
+                            <input
+                                type="checkbox"
+                                id="StoreLoc"
+                                name="StoreLoc"
+                                checked={storeLoc}
+                                disabled={!pageLoadsChecked}
+                                onChange={() => setStoreLoc(!storeLoc)}
+                            />
+                            Store user location
+                        </label>
+                    </li>
+                    <hr />
+                    <li style="list-style-type: none;">
                         <label for="PageLoads">
                             <input
                                 type="checkbox"
@@ -85,22 +116,6 @@ export function EditProject(data: ProjectData) {
                             />
                             Track page loads
                         </label>
-
-                        <ul>
-                            <li style="list-style-type: none;">
-                                <label for="PageLoadsStoreUA">
-                                    <input
-                                        type="checkbox"
-                                        id="PageLoadsStoreUA"
-                                        name="PageLoadsStoreUA"
-                                        checked={storeUA}
-                                        disabled={!pageLoadsChecked}
-                                        onChange={() => setStoreUA(!storeUA)}
-                                    />
-                                    Store user agent
-                                </label>
-                            </li>
-                        </ul>
                     </li>
                     <hr />
                     <li style="list-style-type: none;">

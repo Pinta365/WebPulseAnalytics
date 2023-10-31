@@ -5,6 +5,7 @@ export function AddProject() {
     const [description, setDescription] = useState("");
     const [pageLoadsChecked, setPageLoadsChecked] = useState(true);
     const [storeUA, setStoreUA] = useState(true);
+    const [storeLoc, setStoreLoc] = useState(true);
     const [pageClicksChecked, setPageClicksChecked] = useState(true);
     const [captureAllClicks, setCaptureAllClicks] = useState(false);
     const [pageScrollsChecked, setPageScrollsChecked] = useState(true);
@@ -17,6 +18,7 @@ export function AddProject() {
                 description,
                 pageLoadsChecked: pageLoadsChecked.toString(),
                 storeUA: storeUA.toString(),
+                storeLoc: storeLoc.toString(),
                 pageClicksChecked: pageClicksChecked.toString(),
                 captureAllClicks: captureAllClicks.toString(),
                 pageScrollsChecked: pageScrollsChecked.toString(),
@@ -46,6 +48,7 @@ export function AddProject() {
         // Reset checkbox states
         setPageLoadsChecked(true);
         setStoreUA(true);
+        setStoreLoc(true);
         setPageClicksChecked(true);
         setCaptureAllClicks(false);
         setPageScrollsChecked(true);
@@ -78,6 +81,33 @@ export function AddProject() {
                 <hr />
                 <ul>
                     <li style="list-style-type: none;">
+                        <label for="StoreUA">
+                            <input
+                                type="checkbox"
+                                id="StoreUA"
+                                name="StoreUA"
+                                checked={storeUA}
+                                disabled={!pageLoadsChecked}
+                                onChange={() => setStoreUA(!storeUA)}
+                            />
+                            Store user agent
+                        </label>
+                    </li>
+                    <li style="list-style-type: none;">
+                        <label for="StoreLoc">
+                            <input
+                                type="checkbox"
+                                id="StoreLoc"
+                                name="StoreLoc"
+                                checked={storeLoc}
+                                disabled={!pageLoadsChecked}
+                                onChange={() => setStoreLoc(!storeLoc)}
+                            />
+                            Store user location
+                        </label>
+                    </li>
+                    <hr />
+                    <li style="list-style-type: none;">
                         <label for="PageLoads">
                             <input
                                 type="checkbox"
@@ -88,23 +118,8 @@ export function AddProject() {
                                 onChange={() => setPageLoadsChecked(!pageLoadsChecked)}
                             />
                             Track page loads
-                        </label>
-
-                        <ul>
-                            <li style="list-style-type: none;">
-                                <label for="PageLoadsStoreUA">
-                                    <input
-                                        type="checkbox"
-                                        id="PageLoadsStoreUA"
-                                        name="PageLoadsStoreUA"
-                                        checked={storeUA}
-                                        disabled={!pageLoadsChecked}
-                                        onChange={() => setStoreUA(!storeUA)}
-                                    />
-                                    Store user agent
-                                </label>
-                            </li>
-                        </ul>
+                        </label>                     
+    
                     </li>
                     <hr />
                     <li style="list-style-type: none;">

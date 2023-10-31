@@ -9,7 +9,7 @@ interface Projects {
 function printProject(project: Project) {
     return (
         <details class="w-50">
-            <summary class="secondary">{project.name}</summary>
+            <summary class="secondary">{project.name}</summary>            
             <table>
                 <tr>
                     <td class="strong">Id</td>
