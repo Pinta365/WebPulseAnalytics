@@ -18,6 +18,8 @@ const periodTranslations: Record<string, string> = {
 };
 
 function printProject(stats: RealTimeStats, period: RealTimePeriod, project?: Project) {
+    
+    console.log(stats);
 
     // Define example data for AnalysisBoxes
     const analysisData = [
@@ -75,16 +77,14 @@ function printProjects(stats: RealTimeStats[], period: RealTimePeriod, project?:
     return (
         <section class="analysis-section">
             <table>
-                <thead>
-                    <tr>
-                        <th>Project</th>
-                        <th>Visitors</th>
-                        <th>Sessions</th>
-                        <th>Page Loads</th>
-                        <th>Clicks</th>
-                        <th>Scrolls</th>
-                    </tr>
-                </thead>
+                <tr>
+                    <th>Project</th>
+                    <th>Visitors</th>
+                    <th>Sessions</th>
+                    <th>Page Loads</th>
+                    <th>Clicks</th>
+                    <th>Scrolls</th>
+                </tr>
                 {stats.map((data, index) => (
                     <AnalysisRow
                         key={index}
@@ -155,9 +155,9 @@ export function RealTimeView(data: Projects) {
                 </div>
             </div>
             <hr></hr>
-            { analyticsData[0] && analyticsDataPerProject?.length > 0 && (
-                <>  
-                    {printProject(analyticsData[0], period, project)}
+            { analyticsData[0] && printProject(analyticsData[0], period, project) }
+            { analyticsDataPerProject?.length > 0 && (
+                <>
                     <hr></hr>
                     {printProjects(analyticsDataPerProject, period, project)}
                 </>
