@@ -100,7 +100,8 @@ function printProjects(stats: RealTimeStats[], period: RealTimePeriod, project?:
     );
 }
 
-function printDataTable(data: { _id: string | null; count: number }[], titles: string[]) {
+function printDataTable(data: { _id: string | null; count: number }[], topN: number, titles: string[]) {
+    const rowsToShow = data.slice(0, topN);
     return (
         <table>
             <thead>
@@ -111,7 +112,7 @@ function printDataTable(data: { _id: string | null; count: number }[], titles: s
                 </tr>
             </thead>
             <tbody>
-                {data.map((row, index) => (
+                {rowsToShow.map((row, index) => (
                     <tr key={index}>
                         <td>{row._id && row._id.trim() !== "" ? row._id : "Unknown"}</td>
                         <td>{row.count}</td>
@@ -121,6 +122,7 @@ function printDataTable(data: { _id: string | null; count: number }[], titles: s
         </table>
     );
 }
+
 
 function printProjectLink(period: string | null, project?: Project, projectClass?: string) {
     const periodName = period ? period : "30min";
@@ -184,18 +186,18 @@ export function RealTimeView(data: Projects) {
             { analyticsDataPerProject?.length > 0 && printProjects(analyticsDataPerProject, period, project) }
             <div class="grid">
                 <article>
-                    { referrerData && printDataTable(referrerData, ["Referrer", "Count"]) }
+                    { referrerData && printDataTable(referrerData, 10, ["Referrer", "Count"]) }
                 </article>
                 <article>
-                    { countryData && printDataTable(countryData, ["Country", "Count"]) }
+                    { countryData && printDataTable(countryData, 10, ["Country", "Count"]) }
                 </article>
             </div>
             <div class="grid">
                 <article>
-                    { browserData && printDataTable(browserData, ["Browser", "Count"]) }
+                    { browserData && printDataTable(browserData, 10, ["Browser", "Count"]) }
                 </article>
                 <article>
-                    { osData && printDataTable(osData, ["Operating System", "Count"]) }
+                    { osData && printDataTable(osData, 10, ["Operating System", "Count"]) }
                 </article>
             </div>
         </section>

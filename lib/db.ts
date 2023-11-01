@@ -78,7 +78,7 @@ interface PageLoad {
     timestamp: number;
     firstEventAt: number;
     lastEventAt: number;
-
+    referer: string | undefined;
     clicks: number;
     scrolls: number;
 }
@@ -320,40 +320,6 @@ export async function getAnalytics(
     return results;
   }
 
-  export async function getReferrers(
-    projectId: ObjectId | ObjectId[],
-    startDate: number,
-    endDate: number
-  ): Promise<any> {
-    const database = await getDatabase();
-    const sessionsCollection = database.collection("sessions");
-  
-    const matchStage = {
-      $match: {
-        projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
-        timestamp: { $gte: startDate, $lte: endDate },
-      },
-    };
-  
-    const groupStage = {
-      $group: {
-        _id: "$referrer",
-        count: { $sum: 1 },
-      },
-    };
-  
-    const sortStage = {
-      $sort: {
-        count: -1,
-      },
-    };
-  
-    const pipeline = [matchStage, groupStage, sortStage];
-  
-    const results = await sessionsCollection.aggregate(pipeline).toArray();
-  
-    return results;
-  }
 
   export async function getCountries(
     projectId: ObjectId | ObjectId[],
@@ -454,6 +420,70 @@ export async function getAnalytics(
     };
   
     const pipeline = [matchStage, groupStage, sortStage];
+  
+    const results = await sessionsCollection.aggregate(pipeline).toArray();
+  
+    return results;
+  }
+  export async function getReferrers(
+    projectId: ObjectId | ObjectId[],
+    startDate: number,
+    endDate: number
+  ): Promise<any> {
+    const database = await getDatabase();
+    const sessionsCollection = database.collection("sessions");
+  
+    const matchStage = {
+      $match: {
+        projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
+        "pageLoads.timestamp": { $gte: startDate, $lte: endDate },
+      },
+    };
+  
+    const unwindStage = {
+      $unwind: "$pageLoads",
+    };
+  
+    const addFieldsStage = {
+      $addFields: {
+        "domain": {
+          $arrayElemAt: [
+            {
+              $split: [
+                {
+                  $arrayElemAt: [
+                    {
+                      $split: [
+                        "$pageLoads.referer",
+                        "//",
+                      ],
+                    },
+                    1,
+                  ],
+                },
+                "/",
+              ],
+            },
+            0,
+          ],
+        },
+      },
+    };
+  
+    const groupStage = {
+      $group: {
+        _id: "$domain",
+        count: { $sum: 1 },
+      },
+    };
+  
+    const sortStage = {
+      $sort: {
+        count: -1,
+      },
+    };
+  
+    const pipeline = [matchStage, unwindStage, addFieldsStage, groupStage, sortStage];
   
     const results = await sessionsCollection.aggregate(pipeline).toArray();
   
