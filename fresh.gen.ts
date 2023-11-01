@@ -20,7 +20,6 @@ import * as $$1 from "./islands/DelProjectButton.tsx";
 import * as $$2 from "./islands/EditProject.tsx";
 import * as $$3 from "./islands/NavSide.tsx";
 import * as $$4 from "./islands/analysis/AnalysisBox.tsx";
-import * as $$5 from "./islands/analysis/AnalysisRow.tsx";
 
 const manifest = {
     routes: {
@@ -44,7 +43,6 @@ const manifest = {
         "./islands/EditProject.tsx": $$2,
         "./islands/NavSide.tsx": $$3,
         "./islands/analysis/AnalysisBox.tsx": $$4,
-        "./islands/analysis/AnalysisRow.tsx": $$5,
     },
     baseUrl: import.meta.url,
 };

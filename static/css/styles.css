@@ -114,3 +114,10 @@ body {
   width: 100%;
   height: 30rem;
 }
+article {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+article {
+  padding: 0.5rem;
+}

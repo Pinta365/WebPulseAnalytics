@@ -1,6 +1,8 @@
-import { MongoClient, Db, ObjectId, UpdateResult, InsertOneResult } from 'npm:mongodb';
+import { MongoClient, Db, ObjectId } from 'npm:mongodb';
 import { logError } from "./debug_logger.ts";
 import { config } from "./config.ts";
+
+import type { Browser, Cpu, Device, Engine, Os } from "https://deno.land/std@0.204.0/http/user_agent.ts";
 
 export interface ProviderProfile {
     name: string; //"Pinta"
@@ -24,7 +26,7 @@ export interface ProjectOptions {
     storeUserAgent: boolean;
     storeLocation: boolean;
     pageLoads: {
-        enabled: boolean;        
+        enabled: boolean;
     };
     pageClicks: {
         enabled: boolean;
@@ -42,6 +44,73 @@ export interface Project {
     description?: string;
     allowedOrigins?: string[];
     options: ProjectOptions;
+}
+
+export interface EventPayload {
+    // Fixed types
+    timestamp: number;
+    projectId: ObjectId;
+    type: string;
+    pageLoadId: ObjectId;
+    deviceId: ObjectId;
+    sessionId: ObjectId;
+    userAgent?: UserAgentData;
+    location?: LocationData;
+    // eventtype specific types.. should be typed at some point
+    [key: string]: string | number | undefined | ObjectId | LocationData | UserAgentData;
+}
+
+export interface UserAgentData {
+    browser: Browser;
+    cpu: Cpu;
+    device: Device;
+    engine: Engine;
+    os: Os;
+    ua: string;
+}
+export interface LocationData {
+    countryShort: string;
+    countryLong: string;
+}
+
+interface PageLoad {
+    pageLoadId: ObjectId;
+    timestamp: number;
+    firstEventAt: number;
+    lastEventAt: number;
+
+    clicks: number;
+    scrolls: number;
+}
+
+interface SessionObject {
+    _id: ObjectId;
+    projectId: ObjectId;
+    deviceId: ObjectId;
+    timestamp: number;
+    firstEventAt: number;
+    lastEventAt: number;
+    userAgent?: UserAgentData;
+    location?: LocationData;
+
+    loads: number;
+    clicks: number;
+    scrolls: number;
+
+    pageLoads: PageLoad[];
+}
+
+interface DeviceObject {
+    _id: ObjectId;
+    projectId: ObjectId;
+    firstEventAt: number;
+    lastEventAt: number;
+    sessionIds: ObjectId[];
+
+    sessions: number;
+    loads: number;
+    clicks: number;
+    scrolls: number;
 }
 
 const mongoClient = new MongoClient(config.mongo.mongoUri!);
@@ -250,3 +319,144 @@ export async function getAnalytics(
   
     return results;
   }
+
+  export async function getReferrers(
+    projectId: ObjectId | ObjectId[],
+    startDate: number,
+    endDate: number
+  ): Promise<any> {
+    const database = await getDatabase();
+    const sessionsCollection = database.collection("sessions");
+  
+    const matchStage = {
+      $match: {
+        projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
+        timestamp: { $gte: startDate, $lte: endDate },
+      },
+    };
+  
+    const groupStage = {
+      $group: {
+        _id: "$referrer",
+        count: { $sum: 1 },
+      },
+    };
+  
+    const sortStage = {
+      $sort: {
+        count: -1,
+      },
+    };
+  
+    const pipeline = [matchStage, groupStage, sortStage];
+  
+    const results = await sessionsCollection.aggregate(pipeline).toArray();
+  
+    return results;
+  }
+
+  export async function getCountries(
+    projectId: ObjectId | ObjectId[],
+    startDate: number,
+    endDate: number
+  ): Promise<any> {
+    const database = await getDatabase();
+    const sessionsCollection = database.collection("sessions");
+  
+    const matchStage = {
+      $match: {
+        projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
+        timestamp: { $gte: startDate, $lte: endDate },
+      },
+    };
+  
+    const groupStage = {
+      $group: {
+        _id: "$location.countryLong",
+        count: { $sum: 1 },
+      },
+    };
+  
+    const sortStage = {
+      $sort: {
+        count: -1,
+      },
+    };
+  
+    const pipeline = [matchStage, groupStage, sortStage];
+  
+    const results = await sessionsCollection.aggregate(pipeline).toArray();
+  
+    return results;
+  }
+
+  export async function getOperatingSystems(
+    projectId: ObjectId | ObjectId[],
+    startDate: number,
+    endDate: number
+  ): Promise<any> {
+    const database = await getDatabase();
+    const sessionsCollection = database.collection("sessions");
+  
+    const matchStage = {
+      $match: {
+        projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
+        timestamp: { $gte: startDate, $lte: endDate },
+      },
+    };
+  
+    const groupStage = {
+      $group: {
+        _id: "$userAgent.os.name",
+        count: { $sum: 1 },
+      },
+    };
+  
+    const sortStage = {
+      $sort: {
+        count: -1,
+      },
+    };
+  
+    const pipeline = [matchStage, groupStage, sortStage];
+  
+    const results = await sessionsCollection.aggregate(pipeline).toArray();
+  
+    return results;
+  }
+
+  export async function getBrowsers(
+    projectId: ObjectId | ObjectId[],
+    startDate: number,
+    endDate: number
+  ): Promise<any> {
+    const database = await getDatabase();
+    const sessionsCollection = database.collection("sessions");
+  
+    const matchStage = {
+      $match: {
+        projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
+        timestamp: { $gte: startDate, $lte: endDate },
+      },
+    };
+  
+    const groupStage = {
+      $group: {
+        _id: "$userAgent.browser.name",
+        count: { $sum: 1 },
+      },
+    };
+  
+    const sortStage = {
+      $sort: {
+        count: -1,
+      },
+    };
+  
+    const pipeline = [matchStage, groupStage, sortStage];
+  
+    const results = await sessionsCollection.aggregate(pipeline).toArray();
+  
+    return results;
+  }
+  

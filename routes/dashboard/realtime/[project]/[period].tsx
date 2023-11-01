@@ -4,7 +4,7 @@ import { NavTop } from "components/layout/NavTop.tsx";
 import { NavSide } from "islands/NavSide.tsx";
 import { RealTimeView } from "components/RealTimeView.tsx";
 import { Footer } from "components/layout/Footer.tsx";
-import { getAnalytics, getProjects } from "lib/db.ts";
+import { getAnalytics, getBrowsers, getCountries, getOperatingSystems, getProjects, getReferrers } from "lib/db.ts";
 import { RealTimePeriod, RealTimePeriods, RealTimeStats } from "lib/commonTypes.ts";
 
 export const handler: Handlers = {
@@ -61,13 +61,42 @@ export const handler: Handlers = {
         if (project === null) {
             analyticsData = await getAnalytics(projectIds,period.from!,period.to!, true);
             analyticsDataPerProject = await getAnalytics(projectIds,period.from!,period.to!, false);
-            
         } else {
             analyticsData = await getAnalytics([project._id!],Date.now()-3600*1000*24,Date.now(), false);
         }
 
-        // Per project stats (if applicable)
-        
+        // Referrer stats
+        let referrerData;
+        if (project === null) {
+            referrerData = await getReferrers(projectIds,period.from!,period.to!);
+        } else {
+            referrerData = await getReferrers([project._id!],Date.now()-3600*1000*24,Date.now());
+        }
+
+        // Country stats
+        let countryData;
+        if (project === null) {
+            countryData = await getCountries(projectIds,period.from!,period.to!);
+        } else {
+            countryData = await getCountries([project._id!],Date.now()-3600*1000*24,Date.now());
+        }
+
+        // Country stats
+        let osData;
+        if (project === null) {
+            osData = await getOperatingSystems(projectIds,period.from!,period.to!);
+        } else {
+            osData = await getOperatingSystems([project._id!],Date.now()-3600*1000*24,Date.now());
+        }
+
+        // Browsers stats
+        let browserData;
+        if (project === null) {
+            browserData = await getBrowsers(projectIds,period.from!,period.to!);
+        } else {
+            browserData = await getBrowsers([project._id!],Date.now()-3600*1000*24,Date.now());
+        }
+
         // Go!
         return ctx.render({
             state: ctx.state,
@@ -75,13 +104,17 @@ export const handler: Handlers = {
             projects,
             period,
             analyticsData,
-            analyticsDataPerProject
+            analyticsDataPerProject,
+            referrerData,
+            countryData,
+            osData,
+            browserData
         });
     },
 };
 
 export default function Projects({ data }: PageProps) {
-    const { state, projects, project, period, analyticsData, analyticsDataPerProject } = data;
+    const { state, projects, project, period, analyticsData, analyticsDataPerProject, osData, referrerData, browserData, countryData  } = data;
 
     return (
         <body>
@@ -95,6 +128,10 @@ export default function Projects({ data }: PageProps) {
                         analyticsData={analyticsData}
                         analyticsDataPerProject={analyticsDataPerProject}
                         period={period}
+                        osData={osData}
+                        referrerData={referrerData}
+                        browserData={browserData}
+                        countryData={countryData}
                     />
                 </div>
             </main>

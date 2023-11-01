@@ -1,5 +1,4 @@
 import { AnalysisBox } from "islands/analysis/AnalysisBox.tsx";
-import { AnalysisRow } from "islands/analysis/AnalysisRow.tsx";
 import { Project, RealTimePeriod, RealTimePeriods, RealTimeStats } from "lib/commonTypes.ts";
 import { getAnalytics } from "lib/db.ts";
 
@@ -18,8 +17,6 @@ const periodTranslations: Record<string, string> = {
 };
 
 function printProject(stats: RealTimeStats, period: RealTimePeriod, project?: Project) {
-    
-    console.log(stats);
 
     // Define example data for AnalysisBoxes
     const analysisData = [
@@ -72,27 +69,56 @@ function printProject(stats: RealTimeStats, period: RealTimePeriod, project?: Pr
     );
 }
 
-
 function printProjects(stats: RealTimeStats[], period: RealTimePeriod, project?: Project) {
     return (
-        <section class="analysis-section">
+        <article>
             <table>
-                <tr>
-                    <th>Project</th>
-                    <th>Visitors</th>
-                    <th>Sessions</th>
-                    <th>Page Loads</th>
-                    <th>Clicks</th>
-                    <th>Scrolls</th>
-                </tr>
-                {stats.map((data, index) => (
-                    <AnalysisRow
-                        key={index}
-                        project={data}
-                    />
-                ))}
+                <thead>
+                    <tr>
+                        <td>Project</td>
+                        <td>Visitors</td>
+                        <td>Sessions</td>
+                        <td>Page Loads</td>
+                        <td>Clicks</td>
+                        <td>Scrolls</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {stats.map((data, index) => (
+                        <tr>
+                            <td>{data.projectName}</td>
+                            <td>{data.visitors}</td>   
+                            <td>{data.sessions}</td>  
+                            <td>{data.pageLoads}</td>          
+                            <td>{data.clicks}</td>     
+                            <td>{data.scrolls}</td>    
+                        </tr>
+                    ))}
+                </tbody>
             </table>
-        </section>
+        </article>
+    );
+}
+
+function printDataTable(data: { _id: string | null; count: number }[], titles: string[]) {
+    return (
+        <table>
+            <thead>
+                <tr>
+                    {titles.map((title, index) => (
+                        <th key={index}>{title}</th>
+                    ))}
+                </tr>
+            </thead>
+            <tbody>
+                {data.map((row, index) => (
+                    <tr key={index}>
+                        <td>{row._id && row._id.trim() !== "" ? row._id : "Unknown"}</td>
+                        <td>{row.count}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
     );
 }
 
@@ -128,7 +154,7 @@ function printPeriodMenuEntry(currentPeriod: string, period: RealTimePeriod, pro
 }
 
 export function RealTimeView(data: Projects) {
-    const { project, projects, analyticsData, analyticsDataPerProject, period } = data;
+    const { project, projects, analyticsData, analyticsDataPerProject, period, osData, referrerData, countryData, browserData } = data;
     return (
         <section>
             <div class="grid">
@@ -154,14 +180,24 @@ export function RealTimeView(data: Projects) {
                     </details>
                 </div>
             </div>
-            <hr></hr>
             { analyticsData[0] && printProject(analyticsData[0], period, project) }
-            { analyticsDataPerProject?.length > 0 && (
-                <>
-                    <hr></hr>
-                    {printProjects(analyticsDataPerProject, period, project)}
-                </>
-            )}
+            { analyticsDataPerProject?.length > 0 && printProjects(analyticsDataPerProject, period, project) }
+            <div class="grid">
+                <article>
+                    { referrerData && printDataTable(referrerData, ["Referrer", "Count"]) }
+                </article>
+                <article>
+                    { countryData && printDataTable(countryData, ["Country", "Count"]) }
+                </article>
+            </div>
+            <div class="grid">
+                <article>
+                    { browserData && printDataTable(browserData, ["Browser", "Count"]) }
+                </article>
+                <article>
+                    { osData && printDataTable(osData, ["Operating System", "Count"]) }
+                </article>
+            </div>
         </section>
     );
 }

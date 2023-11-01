@@ -69,7 +69,6 @@ export const handler: Handlers = {
         const _id = params.get("_id");
         if (ownerId && _id) {
             const del = await deleteProject(ownerId, _id);
-            console.log(del);
             if (del) {
                 return new Response("Ok", { status: 200 });
             } else {
