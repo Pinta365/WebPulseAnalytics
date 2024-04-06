@@ -41,7 +41,7 @@ export const handler: Handlers = {
                     storeUserAgent: storeUA,
                     storeLocation: storeLoc,
                     pageLoads: {
-                        enabled: pageLoadsChecked,                        
+                        enabled: pageLoadsChecked,
                     },
                     pageClicks: {
                         enabled: pageClicksChecked,
@@ -101,7 +101,7 @@ export const handler: Handlers = {
                     storeUserAgent: storeUA,
                     storeLocation: storeLoc,
                     pageLoads: {
-                        enabled: pageLoadsChecked,                        
+                        enabled: pageLoadsChecked,
                     },
                     pageClicks: {
                         enabled: pageClicksChecked,

@@ -1,9 +1,9 @@
 import { Handlers } from "$fresh/server.ts";
 import { GitHubProvider } from "lib/auth/github.ts";
 import { deleteCookie, getCookies, setCookie } from "$std/http/cookie.ts";
-import { createJWT, genKey } from "lib/jwt.ts";
+import { generateKey, signJWT } from "@cross/jwt";
 import { createUser, getUserFromProviderId, updateUser } from "lib/db.ts";
-import { DBUser, ProviderProfile } from "lib/commonTypes.ts";
+import { DBUser, ProviderProfile } from "lib/db.ts";
 
 import { config } from "lib/config.ts";
 
@@ -73,13 +73,13 @@ export const handler: Handlers = {
                     return new Response("Error processing authentication", { status: 500 });
                 }
             }
-            const jwtSecret = await genKey(config.jwt.secret);
+            const jwtSecret = await generateKey(config.jwt.secret);
             const jwtContent = {
                 _id: sessionUser._id!.toString(),
                 displayName: sessionUser.displayName!,
                 avatar: sessionUser.avatar!,
             };
-            const jwt = await createJWT(jwtSecret, jwtContent);
+            const jwt = await signJWT(jwtContent, jwtSecret);
             setCookie(headers, {
                 name: config.jwt.cookieName,
                 value: jwt,

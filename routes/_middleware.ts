@@ -2,7 +2,7 @@ import { MiddlewareHandlerContext } from "$fresh/server.ts";
 
 import { SessionUser } from "lib/commonTypes.ts";
 import { getCookies } from "$std/http/cookie.ts";
-import { genKey, parseJWT } from "lib/jwt.ts";
+import { generateKey, validateJWT } from "@cross/jwt";
 import { config } from "lib/config.ts";
 
 export async function handler(
@@ -13,8 +13,8 @@ export async function handler(
     const cookies = getCookies(req.headers);
 
     if (cookies[cookieName]) {
-        const jwtSecret = await genKey(secret);
-        const jwt = await parseJWT(jwtSecret, cookies[cookieName]) as unknown as SessionUser;
+        const jwtSecret = await generateKey(secret);
+        const jwt = await validateJWT(cookies[cookieName], jwtSecret) as unknown as SessionUser;
         ctx.state = jwt;
     }
 

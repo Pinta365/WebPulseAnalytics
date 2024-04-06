@@ -9,7 +9,6 @@ import { RealTimePeriod, RealTimePeriods, RealTimeStats } from "lib/commonTypes.
 
 export const handler: Handlers = {
     async GET(req, ctx) {
-        
         // List projects
         const projects = await getProjects(ctx.state._id as string);
 
@@ -39,9 +38,9 @@ export const handler: Handlers = {
         }
         const now = new Date();
         const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-        const startOfYesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).getTime();        
+        const startOfYesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).getTime();
         if (period.name === "30min") {
-            period.from = Date.now()-1800*1000;
+            period.from = Date.now() - 1800 * 1000;
             period.to = Date.now();
         }
         if (period.name === "today") {
@@ -55,46 +54,46 @@ export const handler: Handlers = {
         }
 
         // Grand Total Stats
-        const projectIds = projects.map(p=>p._id!);
+        const projectIds = projects.map((p) => p._id!);
         let analyticsData;
         let analyticsDataPerProject;
         if (project === null) {
-            analyticsData = await getAnalytics(projectIds,period.from!,period.to!, true);
-            analyticsDataPerProject = await getAnalytics(projectIds,period.from!,period.to!, false);
+            analyticsData = await getAnalytics(projectIds, period.from!, period.to!, true);
+            analyticsDataPerProject = await getAnalytics(projectIds, period.from!, period.to!, false);
         } else {
-            analyticsData = await getAnalytics([project._id!],Date.now()-3600*1000*24,Date.now(), false);
+            analyticsData = await getAnalytics([project._id!], Date.now() - 3600 * 1000 * 24, Date.now(), false);
         }
 
         // Referrer stats
         let referrerData;
         if (project === null) {
-            referrerData = await getReferrers(projectIds,period.from!,period.to!);
+            referrerData = await getReferrers(projectIds, period.from!, period.to!);
         } else {
-            referrerData = await getReferrers([project._id!],Date.now()-3600*1000*24,Date.now());
+            referrerData = await getReferrers([project._id!], Date.now() - 3600 * 1000 * 24, Date.now());
         }
 
         // Country stats
         let countryData;
         if (project === null) {
-            countryData = await getCountries(projectIds,period.from!,period.to!);
+            countryData = await getCountries(projectIds, period.from!, period.to!);
         } else {
-            countryData = await getCountries([project._id!],Date.now()-3600*1000*24,Date.now());
+            countryData = await getCountries([project._id!], Date.now() - 3600 * 1000 * 24, Date.now());
         }
 
         // Country stats
         let osData;
         if (project === null) {
-            osData = await getOperatingSystems(projectIds,period.from!,period.to!);
+            osData = await getOperatingSystems(projectIds, period.from!, period.to!);
         } else {
-            osData = await getOperatingSystems([project._id!],Date.now()-3600*1000*24,Date.now());
+            osData = await getOperatingSystems([project._id!], Date.now() - 3600 * 1000 * 24, Date.now());
         }
 
         // Browsers stats
         let browserData;
         if (project === null) {
-            browserData = await getBrowsers(projectIds,period.from!,period.to!);
+            browserData = await getBrowsers(projectIds, period.from!, period.to!);
         } else {
-            browserData = await getBrowsers([project._id!],Date.now()-3600*1000*24,Date.now());
+            browserData = await getBrowsers([project._id!], Date.now() - 3600 * 1000 * 24, Date.now());
         }
 
         // Go!
@@ -108,13 +107,24 @@ export const handler: Handlers = {
             referrerData,
             countryData,
             osData,
-            browserData
+            browserData,
         });
     },
 };
 
 export default function Projects({ data }: PageProps) {
-    const { state, projects, project, period, analyticsData, analyticsDataPerProject, osData, referrerData, browserData, countryData  } = data;
+    const {
+        state,
+        projects,
+        project,
+        period,
+        analyticsData,
+        analyticsDataPerProject,
+        osData,
+        referrerData,
+        browserData,
+        countryData,
+    } = data;
 
     return (
         <body>

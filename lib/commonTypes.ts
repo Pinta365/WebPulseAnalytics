@@ -1,3 +1,9 @@
+export interface SessionUser {
+    _id: string;
+    displayName: string;
+    avatar: string;
+}
+
 // Get stats for selected project/view
 export interface RealTimeStats {
     projectName?: string;

@@ -18,7 +18,6 @@ export function EditProject(data: ProjectData) {
     const [pageScrollsChecked, setPageScrollsChecked] = useState(project.options.pageScrolls.enabled || false);
 
     const updateProjectButton = async () => {
-
         //Kontroller på indatat?
 
         const options = {

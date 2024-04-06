@@ -6,7 +6,7 @@ const {
     JWT_SECRET,
     JWT_COOKIE,
     WEBSITE_BASE_URL,
-    MONGO_URI
+    MONGO_URI,
 } = Deno.env.toObject();
 
 function getOrThrow(
@@ -40,5 +40,5 @@ export const config = {
     },
     mongo: {
         mongoUri: getOrThrow(MONGO_URI, "MONGO_URI"),
-    }
+    },
 };

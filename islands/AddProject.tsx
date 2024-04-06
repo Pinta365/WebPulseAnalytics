@@ -118,8 +118,7 @@ export function AddProject() {
                                 onChange={() => setPageLoadsChecked(!pageLoadsChecked)}
                             />
                             Track page loads
-                        </label>                     
-    
+                        </label>
                     </li>
                     <hr />
                     <li style="list-style-type: none;">
