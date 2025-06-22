@@ -2,49 +2,50 @@
 // This file SHOULD be checked into source version control.
 // This file is automatically updated during development when running `dev.ts`.
 
-import * as $0 from "./routes/_404.tsx";
-import * as $1 from "./routes/_app.tsx";
-import * as $2 from "./routes/_middleware.ts";
-import * as $3 from "./routes/api/auth/github/callback.ts";
-import * as $4 from "./routes/api/auth/github/login.ts";
-import * as $5 from "./routes/closedBeta.tsx";
-import * as $6 from "./routes/dashboard/_middleware.ts";
-import * as $7 from "./routes/dashboard/index.tsx";
-import * as $8 from "./routes/dashboard/projects.tsx";
-import * as $9 from "./routes/dashboard/realtime/[project]/[period].tsx";
-import * as $10 from "./routes/index.tsx";
-import * as $11 from "./routes/info/privacy.tsx";
-import * as $12 from "./routes/logout.ts";
-import * as $$0 from "./islands/AddProject.tsx";
-import * as $$1 from "./islands/DelProjectButton.tsx";
-import * as $$2 from "./islands/EditProject.tsx";
-import * as $$3 from "./islands/NavSide.tsx";
-import * as $$4 from "./islands/analysis/AnalysisBox.tsx";
+import * as $_404 from "./routes/_404.tsx";
+import * as $_app from "./routes/_app.tsx";
+import * as $_middleware from "./routes/_middleware.ts";
+import * as $api_auth_github_callback from "./routes/api/auth/github/callback.ts";
+import * as $api_auth_github_login from "./routes/api/auth/github/login.ts";
+import * as $closedBeta from "./routes/closedBeta.tsx";
+import * as $dashboard_middleware from "./routes/dashboard/_middleware.ts";
+import * as $dashboard_index from "./routes/dashboard/index.tsx";
+import * as $dashboard_projects from "./routes/dashboard/projects.tsx";
+import * as $dashboard_realtime_project_period_ from "./routes/dashboard/realtime/[project]/[period].tsx";
+import * as $index from "./routes/index.tsx";
+import * as $info_privacy from "./routes/info/privacy.tsx";
+import * as $logout from "./routes/logout.ts";
+import * as $AddProject from "./islands/AddProject.tsx";
+import * as $DelProjectButton from "./islands/DelProjectButton.tsx";
+import * as $EditProject from "./islands/EditProject.tsx";
+import * as $NavSide from "./islands/NavSide.tsx";
+import * as $analysis_AnalysisBox from "./islands/analysis/AnalysisBox.tsx";
+import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
     routes: {
-        "./routes/_404.tsx": $0,
-        "./routes/_app.tsx": $1,
-        "./routes/_middleware.ts": $2,
-        "./routes/api/auth/github/callback.ts": $3,
-        "./routes/api/auth/github/login.ts": $4,
-        "./routes/closedBeta.tsx": $5,
-        "./routes/dashboard/_middleware.ts": $6,
-        "./routes/dashboard/index.tsx": $7,
-        "./routes/dashboard/projects.tsx": $8,
-        "./routes/dashboard/realtime/[project]/[period].tsx": $9,
-        "./routes/index.tsx": $10,
-        "./routes/info/privacy.tsx": $11,
-        "./routes/logout.ts": $12,
+        "./routes/_404.tsx": $_404,
+        "./routes/_app.tsx": $_app,
+        "./routes/_middleware.ts": $_middleware,
+        "./routes/api/auth/github/callback.ts": $api_auth_github_callback,
+        "./routes/api/auth/github/login.ts": $api_auth_github_login,
+        "./routes/closedBeta.tsx": $closedBeta,
+        "./routes/dashboard/_middleware.ts": $dashboard_middleware,
+        "./routes/dashboard/index.tsx": $dashboard_index,
+        "./routes/dashboard/projects.tsx": $dashboard_projects,
+        "./routes/dashboard/realtime/[project]/[period].tsx": $dashboard_realtime_project_period_,
+        "./routes/index.tsx": $index,
+        "./routes/info/privacy.tsx": $info_privacy,
+        "./routes/logout.ts": $logout,
     },
     islands: {
-        "./islands/AddProject.tsx": $$0,
-        "./islands/DelProjectButton.tsx": $$1,
-        "./islands/EditProject.tsx": $$2,
-        "./islands/NavSide.tsx": $$3,
-        "./islands/analysis/AnalysisBox.tsx": $$4,
+        "./islands/AddProject.tsx": $AddProject,
+        "./islands/DelProjectButton.tsx": $DelProjectButton,
+        "./islands/EditProject.tsx": $EditProject,
+        "./islands/NavSide.tsx": $NavSide,
+        "./islands/analysis/AnalysisBox.tsx": $analysis_AnalysisBox,
     },
     baseUrl: import.meta.url,
-};
+} satisfies Manifest;
 
 export default manifest;
