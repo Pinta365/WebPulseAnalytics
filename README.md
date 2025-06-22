@@ -1,6 +1,6 @@
 # WebPulse Analytics Front-end Website
 
-Source code of https://webpulseanalytics.com/ , which could be leveraged to create a custom front-end for the
+Source code of https://webpulseanalytics.com/, which could be leveraged to create a custom front-end for the
 [WebPulse Analytics Backend](https://github.com/pinta365/webpulsebackend).
 
 ## Getting started
