@@ -524,3 +524,55 @@ export async function getPagesVisited(
     const results = await eventsCollection.aggregate(pipeline).toArray();
     return results;
 }
+
+export async function getTrendsData(
+    projectId: ObjectId | ObjectId[],
+    startDate: number,
+    endDate: number,
+    granularity: "day" | "week" | "month" = "day",
+): Promise<any[]> {
+    const database = await getDatabase();
+    const sessionsCollection = database.collection("sessions");
+
+    const matchStage = {
+        $match: {
+            projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
+            timestamp: { $gte: startDate, $lte: endDate },
+        },
+    };
+    const addFieldsStage = {
+        $addFields: {
+            period: {
+                $dateTrunc: {
+                    date: { $toDate: "$timestamp" },
+                    unit: granularity,
+                },
+            },
+        },
+    };
+    const groupStage = {
+        $group: {
+            _id: "$period",
+            visitors: { $addToSet: "$deviceId" },
+            sessions: { $addToSet: "$_id" },
+            pageLoads: { $sum: "$loads" },
+            clicks: { $sum: "$clicks" },
+            scrolls: { $sum: "$scrolls" },
+        },
+    };
+    const projectStage = {
+        $project: {
+            date: "$_id",
+            visitors: { $size: "$visitors" },
+            sessions: { $size: "$sessions" },
+            pageLoads: 1,
+            clicks: 1,
+            scrolls: 1,
+            _id: 0,
+        },
+    };
+    const sortStage = { $sort: { date: 1 } };
+    const pipeline = [matchStage, addFieldsStage, groupStage, projectStage, sortStage];
+    const results = await sessionsCollection.aggregate(pipeline).toArray();
+    return results;
+}

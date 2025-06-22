@@ -13,7 +13,7 @@ import {
     getProjects,
     getReferrers,
 } from "lib/db.ts";
-import { RealTimePeriod, RealTimePeriods, RealTimeStats } from "lib/commonTypes.ts";
+import { RealTimePeriod, RealTimePeriods } from "lib/commonTypes.ts";
 
 export const handler: Handlers = {
     async GET(req, ctx) {

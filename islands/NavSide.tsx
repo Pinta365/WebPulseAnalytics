@@ -65,8 +65,8 @@ export function NavSide() {
                     <summary>Trends & History</summary>
                     <ul>
                         <li>
-                            <a href="#" class="secondary" style={{ pointerEvents: "none", opacity: 0.6 }}>
-                                Coming Soon
+                            <a href="/dashboard/trends/all/month?span=this-year" class="secondary">
+                                Trends & History
                             </a>
                         </li>
                     </ul>

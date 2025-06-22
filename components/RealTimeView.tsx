@@ -1,7 +1,6 @@
 import { AnalysisBox } from "islands/analysis/AnalysisBox.tsx";
 import { Project } from "lib/db.ts";
 import { RealTimePeriod, RealTimePeriods, RealTimeStats } from "lib/commonTypes.ts";
-import { getAnalytics } from "lib/db.ts";
 
 interface Projects {
     projects: Project[];

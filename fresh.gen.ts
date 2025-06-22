@@ -12,6 +12,7 @@ import * as $dashboard_middleware from "./routes/dashboard/_middleware.ts";
 import * as $dashboard_index from "./routes/dashboard/index.tsx";
 import * as $dashboard_projects from "./routes/dashboard/projects.tsx";
 import * as $dashboard_realtime_project_period_ from "./routes/dashboard/realtime/[project]/[period].tsx";
+import * as $dashboard_trends_project_agg_ from "./routes/dashboard/trends/[project]/[agg].tsx";
 import * as $index from "./routes/index.tsx";
 import * as $info_privacy from "./routes/info/privacy.tsx";
 import * as $logout from "./routes/logout.ts";
@@ -34,6 +35,7 @@ const manifest = {
         "./routes/dashboard/index.tsx": $dashboard_index,
         "./routes/dashboard/projects.tsx": $dashboard_projects,
         "./routes/dashboard/realtime/[project]/[period].tsx": $dashboard_realtime_project_period_,
+        "./routes/dashboard/trends/[project]/[agg].tsx": $dashboard_trends_project_agg_,
         "./routes/index.tsx": $index,
         "./routes/info/privacy.tsx": $info_privacy,
         "./routes/logout.ts": $logout,
