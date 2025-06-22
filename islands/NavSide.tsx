@@ -62,21 +62,17 @@ export function NavSide() {
                     </ul>
                 </details>
                 <details>
-                    <summary>Insights</summary>
+                    <summary>Trends & History</summary>
                     <ul>
                         <li>
-                            <a href="#" onClick={handleClick} class="secondary">subMenu 2.1</a>
-                        </li>
-                        <li>
-                            <a href="/dashboard/test" onClick={handleClick} class="secondary">subMenu 2.2</a>
-                        </li>
-                        <li>
-                            <a href="#" onClick={handleClick} class="secondary">subMenu 2.3</a>
+                            <a href="#" class="secondary" style={{ pointerEvents: 'none', opacity: 0.6 }}>
+                                Coming Soon
+                            </a>
                         </li>
                     </ul>
                 </details>
                 <details>
-                    <summary>Manage Settings</summary>
+                    <summary>Settings</summary>
                     <ul>
                         <li>
                             <a href="/dashboard/projects" onClick={handleClick} class="secondary">Manage Projects</a>

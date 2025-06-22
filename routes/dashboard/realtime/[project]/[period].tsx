@@ -4,7 +4,7 @@ import { NavTop } from "components/layout/NavTop.tsx";
 import { NavSide } from "islands/NavSide.tsx";
 import { RealTimeView } from "components/RealTimeView.tsx";
 import { Footer } from "components/layout/Footer.tsx";
-import { getAnalytics, getBrowsers, getCountries, getOperatingSystems, getProjects, getReferrers } from "lib/db.ts";
+import { getAnalytics, getBrowsers, getCountries, getOperatingSystems, getProjects, getReferrers, getPagesVisited } from "lib/db.ts";
 import { RealTimePeriod, RealTimePeriods, RealTimeStats } from "lib/commonTypes.ts";
 
 export const handler: Handlers = {
@@ -96,6 +96,14 @@ export const handler: Handlers = {
             browserData = await getBrowsers([project._id!], Date.now() - 3600 * 1000 * 24, Date.now());
         }
 
+        // Pages visited stats
+        let pagesVisitedData;
+        if (project === null) {
+            pagesVisitedData = await getPagesVisited(projectIds, period.from!, period.to!);
+        } else {
+            pagesVisitedData = await getPagesVisited([project._id!], Date.now() - 3600 * 1000 * 24, Date.now());
+        }
+
         // Go!
         return ctx.render({
             state: ctx.state,
@@ -108,6 +116,7 @@ export const handler: Handlers = {
             countryData,
             osData,
             browserData,
+            pagesVisitedData,
         });
     },
 };
@@ -124,6 +133,7 @@ export default function Projects({ data }: PageProps) {
         referrerData,
         browserData,
         countryData,
+        pagesVisitedData,
     } = data;
 
     return (
@@ -142,6 +152,7 @@ export default function Projects({ data }: PageProps) {
                         referrerData={referrerData}
                         browserData={browserData}
                         countryData={countryData}
+                        pagesVisitedData={pagesVisitedData}
                     />
                 </div>
             </main>

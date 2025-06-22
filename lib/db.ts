@@ -497,3 +497,30 @@ export async function getReferrers(
 
     return results;
 }
+
+export async function getPagesVisited(
+    projectId: ObjectId | ObjectId[],
+    startDate: number,
+    endDate: number,
+): Promise<any> {
+    const database = await getDatabase();
+    const eventsCollection = database.collection("events");
+
+    const matchStage = {
+        $match: {
+            projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
+            type: "pageLoad",
+            timestamp: { $gte: startDate, $lte: endDate },
+        },
+    };
+    const groupStage = {
+        $group: {
+            _id: { url: "$url", title: "$title" },
+            count: { $sum: 1 },
+        },
+    };
+    const sortStage = { $sort: { count: -1 } };
+    const pipeline = [matchStage, groupStage, sortStage];
+    const results = await eventsCollection.aggregate(pipeline).toArray();
+    return results;
+}

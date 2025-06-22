@@ -1,5 +1,6 @@
 import { AnalysisBox } from "islands/analysis/AnalysisBox.tsx";
-import { Project, RealTimePeriod, RealTimePeriods, RealTimeStats } from "lib/commonTypes.ts";
+import { Project } from "lib/db.ts";
+import { RealTimePeriod, RealTimePeriods, RealTimeStats } from "lib/commonTypes.ts";
 import { getAnalytics } from "lib/db.ts";
 
 interface Projects {
@@ -8,6 +9,11 @@ interface Projects {
     analyticsData: RealTimeStats[];
     analyticsDataPerProject: RealTimeStats[];
     period: RealTimePeriod;
+    osData?: any;
+    referrerData?: any;
+    countryData?: any;
+    browserData?: any;
+    pagesVisitedData?: any[];
 }
 
 const periodTranslations: Record<string, string> = {
@@ -74,12 +80,12 @@ function printProjects(stats: RealTimeStats[], period: RealTimePeriod, project?:
             <table>
                 <thead>
                     <tr>
-                        <td>Project</td>
-                        <td>Visitors</td>
-                        <td>Sessions</td>
-                        <td>Page Loads</td>
-                        <td>Clicks</td>
-                        <td>Scrolls</td>
+                        <th>Project</th>
+                        <th>Visitors</th>
+                        <th>Sessions</th>
+                        <th>Page Loads</th>
+                        <th>Clicks</th>
+                        <th>Scrolls</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -140,9 +146,10 @@ function printProjectMenuEntry(period: string | null, currentProject?: Project, 
 }
 
 function printPeriodMenuEntry(currentPeriod: string, period: RealTimePeriod, project?: Project) {
-    const periodName = periodTranslations[currentPeriod] ? periodTranslations[currentPeriod] : "Custom period";
+    const safePeriodName = currentPeriod ?? "";
+    const periodName = periodTranslations[safePeriodName] ? periodTranslations[safePeriodName] : "Custom period";
     const periodUrl = currentPeriod ? `/dashboard/realtime/${project ? project._id : "all"}/${currentPeriod}` : "#";
-    const periodTitle = periodTranslations[currentPeriod];
+    const periodTitle = periodTranslations[safePeriodName];
     const periodClass = (currentPeriod === period.name) ? "primary" : "secondary outline";
     return (
         <li>
@@ -162,6 +169,7 @@ export function RealTimeView(data: Projects) {
         referrerData,
         countryData,
         browserData,
+        pagesVisitedData,
     } = data;
     return (
         <section>
@@ -170,10 +178,10 @@ export function RealTimeView(data: Projects) {
                     <details class="dropdown" role="list">
                         <summary>{project ? project.name : "All Projects"}</summary>
                         <ul>
-                            {printProjectMenuEntry(period.name, project)}
+                            {printProjectMenuEntry(period.name ?? "", project)}
                             {projects?.length > 0
                                 ? projects.map((projectEntry) =>
-                                    printProjectMenuEntry(period.name, project, projectEntry)
+                                    printProjectMenuEntry(period.name ?? "", project, projectEntry)
                                 )
                                 : <li>No projects</li>}
                         </ul>
@@ -181,7 +189,7 @@ export function RealTimeView(data: Projects) {
                 </div>
                 <div class="right">
                     <details class="dropdown" role="list">
-                        <summary>Period: {periodTranslations[period.name]}</summary>
+                        <summary>Period: {periodTranslations[period.name ?? ""]}</summary>
                         <ul>
                             {RealTimePeriods?.length > 0
                                 ? RealTimePeriods.map((periodEntry) =>
@@ -210,6 +218,31 @@ export function RealTimeView(data: Projects) {
                     {osData && printDataTable(osData, 10, ["Operating System", "Count"])}
                 </article>
             </div>
+            {pagesVisitedData && pagesVisitedData.length > 0 && (
+                <div class="grid">
+                    <article>
+                        <h3>Pages Visited</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>URL</th>
+                                    <th>Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {pagesVisitedData.slice(0, 10).map((row, idx) => (
+                                    <tr key={idx}>
+                                        <td>{row._id.title || "(no title)"}</td>
+                                        <td>{row._id.url || "(no url)"}</td>
+                                        <td>{row.count}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </article>
+                </div>
+            )}
         </section>
     );
 }
