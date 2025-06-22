@@ -4,7 +4,15 @@ import { NavTop } from "components/layout/NavTop.tsx";
 import { NavSide } from "islands/NavSide.tsx";
 import { RealTimeView } from "components/RealTimeView.tsx";
 import { Footer } from "components/layout/Footer.tsx";
-import { getAnalytics, getBrowsers, getCountries, getOperatingSystems, getProjects, getReferrers, getPagesVisited } from "lib/db.ts";
+import {
+    getAnalytics,
+    getBrowsers,
+    getCountries,
+    getOperatingSystems,
+    getPagesVisited,
+    getProjects,
+    getReferrers,
+} from "lib/db.ts";
 import { RealTimePeriod, RealTimePeriods, RealTimeStats } from "lib/commonTypes.ts";
 
 export const handler: Handlers = {

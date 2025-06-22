@@ -36,7 +36,9 @@ function printProject(project: Project) {
                         <td class="strong">Snippet</td>
                         <td>
                             <code>
-                                {`<script async src="https://track.webpulseanalytics.com/client/${project._id?.toString() ?? ""}" type="module"></script>`}
+                                {`<script async src="https://track.webpulseanalytics.com/client/${
+                                    project._id?.toString() ?? ""
+                                }" type="module"></script>`}
                             </code>
                         </td>
                     </tr>
@@ -44,7 +46,11 @@ function printProject(project: Project) {
             </table>
             <div class="grid mt-1">
                 <div>
-                    <a href={"/dashboard/projects?edit=" + (project._id?.toString() ?? "")} role="button" class="block primary">
+                    <a
+                        href={"/dashboard/projects?edit=" + (project._id?.toString() ?? "")}
+                        role="button"
+                        class="block primary"
+                    >
                         Edit
                     </a>
                 </div>
