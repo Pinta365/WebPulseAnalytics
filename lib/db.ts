@@ -1,4 +1,4 @@
-import { Db, MongoClient, ObjectId } from "npm:mongodb";
+import { Db, MongoClient, ObjectId } from "mongodb";
 import { logError } from "./debug_logger.ts";
 import { config } from "./config.ts";
 
@@ -83,7 +83,7 @@ interface PageLoad {
     scrolls: number;
 }
 
-interface SessionObject {
+export interface SessionObject {
     _id: ObjectId;
     projectId: ObjectId;
     deviceId: ObjectId;
@@ -131,14 +131,14 @@ export async function disconnect(): Promise<void> {
     console.log("MongoDB connection closed.");
 }
 
-export async function getProject(userId: string, projectId: string): Promise<Project> {
-    const collection = (await getDatabase()).collection("projects");
+export async function getProject(userId: string, projectId: string): Promise<Project | null> {
+    const collection = (await getDatabase()).collection<Project>("projects");
     const project = await collection.findOne({ _id: new ObjectId(projectId), ownerId: userId });
     return project;
 }
 
 export async function getProjects(userId: string): Promise<Project[]> {
-    const collection = (await getDatabase()).collection("projects");
+    const collection = (await getDatabase()).collection<Project>("projects");
     const projects = await collection.find({ ownerId: userId }).toArray();
     return projects;
 }
@@ -195,7 +195,7 @@ export async function deleteProject(ownerId: string, projectId: string): Promise
 
 export async function getUserFromProviderId(provider: SupportedProviders, id: number): Promise<DBUser | null> {
     try {
-        const collection = (await getDatabase()).collection("users");
+        const collection = (await getDatabase()).collection<DBUser>("users");
         const userDoc = await collection.findOne({ [`providers.${provider}.id`]: id });
         return userDoc;
     } catch (error) {
@@ -251,7 +251,7 @@ export async function getAnalytics(
     total: boolean = false,
 ): Promise<any> {
     const database = await getDatabase();
-    const sessionsCollection = database.collection("sessions");
+    const sessionsCollection = database.collection<SessionObject>("sessions");
 
     const matchStage = {
         $match: {
@@ -319,7 +319,7 @@ export async function getAnalytics(
         },
     };
 
-    const pipeline = [matchStage, groupStage, lookupDevicesStage, lookupProjectsStage, projectStage, sortStage];
+    const pipeline: any[] = [matchStage, groupStage, lookupDevicesStage, lookupProjectsStage, projectStage, sortStage];
     if (total) {
         pipeline.push(totalStage);
     }
@@ -335,7 +335,7 @@ export async function getCountries(
     endDate: number,
 ): Promise<any> {
     const database = await getDatabase();
-    const sessionsCollection = database.collection("sessions");
+    const sessionsCollection = database.collection<SessionObject>("sessions");
 
     const matchStage = {
         $match: {
@@ -370,7 +370,7 @@ export async function getOperatingSystems(
     endDate: number,
 ): Promise<any> {
     const database = await getDatabase();
-    const sessionsCollection = database.collection("sessions");
+    const sessionsCollection = database.collection<SessionObject>("sessions");
 
     const matchStage = {
         $match: {
@@ -405,7 +405,7 @@ export async function getBrowsers(
     endDate: number,
 ): Promise<any> {
     const database = await getDatabase();
-    const sessionsCollection = database.collection("sessions");
+    const sessionsCollection = database.collection<SessionObject>("sessions");
 
     const matchStage = {
         $match: {
@@ -439,7 +439,7 @@ export async function getReferrers(
     endDate: number,
 ): Promise<any> {
     const database = await getDatabase();
-    const sessionsCollection = database.collection("sessions");
+    const sessionsCollection = database.collection<SessionObject>("sessions");
 
     const matchStage = {
         $match: {
@@ -532,7 +532,7 @@ export async function getTrendsData(
     granularity: "day" | "week" | "month" = "day",
 ): Promise<any[]> {
     const database = await getDatabase();
-    const sessionsCollection = database.collection("sessions");
+    const sessionsCollection = database.collection<SessionObject>("sessions");
 
     const matchStage = {
         $match: {

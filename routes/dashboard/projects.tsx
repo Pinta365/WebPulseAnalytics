@@ -5,7 +5,7 @@ import { ProjectView } from "components/ProjectView.tsx";
 import { EditProject } from "islands/EditProject.tsx";
 import { Footer } from "components/layout/Footer.tsx";
 import { deleteProject, getProject, getProjects, upsertProject } from "lib/db.ts";
-import { ObjectId } from "npm:mongodb";
+import { ObjectId } from "mongodb";
 
 export const handler: Handlers = {
     async GET(req, ctx) {

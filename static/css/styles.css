@@ -139,3 +139,16 @@ article {
 article {
     padding: 0.5rem;
 }
+
+.metric-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+}
+
+.metric-card:hover .details-hint {
+    color: #ddd !important;
+}

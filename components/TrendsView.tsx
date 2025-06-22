@@ -145,42 +145,52 @@ export function TrendsView({ projects, project, period, trendsData, span, agg }:
                             const avg = metric.data.length > 0
                                 ? Math.round(metric.data.reduce((a, b) => a + b, 0) / metric.data.length)
                                 : 0;
+                            const metricSlug = metric.label.toLowerCase().replace(" ", "-");
+                            const drilldownUrl = `/dashboard/trends/${
+                                project ? project._id : "all"
+                            }/${agg}/${metricSlug}?span=${span}&color=${encodeURIComponent(metric.color)}`;
                             return (
-                                <div
-                                    style={{
-                                        background: "rgba(255,255,255,0.03)",
-                                        borderRadius: "1rem",
-                                        boxShadow: "0 2px 12px 0 rgba(0,0,0,0.10)",
-                                        padding: "1.2rem 1.2rem 0.7rem 1.2rem",
-                                        minWidth: 140,
-                                        maxWidth: 180,
-                                        flex: 1,
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        alignItems: "center",
-                                    }}
-                                >
+                                <a href={drilldownUrl} class="metric-card" style={{ textDecoration: "none" }}>
                                     <div
                                         style={{
-                                            fontSize: "2.1rem",
-                                            fontWeight: 700,
-                                            color: metric.color,
-                                            marginBottom: "0.2rem",
+                                            height: "100%",
+                                            background: "rgba(255,255,255,0.03)",
+                                            borderRadius: "1rem",
+                                            boxShadow: "0 2px 12px 0 rgba(0,0,0,0.10)",
+                                            padding: "1.2rem 1.2rem 0.7rem 1.2rem",
+                                            minWidth: 140,
+                                            maxWidth: 180,
+                                            flex: 1,
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            alignItems: "center",
                                         }}
                                     >
-                                        {metric.data[metric.data.length - 1] ?? 0}
+                                        <div
+                                            style={{
+                                                fontSize: "2.1rem",
+                                                fontWeight: 700,
+                                                color: metric.color,
+                                                marginBottom: "0.2rem",
+                                            }}
+                                        >
+                                            {metric.data[metric.data.length - 1] ?? 0}
+                                        </div>
+                                        <div style={{ fontSize: "1rem", color: "#aaa", marginBottom: "0.2rem" }}>
+                                            Avg: {avg}
+                                        </div>
+                                        <div
+                                            class="small"
+                                            style={{ marginBottom: "0.5rem", color: "#b3b3b3", fontWeight: 500 }}
+                                        >
+                                            {metric.label}
+                                        </div>
+                                        <Sparkline data={metric.data} color={metric.color} height={32} width={120} />
+                                        <div class="small details-hint" style={{ marginTop: "0.5rem", color: "#888" }}>
+                                            View Details &rarr;
+                                        </div>
                                     </div>
-                                    <div style={{ fontSize: "1rem", color: "#aaa", marginBottom: "0.2rem" }}>
-                                        Avg: {avg}
-                                    </div>
-                                    <div
-                                        class="small"
-                                        style={{ marginBottom: "0.5rem", color: "#b3b3b3", fontWeight: 500 }}
-                                    >
-                                        {metric.label}
-                                    </div>
-                                    <Sparkline data={metric.data} color={metric.color} height={32} width={120} />
-                                </div>
+                                </a>
                             );
                         })}
                     </>

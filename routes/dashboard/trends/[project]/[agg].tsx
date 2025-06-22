@@ -4,8 +4,7 @@ import { NavSide } from "islands/NavSide.tsx";
 import { TrendsView } from "components/TrendsView.tsx";
 import { Footer } from "components/layout/Footer.tsx";
 import { getProjects, getTrendsData } from "lib/db.ts";
-import { RealTimePeriod } from "lib/commonTypes.ts";
-import { ObjectId } from "npm:mongodb";
+import { ObjectId } from "mongodb";
 
 export const handler: Handlers = {
     async GET(req, ctx) {

@@ -13,6 +13,7 @@ import * as $dashboard_index from "./routes/dashboard/index.tsx";
 import * as $dashboard_projects from "./routes/dashboard/projects.tsx";
 import * as $dashboard_realtime_project_period_ from "./routes/dashboard/realtime/[project]/[period].tsx";
 import * as $dashboard_trends_project_agg_ from "./routes/dashboard/trends/[project]/[agg].tsx";
+import * as $dashboard_trends_project_agg_metric_ from "./routes/dashboard/trends/[project]/[agg]/[metric].tsx";
 import * as $index from "./routes/index.tsx";
 import * as $info_privacy from "./routes/info/privacy.tsx";
 import * as $logout from "./routes/logout.ts";
@@ -21,6 +22,7 @@ import * as $DelProjectButton from "./islands/DelProjectButton.tsx";
 import * as $EditProject from "./islands/EditProject.tsx";
 import * as $NavSide from "./islands/NavSide.tsx";
 import * as $Sparkline from "./islands/Sparkline.tsx";
+import * as $TrendsChart from "./islands/TrendsChart.tsx";
 import * as $analysis_AnalysisBox from "./islands/analysis/AnalysisBox.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
@@ -37,6 +39,7 @@ const manifest = {
         "./routes/dashboard/projects.tsx": $dashboard_projects,
         "./routes/dashboard/realtime/[project]/[period].tsx": $dashboard_realtime_project_period_,
         "./routes/dashboard/trends/[project]/[agg].tsx": $dashboard_trends_project_agg_,
+        "./routes/dashboard/trends/[project]/[agg]/[metric].tsx": $dashboard_trends_project_agg_metric_,
         "./routes/index.tsx": $index,
         "./routes/info/privacy.tsx": $info_privacy,
         "./routes/logout.ts": $logout,
@@ -47,6 +50,7 @@ const manifest = {
         "./islands/EditProject.tsx": $EditProject,
         "./islands/NavSide.tsx": $NavSide,
         "./islands/Sparkline.tsx": $Sparkline,
+        "./islands/TrendsChart.tsx": $TrendsChart,
         "./islands/analysis/AnalysisBox.tsx": $analysis_AnalysisBox,
     },
     baseUrl: import.meta.url,
