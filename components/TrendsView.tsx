@@ -1,5 +1,6 @@
 import { Project } from "lib/db.ts";
 import { RealTimePeriod } from "lib/commonTypes.ts";
+import Sparkline from "../islands/Sparkline.tsx";
 
 interface TrendsProps {
     projects: Project[];
@@ -124,6 +125,67 @@ export function TrendsView({ projects, project, period, trendsData, span, agg }:
                     </details>
                 </div>
             </div>
+            <div
+                class="grid"
+                style={{ marginBottom: "2rem", gap: "2rem", alignItems: "stretch", justifyContent: "center" }}
+            >
+                {trendsData && trendsData.length > 0 && (
+                    <>
+                        {[
+                            {
+                                label: "Page Loads",
+                                color: "#2563eb",
+                                data: trendsData.map((row: any) => row.pageLoads),
+                            },
+                            { label: "Sessions", color: "#10b981", data: trendsData.map((row: any) => row.sessions) },
+                            { label: "Visitors", color: "#6366f1", data: trendsData.map((row: any) => row.visitors) },
+                            { label: "Clicks", color: "#f59e42", data: trendsData.map((row: any) => row.clicks) },
+                            { label: "Scrolls", color: "#14b8a6", data: trendsData.map((row: any) => row.scrolls) },
+                        ].map((metric) => {
+                            const avg = metric.data.length > 0
+                                ? Math.round(metric.data.reduce((a, b) => a + b, 0) / metric.data.length)
+                                : 0;
+                            return (
+                                <div
+                                    style={{
+                                        background: "rgba(255,255,255,0.03)",
+                                        borderRadius: "1rem",
+                                        boxShadow: "0 2px 12px 0 rgba(0,0,0,0.10)",
+                                        padding: "1.2rem 1.2rem 0.7rem 1.2rem",
+                                        minWidth: 140,
+                                        maxWidth: 180,
+                                        flex: 1,
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            fontSize: "2.1rem",
+                                            fontWeight: 700,
+                                            color: metric.color,
+                                            marginBottom: "0.2rem",
+                                        }}
+                                    >
+                                        {metric.data[metric.data.length - 1] ?? 0}
+                                    </div>
+                                    <div style={{ fontSize: "1rem", color: "#aaa", marginBottom: "0.2rem" }}>
+                                        Avg: {avg}
+                                    </div>
+                                    <div
+                                        class="small"
+                                        style={{ marginBottom: "0.5rem", color: "#b3b3b3", fontWeight: 500 }}
+                                    >
+                                        {metric.label}
+                                    </div>
+                                    <Sparkline data={metric.data} color={metric.color} height={32} width={120} />
+                                </div>
+                            );
+                        })}
+                    </>
+                )}
+            </div>
             <div class="grid">
                 <article>
                     <h3>Trends & History for {project ? project.name : "All Projects"}</h3>
@@ -137,9 +199,9 @@ export function TrendsView({ projects, project, period, trendsData, span, agg }:
                                 <thead>
                                     <tr>
                                         <th>Date Range</th>
-                                        <th>Visitors</th>
-                                        <th>Sessions</th>
                                         <th>Page Loads</th>
+                                        <th>Sessions</th>
+                                        <th>Visitors</th>
                                         <th>Clicks</th>
                                         <th>Scrolls</th>
                                     </tr>
@@ -151,9 +213,9 @@ export function TrendsView({ projects, project, period, trendsData, span, agg }:
                                                 {new Date(row.date).toLocaleDateString()} -{" "}
                                                 {getPeriodEnd(row.date, agg as "day" | "week" | "month" | "quarter")}
                                             </td>
-                                            <td>{row.visitors}</td>
-                                            <td>{row.sessions}</td>
                                             <td>{row.pageLoads}</td>
+                                            <td>{row.sessions}</td>
+                                            <td>{row.visitors}</td>
                                             <td>{row.clicks}</td>
                                             <td>{row.scrolls}</td>
                                         </tr>

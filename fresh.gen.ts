@@ -20,6 +20,7 @@ import * as $AddProject from "./islands/AddProject.tsx";
 import * as $DelProjectButton from "./islands/DelProjectButton.tsx";
 import * as $EditProject from "./islands/EditProject.tsx";
 import * as $NavSide from "./islands/NavSide.tsx";
+import * as $Sparkline from "./islands/Sparkline.tsx";
 import * as $analysis_AnalysisBox from "./islands/analysis/AnalysisBox.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
@@ -45,6 +46,7 @@ const manifest = {
         "./islands/DelProjectButton.tsx": $DelProjectButton,
         "./islands/EditProject.tsx": $EditProject,
         "./islands/NavSide.tsx": $NavSide,
+        "./islands/Sparkline.tsx": $Sparkline,
         "./islands/analysis/AnalysisBox.tsx": $analysis_AnalysisBox,
     },
     baseUrl: import.meta.url,
