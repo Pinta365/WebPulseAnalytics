@@ -18,6 +18,7 @@ export default function App({ Component }: AppProps) {
             </head>
             <body>
                 <Component />
+                <script src="/js/pico.js"></script>
             </body>
         </html>
     );

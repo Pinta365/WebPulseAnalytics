@@ -1,14 +1,18 @@
 import { Project } from "lib/db.ts";
-import { RealTimePeriod } from "lib/commonTypes.ts";
 import Sparkline from "../islands/Sparkline.tsx";
+import DataTable, { DataTableColumn } from "islands/DataTable.tsx";
 
 interface TrendsProps {
     projects: Project[];
-    project?: Project;
-    period: RealTimePeriod;
-    trendsData?: any[];
+    project: Project | null;
+    period: any;
+    trendsData: any[];
     span: string;
     agg: string;
+    referrerData?: any[];
+    countryData?: any[];
+    browserData?: any[];
+    osData?: any[];
 }
 
 function printProjectMenuEntry(
@@ -57,7 +61,9 @@ function getPeriodEnd(startDate: string | number | Date, granularity: "day" | "w
     return end.toLocaleDateString();
 }
 
-export function TrendsView({ projects, project, period, trendsData, span, agg }: TrendsProps) {
+export function TrendsView(
+    { projects, project, period, trendsData, span, agg, referrerData, countryData, browserData, osData }: TrendsProps,
+) {
     // Helper to build URL
     function buildUrl(newSpan: string, newAgg: string, newProjectId?: string) {
         const projectId = newProjectId ?? (project ? project._id : "all");
@@ -81,10 +87,10 @@ export function TrendsView({ projects, project, period, trendsData, span, agg }:
                     <details class="dropdown" role="list">
                         <summary>{project ? project.name : "All Projects"}</summary>
                         <ul>
-                            {printProjectMenuEntry(period.name, project, undefined, agg, span)}
+                            {printProjectMenuEntry(period.name, project || undefined, undefined, agg, span)}
                             {projects?.length > 0
                                 ? projects.map((projectEntry) =>
-                                    printProjectMenuEntry(period.name, project, projectEntry, agg, span)
+                                    printProjectMenuEntry(period.name, project || undefined, projectEntry, agg, span)
                                 )
                                 : <li>No projects</li>}
                         </ul>
@@ -205,37 +211,80 @@ export function TrendsView({ projects, project, period, trendsData, span, agg }:
                     </div>
                     {trendsData && trendsData.length > 0
                         ? (
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Date Range</th>
-                                        <th>Page Loads</th>
-                                        <th>Sessions</th>
-                                        <th>Visitors</th>
-                                        <th>Clicks</th>
-                                        <th>Scrolls</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {trendsData.map((row: any, idx: number) => (
-                                        <tr key={idx}>
-                                            <td>
-                                                {new Date(row.date).toLocaleDateString()} -{" "}
-                                                {getPeriodEnd(row.date, agg as "day" | "week" | "month" | "quarter")}
-                                            </td>
-                                            <td>{row.pageLoads}</td>
-                                            <td>{row.sessions}</td>
-                                            <td>{row.visitors}</td>
-                                            <td>{row.clicks}</td>
-                                            <td>{row.scrolls}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                            <DataTable
+                                columns={[
+                                    { key: "date", label: "Date Range" },
+                                    { key: "pageLoads", label: "Page Loads" },
+                                    { key: "sessions", label: "Sessions" },
+                                    { key: "visitors", label: "Visitors" },
+                                    { key: "clicks", label: "Clicks" },
+                                    { key: "scrolls", label: "Scrolls" },
+                                ]}
+                                data={trendsData}
+                            />
                         )
                         : <p>No data for selected period.</p>}
                 </article>
             </div>
+            <section style={{ marginTop: "2.5rem" }}>
+                <h3>User & Technology Breakdown</h3>
+                <div class="grid">
+                    <article>
+                        {referrerData && (
+                            <DataTable
+                                columns={[
+                                    { key: "_id", label: "Referrer" },
+                                    { key: "count", label: "Count" },
+                                ]}
+                                data={referrerData}
+                                defaultSortCol="count"
+                                defaultSortDir="desc"
+                            />
+                        )}
+                    </article>
+                    <article>
+                        {countryData && (
+                            <DataTable
+                                columns={[
+                                    { key: "_id", label: "Country" },
+                                    { key: "count", label: "Count" },
+                                ]}
+                                data={countryData}
+                                defaultSortCol="count"
+                                defaultSortDir="desc"
+                            />
+                        )}
+                    </article>
+                </div>
+                <div class="grid">
+                    <article>
+                        {browserData && (
+                            <DataTable
+                                columns={[
+                                    { key: "_id", label: "Browser" },
+                                    { key: "count", label: "Count" },
+                                ]}
+                                data={browserData}
+                                defaultSortCol="count"
+                                defaultSortDir="desc"
+                            />
+                        )}
+                    </article>
+                    <article>
+                        {osData && (
+                            <DataTable
+                                columns={[
+                                    { key: "_id", label: "Operating System" },
+                                    { key: "count", label: "Count" },
+                                ]}
+                                data={osData}
+                                defaultSortCol="count"
+                                defaultSortDir="desc"
+                            />
+                        )}
+                    </article>
+                </div>
+            </section>
         </section>
     );
 }

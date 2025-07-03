@@ -2,9 +2,20 @@ import type { Handlers, PageProps } from "$fresh/server.ts";
 import { NavTop } from "components/layout/NavTop.tsx";
 import { NavSide } from "islands/NavSide.tsx";
 import { Footer } from "components/layout/Footer.tsx";
-import { getProjects, getTrendsData } from "lib/db.ts";
+import {
+    getBrowsers,
+    getCountries,
+    getOperatingSystems,
+    getPageMetricCounts,
+    getProjects,
+    getReferrers,
+    getSessionsPerLandingPage,
+    getTrendsData,
+    getUniqueVisitorsPerLandingPage,
+} from "lib/db.ts";
 import { ObjectId } from "mongodb";
 import TrendsChart from "islands/TrendsChart.tsx";
+import DataTable from "islands/DataTable.tsx";
 
 type TrendDataRow = {
     date: Date;
@@ -68,6 +79,30 @@ export const handler: Handlers = {
             : (projects.map((p) => p._id).filter((id): id is ObjectId => !!id));
         const trendsData = await getTrendsData(projectIds, startDate, endDate, agg as any);
 
+        // Fetch breakdowns based on metric
+        let referrerData = null, countryData = null, browserData = null, osData = null, pagesVisitedData = null;
+        if (["page-loads", "sessions", "visitors", "clicks"].includes(metricSlug)) {
+            referrerData = await getReferrers(projectIds, startDate, endDate);
+        }
+        if (["page-loads", "sessions", "visitors", "clicks", "scrolls"].includes(metricSlug)) {
+            countryData = await getCountries(projectIds, startDate, endDate);
+            browserData = await getBrowsers(projectIds, startDate, endDate);
+            osData = await getOperatingSystems(projectIds, startDate, endDate);
+        }
+        if (["page-loads", "clicks", "scrolls", "sessions", "visitors"].includes(metricSlug)) {
+            if (metricSlug === "sessions") {
+                pagesVisitedData = await getSessionsPerLandingPage(projectIds, startDate, endDate);
+            } else if (metricSlug === "visitors") {
+                pagesVisitedData = await getUniqueVisitorsPerLandingPage(projectIds, startDate, endDate);
+            } else {
+                let metricArg: "clicks" | "scrolls" | "pageLoads" = "pageLoads";
+                if (metricSlug === "clicks") metricArg = "clicks";
+                else if (metricSlug === "scrolls") metricArg = "scrolls";
+                else metricArg = "pageLoads";
+                pagesVisitedData = await getPageMetricCounts(projectIds, startDate, endDate, metricArg);
+            }
+        }
+
         return ctx.render({
             state: ctx.state,
             project,
@@ -76,6 +111,12 @@ export const handler: Handlers = {
             agg,
             metric: metricInfo,
             color,
+            referrerData,
+            countryData,
+            browserData,
+            osData,
+            pagesVisitedData,
+            metricSlug,
         });
     },
 };
@@ -101,7 +142,21 @@ function getPeriodEnd(startDate: string | number | Date, granularity: "day" | "w
 }
 
 export default function TrendsMetricPage({ data }: PageProps) {
-    const { state, project, trendsData, span, agg, metric, color } = data;
+    const {
+        state,
+        project,
+        trendsData,
+        span,
+        agg,
+        metric,
+        color,
+        referrerData,
+        countryData,
+        browserData,
+        osData,
+        pagesVisitedData,
+        metricSlug,
+    } = data;
     const backUrl = `/dashboard/trends/${project ? project._id : "all"}/${agg}?span=${span}`;
 
     return (
@@ -140,27 +195,64 @@ export default function TrendsMetricPage({ data }: PageProps) {
                         <h3>Data Details</h3>
                         {trendsData && trendsData.length > 0
                             ? (
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Date Range</th>
-                                            <th>{metric.label}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {trendsData.map((row: any, idx: number) => (
-                                            <tr key={idx}>
-                                                <td>
-                                                    {new Date(row.date).toLocaleDateString()} -{" "}
-                                                    {getPeriodEnd(row.date, agg)}
-                                                </td>
-                                                <td>{row[metric.key]}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                <DataTable
+                                    columns={[
+                                        { key: "dateRange", label: "Date Range" },
+                                        { key: "metricValue", label: metric.label },
+                                    ]}
+                                    data={trendsData.map((row: any) => ({
+                                        dateRange: `${new Date(row.date).toLocaleDateString()} - ${
+                                            getPeriodEnd(row.date, agg)
+                                        }`,
+                                        metricValue: row[metric.key],
+                                    }))}
+                                />
                             )
                             : <p>No data available.</p>}
+
+                        {/* Breakdown sections based on metric */}
+                        <div style={{ marginTop: "2rem" }}>
+                            {(["page-loads", "sessions", "visitors", "clicks", "scrolls"].includes(metric.key) &&
+                                pagesVisitedData) && (
+                                <div style={{ marginBottom: "1.5rem" }}>
+                                    <h4>Top Pages</h4>
+                                    <DataTable
+                                        columns={[
+                                            { key: "title", label: "Title" },
+                                            {
+                                                key: "url",
+                                                label: "URL",
+                                                render: (value: string) =>
+                                                    value
+                                                        ? (
+                                                            <a href={value} target="_blank" rel="noopener noreferrer">
+                                                                {value}
+                                                            </a>
+                                                        )
+                                                        : <span>(no url)</span>,
+                                            },
+                                            {
+                                                key: "count",
+                                                label: metricSlug === "sessions"
+                                                    ? "Sessions Started"
+                                                    : metricSlug === "visitors"
+                                                    ? "Unique Visitors"
+                                                    : metric.label,
+                                            },
+                                        ]}
+                                        data={pagesVisitedData
+                                            ? pagesVisitedData.map((row: any) => ({
+                                                title: row._id?.title || "(no title)",
+                                                url: row._id?.url || "",
+                                                count: row.count,
+                                            }))
+                                            : []}
+                                        defaultSortCol="count"
+                                        defaultSortDir="desc"
+                                    />
+                                </div>
+                            )}
+                        </div>
                     </section>
                 </div>
             </main>

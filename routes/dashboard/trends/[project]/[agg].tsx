@@ -3,7 +3,7 @@ import { NavTop } from "components/layout/NavTop.tsx";
 import { NavSide } from "islands/NavSide.tsx";
 import { TrendsView } from "components/TrendsView.tsx";
 import { Footer } from "components/layout/Footer.tsx";
-import { getProjects, getTrendsData } from "lib/db.ts";
+import { getBrowsers, getCountries, getOperatingSystems, getProjects, getReferrers, getTrendsData } from "lib/db.ts";
 import { ObjectId } from "mongodb";
 
 export const handler: Handlers = {
@@ -45,6 +45,11 @@ export const handler: Handlers = {
             ? [project._id!]
             : (projects.map((p) => p._id).filter((id): id is ObjectId => !!id));
         const trendsData = await getTrendsData(projectIds, startDate, endDate, granularity as any);
+        // User & Technology Breakdown
+        const referrerData = await getReferrers(projectIds, startDate, endDate);
+        const countryData = await getCountries(projectIds, startDate, endDate);
+        const browserData = await getBrowsers(projectIds, startDate, endDate);
+        const osData = await getOperatingSystems(projectIds, startDate, endDate);
         return ctx.render({
             state: ctx.state,
             project,
@@ -53,12 +58,17 @@ export const handler: Handlers = {
             trendsData,
             span,
             agg,
+            referrerData,
+            countryData,
+            browserData,
+            osData,
         });
     },
 };
 
 export default function TrendsAggPage({ data }: PageProps) {
-    const { state, projects, project, period, trendsData, span, agg } = data;
+    const { state, projects, project, period, trendsData, span, agg, referrerData, countryData, browserData, osData } =
+        data;
     return (
         <body>
             <NavTop {...state} />
@@ -72,11 +82,14 @@ export default function TrendsAggPage({ data }: PageProps) {
                         trendsData={trendsData}
                         span={span}
                         agg={agg}
+                        referrerData={referrerData}
+                        countryData={countryData}
+                        browserData={browserData}
+                        osData={osData}
                     />
                 </div>
             </main>
             <Footer />
-            <script src="/js/pico.js"></script>
         </body>
     );
 }

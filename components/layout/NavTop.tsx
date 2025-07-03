@@ -34,34 +34,12 @@ export function NavTop(data: SessionUser) {
                             </summary>
                             <ul role="listbox">
                                 <li>
-                                    <a href="#">User Settings</a>
+                                    <a href="/dashboard/settings">User Settings</a>
                                     <a href="/logout">Logout {data.displayName}</a>
                                 </li>
                             </ul>
                         </details>
                     </li>}
-                <li>
-                    <details role="list" dir="rtl">
-                        <summary aria-haspopup="listbox" role="link" class="secondary">
-                            <img
-                                src="/img/svg/yin-yang-filled.svg"
-                                class="icon"
-                                alt="dark/light mode selector"
-                            />
-                        </summary>
-                        <ul role="listbox">
-                            <li>
-                                <a href="#" data-theme-switcher="auto">Auto</a>
-                            </li>
-                            <li>
-                                <a href="#" data-theme-switcher="light">Light mode</a>
-                            </li>
-                            <li>
-                                <a href="#" data-theme-switcher="dark">Dark mode</a>
-                            </li>
-                        </ul>
-                    </details>
-                </li>
             </ul>
         </nav>
     );

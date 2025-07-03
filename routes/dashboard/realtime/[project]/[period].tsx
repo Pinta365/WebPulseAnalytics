@@ -165,7 +165,6 @@ export default function Projects({ data }: PageProps) {
                 </div>
             </main>
             <Footer />
-            <script src="/js/pico.js"></script>
         </body>
     );
 }

@@ -152,3 +152,48 @@ article {
 .metric-card:hover .details-hint {
     color: #ddd !important;
 }
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    background: inherit;
+    color: inherit;
+    font-size: 1rem;
+    border-radius: 6px;
+    overflow: hidden;
+}
+th, td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+}
+th {
+    cursor: pointer;
+    user-select: none;
+    font-weight: bold;
+    border-bottom: 2px solid var(--muted-border-color, #e5e7eb);
+}
+tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+tr:hover {
+    background-color: rgba(100, 116, 139, 0.08);
+}
+table {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+@media (max-width: 600px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    th, td {
+        padding: 0.5rem 0.75rem;
+    }
+    tr {
+        margin-bottom: 0.75rem;
+    }
+    th {
+        border-bottom: none;
+    }
+}

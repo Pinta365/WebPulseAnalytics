@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { Db, MongoClient, ObjectId } from "mongodb";
 import { logError } from "./debug_logger.ts";
 import { config } from "./config.ts";
@@ -575,4 +576,108 @@ export async function getTrendsData(
     const pipeline = [matchStage, addFieldsStage, groupStage, projectStage, sortStage];
     const results = await sessionsCollection.aggregate(pipeline).toArray();
     return results;
+}
+
+export async function getPageMetricCounts(
+    projectId: ObjectId | ObjectId[],
+    startDate: number,
+    endDate: number,
+    metric: "clicks" | "scrolls" | "pageLoads",
+): Promise<any> {
+    const database = await getDatabase();
+    const eventsCollection = database.collection("events");
+
+    const matchStage: any = {
+        projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
+        timestamp: { $gte: startDate, $lte: endDate },
+    };
+    let groupStage: any;
+    if (metric === "pageLoads") {
+        matchStage.type = "pageLoad";
+        groupStage = {
+            _id: { url: "$url", title: "$title" },
+            count: { $sum: 1 },
+        };
+    } else {
+        matchStage.type = metric.slice(0, -1);
+        groupStage = {
+            _id: { url: "$url", title: "$title" },
+            count: { $sum: 1 },
+        };
+    }
+    const pipeline = [
+        { $match: matchStage },
+        { $group: groupStage },
+        { $sort: { count: -1 } },
+    ];
+    const results = await eventsCollection.aggregate(pipeline).toArray();
+    return results;
+}
+
+export async function getSessionsPerLandingPage(
+    projectId: ObjectId | ObjectId[],
+    startDate: number,
+    endDate: number,
+): Promise<any> {
+    const database = await getDatabase();
+    const sessionsCollection = database.collection<SessionObject>("sessions");
+    const pipeline = [
+        {
+            $match: {
+                projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
+                timestamp: { $gte: startDate, $lte: endDate },
+                pageLoads: { $exists: true, $ne: [] },
+            },
+        },
+        {
+            $addFields: {
+                landingPage: { $arrayElemAt: ["$pageLoads", 0] },
+            },
+        },
+        {
+            $group: {
+                _id: { url: "$landingPage.url", title: "$landingPage.title" },
+                count: { $sum: 1 },
+            },
+        },
+        { $sort: { count: -1 } },
+    ];
+    return await sessionsCollection.aggregate(pipeline).toArray();
+}
+
+export async function getUniqueVisitorsPerLandingPage(
+    projectId: ObjectId | ObjectId[],
+    startDate: number,
+    endDate: number,
+): Promise<any> {
+    const database = await getDatabase();
+    const sessionsCollection = database.collection<SessionObject>("sessions");
+    const pipeline = [
+        {
+            $match: {
+                projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
+                timestamp: { $gte: startDate, $lte: endDate },
+                pageLoads: { $exists: true, $ne: [] },
+            },
+        },
+        {
+            $addFields: {
+                landingPage: { $arrayElemAt: ["$pageLoads", 0] },
+            },
+        },
+        {
+            $group: {
+                _id: { url: "$landingPage.url", title: "$landingPage.title" },
+                uniqueVisitors: { $addToSet: "$deviceId" },
+            },
+        },
+        {
+            $project: {
+                _id: 1,
+                count: { $size: "$uniqueVisitors" },
+            },
+        },
+        { $sort: { count: -1 } },
+    ];
+    return await sessionsCollection.aggregate(pipeline).toArray();
 }

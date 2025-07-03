@@ -19,7 +19,6 @@ export default function Home() {
             <Login />
 
             <Footer />
-            <script src="/js/pico.js"></script>
         </body>
     );
 }

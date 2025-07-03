@@ -75,6 +75,9 @@ export function NavSide() {
                     <summary>Settings</summary>
                     <ul>
                         <li>
+                            <a href="/dashboard/settings" onClick={handleClick} class="secondary">User Settings</a>
+                        </li>
+                        <li>
                             <a href="/dashboard/projects" onClick={handleClick} class="secondary">Manage Projects</a>
                         </li>
                     </ul>

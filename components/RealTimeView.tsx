@@ -1,6 +1,7 @@
 import { AnalysisBox } from "islands/analysis/AnalysisBox.tsx";
 import { Project } from "lib/db.ts";
 import { RealTimePeriod, RealTimePeriods, RealTimeStats } from "lib/commonTypes.ts";
+import DataTable from "islands/DataTable.tsx";
 
 interface Projects {
     projects: Project[];
@@ -70,58 +71,6 @@ function printProject(stats: RealTimeStats, period: RealTimePeriod, project?: Pr
                 ))}
             </div>
         </section>
-    );
-}
-
-function printProjects(stats: RealTimeStats[], period: RealTimePeriod, project?: Project) {
-    return (
-        <article>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Project</th>
-                        <th>Visitors</th>
-                        <th>Sessions</th>
-                        <th>Page Loads</th>
-                        <th>Clicks</th>
-                        <th>Scrolls</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {stats.map((data, index) => (
-                        <tr>
-                            <td>{data.projectName}</td>
-                            <td>{data.visitors}</td>
-                            <td>{data.sessions}</td>
-                            <td>{data.pageLoads}</td>
-                            <td>{data.clicks}</td>
-                            <td>{data.scrolls}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </article>
-    );
-}
-
-function printDataTable(data: { _id: string | null; count: number }[], topN: number, titles: string[]) {
-    const rowsToShow = data.slice(0, topN);
-    return (
-        <table>
-            <thead>
-                <tr>
-                    {titles.map((title, index) => <th key={index}>{title}</th>)}
-                </tr>
-            </thead>
-            <tbody>
-                {rowsToShow.map((row, index) => (
-                    <tr key={index}>
-                        <td>{row._id && row._id.trim() !== "" ? row._id : "Unknown"}</td>
-                        <td>{row.count}</td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
     );
 }
 
@@ -200,45 +149,103 @@ export function RealTimeView(data: Projects) {
                 </div>
             </div>
             {analyticsData[0] && printProject(analyticsData[0], period, project)}
-            {analyticsDataPerProject?.length > 0 && printProjects(analyticsDataPerProject, period, project)}
+            {analyticsDataPerProject?.length > 0 && (
+                <article>
+                    <DataTable
+                        columns={[
+                            { key: "projectName", label: "Project" },
+                            { key: "visitors", label: "Visitors" },
+                            { key: "sessions", label: "Sessions" },
+                            { key: "pageLoads", label: "Page Loads" },
+                            { key: "clicks", label: "Clicks" },
+                            { key: "scrolls", label: "Scrolls" },
+                        ]}
+                        data={analyticsDataPerProject}
+                        topN={100}
+                    />
+                </article>
+            )}
             <div class="grid">
                 <article>
-                    {referrerData && printDataTable(referrerData, 10, ["Referrer", "Count"])}
+                    {referrerData && (
+                        <DataTable
+                            columns={[
+                                { key: "_id", label: "Referrer" },
+                                { key: "count", label: "Count" },
+                            ]}
+                            data={referrerData}
+                            defaultSortCol="count"
+                            defaultSortDir="desc"
+                        />
+                    )}
                 </article>
                 <article>
-                    {countryData && printDataTable(countryData, 10, ["Country", "Count"])}
+                    {countryData && (
+                        <DataTable
+                            columns={[
+                                { key: "_id", label: "Country" },
+                                { key: "count", label: "Count" },
+                            ]}
+                            data={countryData}
+                            defaultSortCol="count"
+                            defaultSortDir="desc"
+                        />
+                    )}
                 </article>
             </div>
             <div class="grid">
                 <article>
-                    {browserData && printDataTable(browserData, 10, ["Browser", "Count"])}
+                    {browserData && (
+                        <DataTable
+                            columns={[
+                                { key: "_id", label: "Browser" },
+                                { key: "count", label: "Count" },
+                            ]}
+                            data={browserData}
+                            defaultSortCol="count"
+                            defaultSortDir="desc"
+                        />
+                    )}
                 </article>
                 <article>
-                    {osData && printDataTable(osData, 10, ["Operating System", "Count"])}
+                    {osData && (
+                        <DataTable
+                            columns={[
+                                { key: "_id", label: "Operating System" },
+                                { key: "count", label: "Count" },
+                            ]}
+                            data={osData}
+                            defaultSortCol="count"
+                            defaultSortDir="desc"
+                        />
+                    )}
                 </article>
             </div>
             {pagesVisitedData && pagesVisitedData.length > 0 && (
                 <div class="grid">
                     <article>
                         <h3>Pages Visited</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Title</th>
-                                    <th>URL</th>
-                                    <th>Count</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {pagesVisitedData.slice(0, 10).map((row, idx) => (
-                                    <tr key={idx}>
-                                        <td>{row._id.title || "(no title)"}</td>
-                                        <td>{row._id.url || "(no url)"}</td>
-                                        <td>{row.count}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                        <DataTable
+                            columns={[
+                                { key: "title", label: "Title" },
+                                {
+                                    key: "url",
+                                    label: "URL",
+                                    render: (value: string) =>
+                                        value
+                                            ? <a href={value} target="_blank" rel="noopener noreferrer">{value}</a>
+                                            : <span>(no url)</span>,
+                                },
+                                { key: "count", label: "Count" },
+                            ]}
+                            data={pagesVisitedData.map((row: any) => ({
+                                title: row._id?.title || "(no title)",
+                                url: row._id?.url || "",
+                                count: row.count,
+                            }))}
+                            defaultSortCol="count"
+                            defaultSortDir="desc"
+                        />
                     </article>
                 </div>
             )}
