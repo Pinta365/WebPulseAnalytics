@@ -28,6 +28,7 @@ export const handler: Handlers = {
         const pageLoadsChecked = params.get("pageLoadsChecked") === "true";
         const storeUA = params.get("storeUA") === "true";
         const storeLoc = params.get("storeLoc") === "true";
+        const storeUTM = params.get("storeUTM") === "true";
         const pageClicksChecked = params.get("pageClicksChecked") === "true";
         const captureAllClicks = params.get("captureAllClicks") === "true";
         const pageScrollsChecked = params.get("pageScrollsChecked") === "true";
@@ -40,6 +41,7 @@ export const handler: Handlers = {
                 options: {
                     storeUserAgent: storeUA,
                     storeLocation: storeLoc,
+                    storeUTM: storeUTM,
                     pageLoads: {
                         enabled: pageLoadsChecked,
                     },
@@ -87,6 +89,7 @@ export const handler: Handlers = {
         const pageLoadsChecked = params.get("pageLoadsChecked") === "true";
         const storeUA = params.get("storeUA") === "true";
         const storeLoc = params.get("storeLoc") === "true";
+        const storeUTM = params.get("storeUTM") === "true";
         const pageClicksChecked = params.get("pageClicksChecked") === "true";
         const captureAllClicks = params.get("captureAllClicks") === "true";
         const pageScrollsChecked = params.get("pageScrollsChecked") === "true";
@@ -100,6 +103,7 @@ export const handler: Handlers = {
                 options: {
                     storeUserAgent: storeUA,
                     storeLocation: storeLoc,
+                    storeUTM: storeUTM,
                     pageLoads: {
                         enabled: pageLoadsChecked,
                     },

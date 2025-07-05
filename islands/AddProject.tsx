@@ -6,6 +6,7 @@ export function AddProject() {
     const [pageLoadsChecked, setPageLoadsChecked] = useState(true);
     const [storeUA, setStoreUA] = useState(true);
     const [storeLoc, setStoreLoc] = useState(true);
+    const [storeUTM, setStoreUTM] = useState(false);
     const [pageClicksChecked, setPageClicksChecked] = useState(true);
     const [captureAllClicks, setCaptureAllClicks] = useState(false);
     const [pageScrollsChecked, setPageScrollsChecked] = useState(true);
@@ -13,16 +14,17 @@ export function AddProject() {
     const addProjectButton = async () => {
         const options = {
             method: "POST",
-            body: new URLSearchParams({
+            body: new URLSearchParams(Object.entries({
                 name,
                 description,
                 pageLoadsChecked: pageLoadsChecked.toString(),
                 storeUA: storeUA.toString(),
                 storeLoc: storeLoc.toString(),
+                storeUTM: storeUTM.toString(),
                 pageClicksChecked: pageClicksChecked.toString(),
                 captureAllClicks: captureAllClicks.toString(),
                 pageScrollsChecked: pageScrollsChecked.toString(),
-            }),
+            })),
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Accept": "application/json",
@@ -49,6 +51,7 @@ export function AddProject() {
         setPageLoadsChecked(true);
         setStoreUA(true);
         setStoreLoc(true);
+        setStoreUTM(false);
         setPageClicksChecked(true);
         setCaptureAllClicks(false);
         setPageScrollsChecked(true);
@@ -104,6 +107,19 @@ export function AddProject() {
                                 onChange={() => setStoreLoc(!storeLoc)}
                             />
                             Store user location
+                        </label>
+                    </li>
+                    <li style="list-style-type: none;">
+                        <label for="StoreUTM">
+                            <input
+                                type="checkbox"
+                                id="StoreUTM"
+                                name="StoreUTM"
+                                checked={storeUTM}
+                                disabled={!pageLoadsChecked}
+                                onChange={() => setStoreUTM(!storeUTM)}
+                            />
+                            Store UTM parameters
                         </label>
                     </li>
                     <hr />

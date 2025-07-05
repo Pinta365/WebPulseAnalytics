@@ -26,6 +26,7 @@ export interface DBUser {
 export interface ProjectOptions {
     storeUserAgent: boolean;
     storeLocation: boolean;
+    storeUTM: boolean;
     pageLoads: {
         enabled: boolean;
     };
