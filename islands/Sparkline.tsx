@@ -1,5 +1,3 @@
-import { h } from "preact";
-
 interface SparklineProps {
     data: number[];
     color?: string;
@@ -14,7 +12,7 @@ export default function Sparkline({ data, color = "#2563eb", height = 32, width 
     const range = max - min || 1;
     const points = data.map((v, i) => {
         const x = (i / (data.length - 1)) * width;
-        const y = height - ((v - min) / range) * (height - 4) - 2; // 2px padding top/bottom
+        const y = height - ((v - min) / range) * (height - 4) - 2;
         return `${x},${y}`;
     }).join(" ");
     return (

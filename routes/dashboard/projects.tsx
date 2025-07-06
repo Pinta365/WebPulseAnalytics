@@ -1,9 +1,6 @@
 import type { Handlers, PageProps } from "$fresh/server.ts";
-import { NavTop } from "components/layout/NavTop.tsx";
-import { NavSide } from "islands/NavSide.tsx";
 import { ProjectView } from "components/ProjectView.tsx";
 import { EditProject } from "islands/EditProject.tsx";
-import { Footer } from "components/layout/Footer.tsx";
 import { deleteProject, getProject, getProjects, upsertProject } from "lib/db.ts";
 import { ObjectId } from "mongodb";
 
@@ -129,19 +126,10 @@ export const handler: Handlers = {
 };
 
 export default function Projects({ data }: PageProps) {
-    const { state, editProject, projects } = data;
+    const { editProject, projects } = data;
     return (
-        <body>
-            <NavTop {...state} />
-
-            <main class="container">
-                <div class="grid">
-                    <NavSide />
-                    {editProject ? <EditProject project={editProject} /> : <ProjectView projects={projects} />}
-                </div>
-            </main>
-
-            <Footer />
-        </body>
+        <>
+            {editProject ? <EditProject project={editProject} /> : <ProjectView projects={projects} />}
+        </>
     );
 }

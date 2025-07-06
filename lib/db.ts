@@ -102,7 +102,7 @@ export interface SessionObject {
     pageLoads: PageLoad[];
 }
 
-interface DeviceObject {
+export interface DeviceObject {
     _id: ObjectId;
     projectId: ObjectId;
     firstEventAt: number;
@@ -564,7 +564,7 @@ export async function getTrendsData(
     };
     const projectStage = {
         $project: {
-            date: "$_id",
+            date: { $dateToString: { format: "%Y-%m-%d", date: "$_id" } },
             visitors: { $size: "$visitors" },
             sessions: { $size: "$sessions" },
             pageLoads: 1,

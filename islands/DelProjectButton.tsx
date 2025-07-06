@@ -16,12 +16,20 @@ export function DelProjectButton(data: ProjectData) {
         };
         const response = await fetch("/dashboard/projects", options);
         if (response.ok) {
-            window.location.href = "/dashboard/projects";
+            globalThis.location.href = "/dashboard/projects";
         } else {
             //Poppa varningsruta med fel
             console.error("Post failed");
         }
     };
 
-    return <button onClick={() => delButtonClick(data.id)} class="contrast">Delete</button>;
+    return (
+        <button
+            type="button"
+            onClick={() => delButtonClick(data.id)}
+            class="btn-danger"
+        >
+            Delete
+        </button>
+    );
 }

@@ -1,7 +1,9 @@
+// deno-lint-ignore-file no-explicit-any
 import { AnalysisBox } from "islands/analysis/AnalysisBox.tsx";
 import { Project } from "lib/db.ts";
 import { RealTimePeriod, RealTimePeriods, RealTimeStats } from "lib/commonTypes.ts";
 import DataTable from "islands/DataTable.tsx";
+import { classNames } from "lib/helper.ts";
 
 interface Projects {
     projects: Project[];
@@ -22,7 +24,7 @@ const periodTranslations: Record<string, string> = {
     "yesterday": "Yesterday",
 };
 
-function printProject(stats: RealTimeStats, period: RealTimePeriod, project?: Project) {
+function printProject(stats: RealTimeStats) {
     // Define example data for AnalysisBoxes
     const analysisData = [
         {
@@ -53,12 +55,11 @@ function printProject(stats: RealTimeStats, period: RealTimePeriod, project?: Pr
             submeasure: "Scrolls/Page View",
             subvalue: (stats.scrolls / stats.pageLoads).toPrecision(2),
         },
-        // Add more data for additional measures
     ];
 
     return (
-        <section class="analysis-section">
-            <div class="grid">
+        <section class="mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                 {analysisData.map((data, index) => (
                     <AnalysisBox
                         key={index}
@@ -83,9 +84,11 @@ function printProjectLink(period: string | null, project?: Project, projectClass
 }
 
 function printProjectMenuEntry(period: string | null, currentProject?: Project, project?: Project) {
-    const projectClass = (currentProject === project) || (!currentProject && !project)
-        ? "primary"
-        : "secondary outline";
+    const isActive = (currentProject === project) || (!currentProject && !project);
+    const projectClass = classNames(
+        "dropdown-item",
+        isActive && "dropdown-item-active",
+    );
     return (
         <li>
             {printProjectLink(period, project, projectClass)}
@@ -98,7 +101,11 @@ function printPeriodMenuEntry(currentPeriod: string, period: RealTimePeriod, pro
     const periodName = periodTranslations[safePeriodName] ? periodTranslations[safePeriodName] : "Custom period";
     const periodUrl = currentPeriod ? `/dashboard/realtime/${project ? project._id : "all"}/${currentPeriod}` : "#";
     const periodTitle = periodTranslations[safePeriodName];
-    const periodClass = (currentPeriod === period.name) ? "primary" : "secondary outline";
+    const isActive = currentPeriod === period.name;
+    const periodClass = classNames(
+        "dropdown-item",
+        isActive && "dropdown-item-active",
+    );
     return (
         <li>
             <a href={periodUrl} title={periodTitle} class={periodClass}>{periodName}</a>
@@ -120,37 +127,41 @@ export function RealTimeView(data: Projects) {
         pagesVisitedData,
     } = data;
     return (
-        <section>
-            <div class="grid">
+        <section class="space-y-8">
+            <div class="flex flex-col sm:flex-row justify-between items-start">
                 <div>
-                    <details class="dropdown" role="list">
-                        <summary>{project ? project.name : "All Projects"}</summary>
-                        <ul>
+                    <details class="relative">
+                        <summary class="summary-base">
+                            {project ? project.name : "All Projects"}
+                        </summary>
+                        <ul class="dropdown-menu">
                             {printProjectMenuEntry(period.name ?? "", project)}
                             {projects?.length > 0
                                 ? projects.map((projectEntry) =>
                                     printProjectMenuEntry(period.name ?? "", project, projectEntry)
                                 )
-                                : <li>No projects</li>}
+                                : <li class="px-4 py-2 text-muted">No projects</li>}
                         </ul>
                     </details>
                 </div>
-                <div class="right">
-                    <details class="dropdown" role="list">
-                        <summary>Period: {periodTranslations[period.name ?? ""]}</summary>
-                        <ul>
+                <div>
+                    <details class="relative">
+                        <summary class="summary-base">
+                            Period: {periodTranslations[period.name ?? ""]}
+                        </summary>
+                        <ul class="dropdown-menu">
                             {RealTimePeriods?.length > 0
                                 ? RealTimePeriods.map((periodEntry) =>
                                     printPeriodMenuEntry(periodEntry, period, project)
                                 )
-                                : <li>No periods</li>}
+                                : <li class="px-4 py-2 text-muted">No periods</li>}
                         </ul>
                     </details>
                 </div>
             </div>
-            {analyticsData[0] && printProject(analyticsData[0], period, project)}
+            {analyticsData[0] && printProject(analyticsData[0])}
             {analyticsDataPerProject?.length > 0 && (
-                <article>
+                <article class="card">
                     <DataTable
                         columns={[
                             { key: "projectName", label: "Project" },
@@ -165,8 +176,8 @@ export function RealTimeView(data: Projects) {
                     />
                 </article>
             )}
-            <div class="grid">
-                <article>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <article class="card">
                     {referrerData && (
                         <DataTable
                             columns={[
@@ -179,7 +190,7 @@ export function RealTimeView(data: Projects) {
                         />
                     )}
                 </article>
-                <article>
+                <article class="card">
                     {countryData && (
                         <DataTable
                             columns={[
@@ -193,8 +204,8 @@ export function RealTimeView(data: Projects) {
                     )}
                 </article>
             </div>
-            <div class="grid">
-                <article>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <article class="card">
                     {browserData && (
                         <DataTable
                             columns={[
@@ -207,7 +218,7 @@ export function RealTimeView(data: Projects) {
                         />
                     )}
                 </article>
-                <article>
+                <article class="card">
                     {osData && (
                         <DataTable
                             columns={[
@@ -222,9 +233,9 @@ export function RealTimeView(data: Projects) {
                 </article>
             </div>
             {pagesVisitedData && pagesVisitedData.length > 0 && (
-                <div class="grid">
-                    <article>
-                        <h3>Pages Visited</h3>
+                <div class="grid grid-cols-1">
+                    <article class="card">
+                        <h3 class="text-xl font-semibold text-primary mb-4">Pages Visited</h3>
                         <DataTable
                             columns={[
                                 { key: "title", label: "Title" },
@@ -233,8 +244,17 @@ export function RealTimeView(data: Projects) {
                                     label: "URL",
                                     render: (value: string) =>
                                         value
-                                            ? <a href={value} target="_blank" rel="noopener noreferrer">{value}</a>
-                                            : <span>(no url)</span>,
+                                            ? (
+                                                <a
+                                                    href={value}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    class="link"
+                                                >
+                                                    {value}
+                                                </a>
+                                            )
+                                            : <span class="text-muted">(no url)</span>,
                                 },
                                 { key: "count", label: "Count" },
                             ]}

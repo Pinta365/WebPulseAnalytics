@@ -29,7 +29,7 @@ GITHUB_CALLBACK_URL=http://localhost:8000/api/auth/github/callback
 WEBSITE_BASE_URL=http://localhost:8000
 
 # MongoDBconfiguration
-MONGO_URI="https://api.deno.com/databases/<project-id>/connect"
+MONGO_URI="mongodb://localhost:27017/
 ```
 
 ... and starting the server using this command:
@@ -39,3 +39,16 @@ deno task start
 ```
 
 Then you will reach the front-end at [http://localhost:8000/](http://localhost:8000/)
+
+## Custom CSS Classes & Color System
+
+This project uses a centralized color system defined in `static/css/styles.css` using CSS custom properties (variables)
+for both light and dark modes. You can easily customize the appearance of the site, including light and dark mode
+colors, by editing these variables.
+
+A set of utility classes (e.g., `.bg-card`, `.text-primary`, `.btn-primary`, etc.) are provided to apply these colors
+throughout the app. To change the color scheme, simply update the values in the `:root` and `.dark` selectors in the CSS
+file.
+
+This approach makes it easy to maintain a consistent look and feel, and to quickly adjust the color palette for branding
+or accessibility needs.

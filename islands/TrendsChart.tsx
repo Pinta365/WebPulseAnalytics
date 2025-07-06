@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { useEffect, useRef } from "preact/hooks";
 
 interface Dataset {

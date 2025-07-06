@@ -47,7 +47,7 @@ export const handler: Handlers = {
                 return new Response("", { status: 303, headers });
             }
 
-            const alreadyUser: DBUser = await getUserFromProviderId("github", githubProfile.id);
+            const alreadyUser: DBUser | null = await getUserFromProviderId("github", githubProfile.id);
 
             const sessionUser = {} as DBUser;
             const providerProfile: ProviderProfile = {
@@ -63,12 +63,12 @@ export const handler: Handlers = {
                 sessionUser._id = alreadyUser._id;
                 alreadyUser.displayName = providerProfile.name;
                 alreadyUser.avatar = providerProfile.avatar_url;
-                await updateUser(alreadyUser._id, alreadyUser, "github", providerProfile);
+                await updateUser(alreadyUser._id.toString(), alreadyUser, "github", providerProfile);
             } else {
                 const createdId = await createUser(sessionUser, "github", providerProfile);
                 console.log(createdId);
                 if (createdId) {
-                    sessionUser._id = createdId;
+                    sessionUser._id = createdId as any;
                 } else {
                     return new Response("Error processing authentication", { status: 500 });
                 }

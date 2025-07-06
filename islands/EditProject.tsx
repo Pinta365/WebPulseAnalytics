@@ -45,7 +45,7 @@ export function EditProject(data: ProjectData) {
         if (response.ok) {
             //clearForm();
             //reloadar sidan så länge som en workaround för att få det nya projected
-            window.location.href = "/dashboard/projects";
+            globalThis.location.href = "/dashboard/projects";
         } else {
             //Poppa varningsruta med fel
             console.error("Update failed");
@@ -54,32 +54,31 @@ export function EditProject(data: ProjectData) {
 
     const clearForm = () => {
         // Bye
-        window.location.href = "/dashboard/projects";
+        globalThis.location.href = "/dashboard/projects";
     };
 
     return (
-        <div>
+        <div class="space-y-4">
             <input
                 type="text"
                 placeholder="Project Name"
                 value={name}
                 onChange={(e) => setName((e.target as HTMLInputElement).value)}
-                class=""
+                class="input-base"
             />
             <textarea
-                type="text"
                 placeholder="Project Description"
                 value={description}
                 onChange={(e) => setDescription((e.target as HTMLInputElement).value)}
                 rows={4}
-                class=""
+                class="input-base"
             />
-            <p>Tracking options for this project</p>
-            <fieldset>
-                <hr />
-                <ul>
-                    <li style="list-style-type: none;">
-                        <label for="StoreUA">
+            <p class="text-secondary font-medium">Tracking options for this project</p>
+            <fieldset class="space-y-4">
+                <hr class="border-input" />
+                <ul class="space-y-3">
+                    <li>
+                        <label for="StoreUA" class="flex items-center space-x-2 cursor-pointer">
                             <input
                                 type="checkbox"
                                 id="StoreUA"
@@ -87,12 +86,13 @@ export function EditProject(data: ProjectData) {
                                 checked={storeUA}
                                 disabled={!pageLoadsChecked}
                                 onChange={() => setStoreUA(!storeUA)}
+                                class="checkbox-base"
                             />
-                            Store user agent
+                            <span class="text-secondary">Store user agent</span>
                         </label>
                     </li>
-                    <li style="list-style-type: none;">
-                        <label for="StoreLoc">
+                    <li>
+                        <label for="StoreLoc" class="flex items-center space-x-2 cursor-pointer">
                             <input
                                 type="checkbox"
                                 id="StoreLoc"
@@ -100,12 +100,13 @@ export function EditProject(data: ProjectData) {
                                 checked={storeLoc}
                                 disabled={!pageLoadsChecked}
                                 onChange={() => setStoreLoc(!storeLoc)}
+                                class="checkbox-base"
                             />
-                            Store user location
+                            <span class="text-secondary">Store user location</span>
                         </label>
                     </li>
-                    <li style="list-style-type: none;">
-                        <label for="StoreUTM">
+                    <li>
+                        <label for="StoreUTM" class="flex items-center space-x-2 cursor-pointer">
                             <input
                                 type="checkbox"
                                 id="StoreUTM"
@@ -113,13 +114,14 @@ export function EditProject(data: ProjectData) {
                                 checked={storeUTM}
                                 disabled={!pageLoadsChecked}
                                 onChange={() => setStoreUTM(!storeUTM)}
+                                class="checkbox-base"
                             />
-                            Store UTM parameters
+                            <span class="text-secondary">Store UTM parameters</span>
                         </label>
                     </li>
-                    <hr />
-                    <li style="list-style-type: none;">
-                        <label for="PageLoads">
+                    <hr class="border-input" />
+                    <li>
+                        <label for="PageLoads" class="flex items-center space-x-2 cursor-pointer">
                             <input
                                 type="checkbox"
                                 id="PageLoads"
@@ -127,13 +129,14 @@ export function EditProject(data: ProjectData) {
                                 role="switch"
                                 checked={pageLoadsChecked}
                                 onChange={() => setPageLoadsChecked(!pageLoadsChecked)}
+                                class="checkbox-base"
                             />
-                            Track page loads
+                            <span class="text-secondary">Track page loads</span>
                         </label>
                     </li>
-                    <hr />
-                    <li style="list-style-type: none;">
-                        <label for="PageClicks">
+                    <hr class="border-input" />
+                    <li>
+                        <label for="PageClicks" class="flex items-center space-x-2 cursor-pointer">
                             <input
                                 type="checkbox"
                                 id="PageClicks"
@@ -141,13 +144,16 @@ export function EditProject(data: ProjectData) {
                                 role="switch"
                                 checked={pageClicksChecked}
                                 onChange={() => setPageClicksChecked(!pageClicksChecked)}
+                                class="checkbox-base"
                             />
-                            Track page clicks. The default is to only track clicks made to link elements
+                            <span class="text-secondary">
+                                Track page clicks. The default is to only track clicks made to link elements
+                            </span>
                         </label>
 
-                        <ul>
-                            <li style="list-style-type: none;">
-                                <label for="PageClicksCaptureAll">
+                        <ul class="ml-6 mt-2 space-y-2">
+                            <li>
+                                <label for="PageClicksCaptureAll" class="flex items-center space-x-2 cursor-pointer">
                                     <input
                                         type="checkbox"
                                         id="PageClicksCaptureAll"
@@ -155,34 +161,46 @@ export function EditProject(data: ProjectData) {
                                         checked={captureAllClicks}
                                         disabled={!pageClicksChecked}
                                         onChange={() => setCaptureAllClicks(!captureAllClicks)}
+                                        class="checkbox-base"
                                     />
-                                    Capture all page clicks
+                                    <span class="text-secondary">Capture all page clicks</span>
                                 </label>
                             </li>
                         </ul>
                     </li>
-                    <hr />
-                    <li style="list-style-type: none;">
-                        <label for="PageScrolls">
+                    <hr class="border-input" />
+                    <li>
+                        <label for="PageScrolls" class="flex items-center space-x-2 cursor-pointer">
                             <input
                                 type="checkbox"
-                                id="PageClicks"
-                                name="PageClicks"
+                                id="PageScrolls"
+                                name="PageScrolls"
                                 role="switch"
                                 checked={pageScrollsChecked}
                                 onChange={() => setPageScrollsChecked(!pageScrollsChecked)}
+                                class="checkbox-base"
                             />
-                            Track page scrolls
+                            <span class="text-secondary">Track page scrolls</span>
                         </label>
                     </li>
                 </ul>
             </fieldset>
-            <div class="grid">
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <button onClick={() => clearForm()} class="secondary">Cancel</button>
+                    <button
+                        onClick={() => clearForm()}
+                        class="btn-secondary w-full"
+                    >
+                        Cancel
+                    </button>
                 </div>
                 <div>
-                    <button onClick={() => updateProjectButton()} class="">Update</button>
+                    <button
+                        onClick={() => updateProjectButton()}
+                        class="btn-primary w-full"
+                    >
+                        Update
+                    </button>
                 </div>
             </div>
         </div>

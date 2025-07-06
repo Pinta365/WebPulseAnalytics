@@ -1,9 +1,5 @@
 import type { Handlers, PageProps } from "$fresh/server.ts";
-
-import { NavTop } from "components/layout/NavTop.tsx";
-import { NavSide } from "islands/NavSide.tsx";
 import { RealTimeView } from "components/RealTimeView.tsx";
-import { Footer } from "components/layout/Footer.tsx";
 import {
     getAnalytics,
     getBrowsers,
@@ -16,14 +12,14 @@ import {
 import { RealTimePeriod, RealTimePeriods } from "lib/commonTypes.ts";
 
 export const handler: Handlers = {
-    async GET(req, ctx) {
+    async GET(_req, ctx) {
         // List projects
         const projects = await getProjects(ctx.state._id as string);
 
         // Find selected project, or "all"
         let project = null;
         if (ctx.params.project !== "all") {
-            project = projects.find((p) => p._id.toString() === ctx.params.project);
+            project = projects.find((p) => p._id?.toString() === ctx.params.project);
             if (!project) {
                 // 404!!
                 return ctx.renderNotFound();
@@ -52,7 +48,6 @@ export const handler: Handlers = {
             period.to = Date.now();
         }
         if (period.name === "today") {
-            const now = new Date();
             period.from = startOfToday;
             period.to = Date.now();
         }
@@ -62,7 +57,7 @@ export const handler: Handlers = {
         }
 
         // Grand Total Stats
-        const projectIds = projects.map((p) => p._id!);
+        const projectIds = projects.map((p) => p._id!).filter(Boolean);
         let analyticsData;
         let analyticsDataPerProject;
         if (project === null) {
@@ -131,7 +126,6 @@ export const handler: Handlers = {
 
 export default function Projects({ data }: PageProps) {
     const {
-        state,
         projects,
         project,
         period,
@@ -145,26 +139,17 @@ export default function Projects({ data }: PageProps) {
     } = data;
 
     return (
-        <body>
-            <NavTop {...state} />
-            <main class="container">
-                <div class="grid">
-                    <NavSide />
-                    <RealTimeView
-                        project={project}
-                        projects={projects}
-                        analyticsData={analyticsData}
-                        analyticsDataPerProject={analyticsDataPerProject}
-                        period={period}
-                        osData={osData}
-                        referrerData={referrerData}
-                        browserData={browserData}
-                        countryData={countryData}
-                        pagesVisitedData={pagesVisitedData}
-                    />
-                </div>
-            </main>
-            <Footer />
-        </body>
+        <RealTimeView
+            project={project}
+            projects={projects}
+            analyticsData={analyticsData}
+            analyticsDataPerProject={analyticsDataPerProject}
+            period={period}
+            osData={osData}
+            referrerData={referrerData}
+            browserData={browserData}
+            countryData={countryData}
+            pagesVisitedData={pagesVisitedData}
+        />
     );
 }

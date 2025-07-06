@@ -8,19 +8,21 @@ interface AnalysisBoxData {
 
 export function AnalysisBox(data: AnalysisBoxData) {
     return (
-        <div class={`analysis-box container${!data.lastBox ? " analysis-box-br" : ""}`}>
-            <div class={`analysis-${data.submeasure ? "total" : "full"}`}>
+        <div
+            class={`text-center p-4 flex flex-col justify-center h-full ${!data.lastBox ? "border-r border-card" : ""}`}
+        >
+            <div class={`font-bold ${data.submeasure ? "text-3xl" : "text-4xl"} text-primary mt-4`}>
                 {data.value}
             </div>
-            <div class="small">
+            <div class="text-sm italic text-secondary">
                 {data.measure}
             </div>
             {data.submeasure && (
                 <>
-                    <div class="analysis-details">
+                    <div class="text-2xl text-primary">
                         {data.subvalue}
                     </div>
-                    <div class="small">
+                    <div class="text-xs italic text-secondary">
                         {data.submeasure}
                     </div>
                 </>

@@ -1,6 +1,5 @@
-import type { Handlers, PageProps } from "$fresh/server.ts";
+import type { Handlers } from "$fresh/server.ts";
 import { Login } from "components/Login.tsx";
-import { Footer } from "components/layout/Footer.tsx";
 import { config } from "lib/config.ts";
 
 export const handler: Handlers = {
@@ -14,11 +13,5 @@ export const handler: Handlers = {
 };
 
 export default function Home() {
-    return (
-        <body>
-            <Login />
-
-            <Footer />
-        </body>
-    );
+    return <Login />;
 }

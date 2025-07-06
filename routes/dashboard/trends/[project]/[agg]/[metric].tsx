@@ -1,7 +1,6 @@
+// deno-lint-ignore-file no-explicit-any
 import type { Handlers, PageProps } from "$fresh/server.ts";
-import { NavTop } from "components/layout/NavTop.tsx";
-import { NavSide } from "islands/NavSide.tsx";
-import { Footer } from "components/layout/Footer.tsx";
+import { getPeriodEnd } from "lib/helper.ts";
 import {
     getBrowsers,
     getCountries,
@@ -38,7 +37,7 @@ export const handler: Handlers = {
     async GET(req, ctx) {
         const url = new URL(req.url);
         const span = url.searchParams.get("span") || "this-year";
-        const color = url.searchParams.get("color") || "#6366f1";
+        const color = url.searchParams.get("color") || "#2563eb";
         const { project: projectId, agg, metric: metricSlug } = ctx.params;
         const metricInfo = metricMapping[metricSlug];
 
@@ -121,142 +120,108 @@ export const handler: Handlers = {
     },
 };
 
-function getPeriodEnd(startDate: string | number | Date, granularity: "day" | "week" | "month" | "quarter") {
-    const start = new Date(startDate);
-    let end = new Date(start);
-    switch (granularity) {
-        case "day":
-            end.setDate(start.getDate() + 1);
-            break;
-        case "week":
-            end.setDate(start.getDate() + 7);
-            break;
-        case "month":
-            end.setMonth(start.getMonth() + 1);
-            break;
-        case "quarter":
-            end.setMonth(start.getMonth() + 3);
-            break;
-    }
-    return new Date(end.getTime() - 1).toLocaleDateString();
-}
-
 export default function TrendsMetricPage({ data }: PageProps) {
     const {
-        state,
         project,
         trendsData,
         span,
         agg,
         metric,
         color,
-        referrerData,
-        countryData,
-        browserData,
-        osData,
         pagesVisitedData,
         metricSlug,
     } = data;
     const backUrl = `/dashboard/trends/${project ? project._id : "all"}/${agg}?span=${span}`;
 
     return (
-        <body>
-            <NavTop {...state} />
-            <main class="container">
-                <div class="grid">
-                    <NavSide />
-                    <section>
-                        <a
-                            href={backUrl}
-                            style={{
-                                textDecoration: "none",
-                                color: "inherit",
-                                marginBottom: "1.5rem",
-                                display: "inline-block",
-                            }}
-                        >
-                            &larr; Back to Trends Overview
-                        </a>
-                        <h2>{metric.label} Trend for {project ? project.name : "All Projects"}</h2>
-                        <div style={{ marginBottom: "2rem" }}>
-                            {trendsData && trendsData.length > 0 && (
-                                <TrendsChart
-                                    labels={trendsData.map((row: any) => new Date(row.date).toLocaleDateString())}
-                                    datasets={[
-                                        {
-                                            label: metric.label,
-                                            data: trendsData.map((row: any) => row[metric.key]),
-                                            borderColor: color,
-                                        },
-                                    ]}
-                                />
-                            )}
-                        </div>
-                        <h3>Data Details</h3>
-                        {trendsData && trendsData.length > 0
-                            ? (
-                                <DataTable
-                                    columns={[
-                                        { key: "dateRange", label: "Date Range" },
-                                        { key: "metricValue", label: metric.label },
-                                    ]}
-                                    data={trendsData.map((row: any) => ({
-                                        dateRange: `${new Date(row.date).toLocaleDateString()} - ${
-                                            getPeriodEnd(row.date, agg)
-                                        }`,
-                                        metricValue: row[metric.key],
-                                    }))}
-                                />
-                            )
-                            : <p>No data available.</p>}
+        <section class="py-8 px-6">
+            <a
+                href={backUrl}
+                class="no-underline text-inherit mb-6 inline-block link"
+            >
+                &larr; Back to Trends Overview
+            </a>
+            <h2 class="text-3xl font-bold text-primary mb-6">
+                {metric.label} Trend for {project ? project.name : "All Projects"}
+            </h2>
+            <div class="mb-8">
+                {trendsData && trendsData.length > 0 && (
+                    <TrendsChart
+                        labels={trendsData.map((row: any) => new Date(row.date).toLocaleDateString())}
+                        datasets={[
+                            {
+                                label: metric.label,
+                                data: trendsData.map((row: any) => row[metric.key]),
+                                borderColor: color,
+                            },
+                        ]}
+                    />
+                )}
+            </div>
+            <h3 class="text-2xl font-semibold text-primary mb-4">Data Details</h3>
+            {trendsData && trendsData.length > 0
+                ? (
+                    <DataTable
+                        columns={[
+                            { key: "dateRange", label: "Date Range" },
+                            { key: "metricValue", label: metric.label },
+                        ]}
+                        data={trendsData.map((row: any) => ({
+                            dateRange: `${new Date(row.date).toLocaleDateString()} - ${getPeriodEnd(row.date, agg)}`,
+                            metricValue: row[metric.key],
+                        }))}
+                    />
+                )
+                : <p class="text-secondary">No data available.</p>}
 
-                        {/* Breakdown sections based on metric */}
-                        <div style={{ marginTop: "2rem" }}>
-                            {(["page-loads", "sessions", "visitors", "clicks", "scrolls"].includes(metric.key) &&
-                                pagesVisitedData) && (
-                                <div style={{ marginBottom: "1.5rem" }}>
-                                    <h4>Top Pages</h4>
-                                    <DataTable
-                                        columns={[
-                                            { key: "title", label: "Title" },
-                                            {
-                                                key: "url",
-                                                label: "URL",
-                                                render: (value: string) =>
-                                                    value
-                                                        ? (
-                                                            <a href={value} target="_blank" rel="noopener noreferrer">
-                                                                {value}
-                                                            </a>
-                                                        )
-                                                        : <span>(no url)</span>,
-                                            },
-                                            {
-                                                key: "count",
-                                                label: metricSlug === "sessions"
-                                                    ? "Sessions Started"
-                                                    : metricSlug === "visitors"
-                                                    ? "Unique Visitors"
-                                                    : metric.label,
-                                            },
-                                        ]}
-                                        data={pagesVisitedData
-                                            ? pagesVisitedData.map((row: any) => ({
-                                                title: row._id?.title || "(no title)",
-                                                url: row._id?.url || "",
-                                                count: row.count,
-                                            }))
-                                            : []}
-                                        defaultSortCol="count"
-                                        defaultSortDir="desc"
-                                    />
-                                </div>
-                            )}
-                        </div>
-                    </section>
-                </div>
-            </main>
-            <Footer />
-        </body>
+            {/* Breakdown sections based on metric */}
+            <div class="mt-8">
+                {(["page-loads", "sessions", "visitors", "clicks", "scrolls"].includes(metric.key) &&
+                    pagesVisitedData) && (
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-primary mb-4">Top Pages</h4>
+                        <DataTable
+                            columns={[
+                                { key: "title", label: "Title" },
+                                {
+                                    key: "url",
+                                    label: "URL",
+                                    render: (value: string) =>
+                                        value
+                                            ? (
+                                                <a
+                                                    href={value}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    class="link"
+                                                >
+                                                    {value}
+                                                </a>
+                                            )
+                                            : <span class="text-muted">(no url)</span>,
+                                },
+                                {
+                                    key: "count",
+                                    label: metricSlug === "sessions"
+                                        ? "Sessions Started"
+                                        : metricSlug === "visitors"
+                                        ? "Unique Visitors"
+                                        : metric.label,
+                                },
+                            ]}
+                            data={pagesVisitedData
+                                ? pagesVisitedData.map((row: any) => ({
+                                    title: row._id?.title || "(no title)",
+                                    url: row._id?.url || "",
+                                    count: row.count,
+                                }))
+                                : []}
+                            defaultSortCol="count"
+                            defaultSortDir="desc"
+                        />
+                    </div>
+                )}
+            </div>
+        </section>
     );
 }

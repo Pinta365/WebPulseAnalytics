@@ -1,10 +1,10 @@
-import { MiddlewareHandlerContext } from "$fresh/server.ts";
+import { FreshContext } from "$fresh/server.ts";
 import { config } from "lib/config.ts";
 import { SessionUser } from "lib/commonTypes.ts";
 
 export function handler(
     _req: Request,
-    ctx: MiddlewareHandlerContext<SessionUser>,
+    ctx: FreshContext<SessionUser>,
 ) {
     if (!ctx?.state?._id) {
         return Response.redirect(config.common.websiteBaseURL);

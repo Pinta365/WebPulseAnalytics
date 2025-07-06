@@ -3,44 +3,66 @@ import { config } from "lib/config.ts";
 
 export function NavTop(data: SessionUser) {
     return (
-        <nav class="container-fluid">
-            <ul>
-                <li>
-                    <a href={config.common.websiteBaseURL} class="contrast">
-                        <img src="/img/svg/logo-top.svg" class="top-logo" alt="the webpulse logo" />
+        <nav class="w-full bg-nav border-b border-card shadow-sm">
+            <div class="px-4 py-2 flex justify-between items-center">
+                {/* Left: Logo */}
+                <div>
+                    <a href={config.common.websiteBaseURL} class="flex items-center gap-2">
+                        <img
+                            src="/img/svg/logo-top.svg"
+                            class="h-8 w-auto filter dark:invert"
+                            alt="the webpulse logo"
+                        />
                     </a>
-                </li>
-            </ul>
-            <ul>
-                {data._id && /* If we are logged in, present menu */
-                    <li>
-                        <details role="list" dir="rtl">
-                            <summary aria-haspopup="listbox" role="link" class="secondary">
+                </div>
+                {/* Right: User menu/avatar */}
+                <div>
+                    {data._id && (
+                        <details class="relative" role="list">
+                            <summary
+                                class="cursor-pointer flex items-center space-x-2 px-3 py-2 rounded hover-nav"
+                                aria-haspopup="listbox"
+                                role="link"
+                            >
                                 {data.avatar
                                     ? (
                                         <img
                                             src={data.avatar}
-                                            class="user-avatar"
+                                            class="h-8 w-8 rounded-full border border-input"
                                             alt="the GitHub user avatar"
                                         />
                                     )
                                     : (
                                         <img
                                             src="/img/svg/user-circle.svg"
-                                            class="icon"
+                                            class="h-8 w-8 filter dark:invert"
                                             alt="the GitHub user avatar"
                                         />
                                     )}
                             </summary>
-                            <ul role="listbox">
+                            <ul
+                                class="dropdown-menu dropdown-menu-right"
+                                role="listbox"
+                            >
                                 <li>
-                                    <a href="/dashboard/settings">User Settings</a>
-                                    <a href="/logout">Logout {data.displayName}</a>
+                                    <a
+                                        href="/dashboard/settings"
+                                        class="dropdown-item"
+                                    >
+                                        User Settings
+                                    </a>
+                                    <a
+                                        href="/logout"
+                                        class="dropdown-item"
+                                    >
+                                        Logout {data.displayName}
+                                    </a>
                                 </li>
                             </ul>
                         </details>
-                    </li>}
-            </ul>
+                    )}
+                </div>
+            </div>
         </nav>
     );
 }

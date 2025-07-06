@@ -24,6 +24,7 @@ import * as $DelProjectButton from "./islands/DelProjectButton.tsx";
 import * as $EditProject from "./islands/EditProject.tsx";
 import * as $NavSide from "./islands/NavSide.tsx";
 import * as $Sparkline from "./islands/Sparkline.tsx";
+import * as $ThemeSwitcher from "./islands/ThemeSwitcher.tsx";
 import * as $TrendsChart from "./islands/TrendsChart.tsx";
 import * as $analysis_AnalysisBox from "./islands/analysis/AnalysisBox.tsx";
 import type { Manifest } from "$fresh/server.ts";
@@ -54,6 +55,7 @@ const manifest = {
         "./islands/EditProject.tsx": $EditProject,
         "./islands/NavSide.tsx": $NavSide,
         "./islands/Sparkline.tsx": $Sparkline,
+        "./islands/ThemeSwitcher.tsx": $ThemeSwitcher,
         "./islands/TrendsChart.tsx": $TrendsChart,
         "./islands/analysis/AnalysisBox.tsx": $analysis_AnalysisBox,
     },

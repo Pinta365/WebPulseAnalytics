@@ -1,4 +1,4 @@
-import { MiddlewareHandlerContext } from "$fresh/server.ts";
+import { FreshContext } from "$fresh/server.ts";
 
 import { SessionUser } from "lib/commonTypes.ts";
 import { getCookies } from "$std/http/cookie.ts";
@@ -7,7 +7,7 @@ import { config } from "lib/config.ts";
 
 export async function handler(
     req: Request,
-    ctx: MiddlewareHandlerContext<SessionUser>,
+    ctx: FreshContext<SessionUser>,
 ) {
     const { cookieName, secret } = config.jwt;
     const cookies = getCookies(req.headers);

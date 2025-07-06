@@ -1,8 +1,6 @@
+// deno-lint-ignore-file no-explicit-any
 import type { Handlers, PageProps } from "$fresh/server.ts";
-import { NavTop } from "components/layout/NavTop.tsx";
-import { NavSide } from "islands/NavSide.tsx";
 import { TrendsView } from "components/TrendsView.tsx";
-import { Footer } from "components/layout/Footer.tsx";
 import { getBrowsers, getCountries, getOperatingSystems, getProjects, getReferrers, getTrendsData } from "lib/db.ts";
 import { ObjectId } from "mongodb";
 
@@ -67,29 +65,19 @@ export const handler: Handlers = {
 };
 
 export default function TrendsAggPage({ data }: PageProps) {
-    const { state, projects, project, period, trendsData, span, agg, referrerData, countryData, browserData, osData } =
-        data;
+    const { projects, project, period, trendsData, span, agg, referrerData, countryData, browserData, osData } = data;
     return (
-        <body>
-            <NavTop {...state} />
-            <main class="container">
-                <div class="grid">
-                    <NavSide />
-                    <TrendsView
-                        projects={projects}
-                        project={project}
-                        period={period}
-                        trendsData={trendsData}
-                        span={span}
-                        agg={agg}
-                        referrerData={referrerData}
-                        countryData={countryData}
-                        browserData={browserData}
-                        osData={osData}
-                    />
-                </div>
-            </main>
-            <Footer />
-        </body>
+        <TrendsView
+            projects={projects}
+            project={project}
+            period={period}
+            trendsData={trendsData}
+            span={span}
+            agg={agg}
+            referrerData={referrerData}
+            countryData={countryData}
+            browserData={browserData}
+            osData={osData}
+        />
     );
 }

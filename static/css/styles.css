@@ -1,11 +1,101 @@
-/* Variables */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Centralized Color Control - CSS Custom Properties */
 :root {
-    --font-size: 14px;
+    /* Light Mode Colors */
+    --color-body: #f9fafb; /* gray-50 */
+    --color-sidebar: #f3f4f6; /* gray-100 */
+    --color-nav: #ffffff; /* white */
+    --color-card: rgba(255, 255, 255, 0.05); /* white/5 */
+    --color-card-light: #f3f4f6; /* gray-100 */
+    --color-border: #e5e7eb; /* gray-200 */
+    --color-border-light: #e5e7eb; /* gray-200 */
+    --color-input: #d1d5db; /* gray-300 */
+    --color-text-primary: #111827; /* gray-900 */
+    --color-text-secondary: #4b5563; /* gray-600 */
+    --color-text-muted: #6b7280; /* gray-500 */
+    --color-hover-card: #e5e7eb; /* gray-200 */
+    --color-hover-nav: #f3f4f6; /* gray-100 */
+    --color-hover-card-light: rgba(255, 255, 255, 0.1); /* white/10 */
+    --color-nav-active: #f3f4f6; /* gray-100 */
+    --color-dropdown-menu: #ffffff; /* white */
+    --color-dropdown-item: #f3f4f6; /* gray-100 */
+    --color-dropdown-hover: #e5e7eb; /* gray-200 */
+    --color-input-bg: #ffffff; /* white */
+    --color-input-text: #111827; /* gray-900 */
+
+    /* Button colors */
+    --color-btn-primary: #2563eb; /* blue-600 */
+    --color-btn-primary-hover: #1d4ed8; /* blue-700 */
+    --color-btn-secondary: #d1d5db; /* gray-300 */
+    --color-btn-secondary-hover: #9ca3af; /* gray-400 */
+    --color-btn-secondary-text: #374151; /* gray-700 */
+    --color-btn-danger: #dc2626; /* red-600 */
+    --color-btn-danger-hover: #b91c1c; /* red-700 */
+    --color-btn-text-light: #ffffff; /* white */
+
+    /* Link colors */
+    --color-link: #2563eb; /* blue-600 */
+    --color-link-hover: #1d4ed8; /* blue-700 */
+
+    /* Focus ring colors */
+    --color-focus-ring: #3b82f6; /* blue-500 */
+
+    /* SVG filter colors */
     --svg-color-inverted: brightness(0) saturate(100%) invert(11%) sepia(13%) saturate(1681%) hue-rotate(163deg)
         brightness(92%) contrast(89%);
     --svg-color: invert(70%) sepia(89%) saturate(0%) hue-rotate(172deg) brightness(105%) contrast(105%);
 }
 
+/* Dark Mode Colors */
+.dark {
+    --color-body: #111827; /* gray-900 */
+    --color-sidebar: #111827; /* gray-900 */
+    --color-nav: #111827; /* gray-900 */
+    --color-card: rgba(255, 255, 255, 0.05); /* white/5 */
+    --color-card-light: rgba(255, 255, 255, 0.05); /* white/5 */
+    --color-border: #374151; /* gray-700 */
+    --color-border-light: rgba(255, 255, 255, 0.1); /* white/10 */
+    --color-input: #4b5563; /* gray-600 */
+    --color-text-primary: #f9fafb; /* gray-100 */
+    --color-text-secondary: #9ca3af; /* gray-400 */
+    --color-text-muted: #9ca3af; /* gray-400 */
+    --color-hover-card: #374151; /* gray-700 */
+    --color-hover-nav: #374151; /* gray-700 */
+    --color-hover-card-light: rgba(255, 255, 255, 0.1); /* white/10 */
+    --color-nav-active: #374151; /* gray-700 */
+    --color-dropdown-menu: #111827; /* gray-900 */
+    --color-dropdown-item: #1f2937; /* gray-800 */
+    --color-dropdown-hover: #374151; /* gray-700 */
+    --color-input-bg: #1f2937; /* gray-800 */
+    --color-input-text: #f9fafb; /* gray-100 */
+
+    /* Button colors for dark mode */
+    --color-btn-primary: #3b82f6; /* blue-500 */
+    --color-btn-primary-hover: #2563eb; /* blue-600 */
+    --color-btn-secondary: #4b5563; /* gray-600 */
+    --color-btn-secondary-hover: #6b7280; /* gray-500 */
+    --color-btn-secondary-text: #d1d5db; /* gray-300 */
+    --color-btn-danger: #ef4444; /* red-500 */
+    --color-btn-danger-hover: #dc2626; /* red-600 */
+    --color-btn-text-light: #ffffff; /* white */
+
+    /* Link colors for dark mode */
+    --color-link: #60a5fa; /* blue-400 */
+    --color-link-hover: #3b82f6; /* blue-500 */
+
+    /* Focus ring colors for dark mode */
+    --color-focus-ring: #60a5fa; /* blue-400 */
+
+    /* SVG filter colors for dark mode */
+    --svg-color-inverted: invert(70%) sepia(89%) saturate(0%) hue-rotate(172deg) brightness(105%) contrast(105%);
+    --svg-color: brightness(0) saturate(100%) invert(11%) sepia(13%) saturate(1681%) hue-rotate(163deg) brightness(92%)
+        contrast(89%);
+}
+
+/* Legacy support for prefers-color-scheme */
 @media (prefers-color-scheme: light) {
     :root:not([data-theme]) {
         --svg-color-inverted: invert(70%) sepia(89%) saturate(0%) hue-rotate(172deg) brightness(105%) contrast(105%);
@@ -21,168 +111,259 @@
         contrast(89%);
 }
 
-/* Responsive reactions */
-@media (min-width: 992px) {
-    main > .grid {
-        grid-column-gap: var(--spacing-company);
-        grid-template-columns: 25% auto;
-    }
-}
-
-@media (min-width: 576px) {
-    body > main {
-        padding: 1.25rem 0;
-    }
-
-    article div {
-        padding: 1.25rem;
-    }
-}
-
-@media (min-width: 768px) {
-    body > main {
-        padding: 1.5rem 0;
-    }
-
-    article div {
-        padding: 1.5rem;
-    }
-}
-
-@media (min-width: 992px) {
-    body > main {
-        padding: 1.75rem 0;
-    }
-
-    article div {
-        padding: 1.75rem;
-    }
-}
-
-@media (min-width: 1200px) {
-    body > main {
-        padding: 2rem 0;
-    }
-
-    article div {
-        padding: 2rem;
-    }
-}
-
 body {
-    /* For sticky footer */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    font-size: 0.9rem;
 }
 
-/* Custom Classes */
-.w-25 {
-    max-width: 25%;
-}
-.w-50 {
-    max-width: 50%;
-}
-.w-75 {
-    max-width: 75%;
-}
-.w-100 {
-    max-width: 100%;
-}
-.mt-1 {
-    margin-top: 1rem;
-}
-.strong {
-    font-weight: bold;
-}
-.block {
-    display: block;
-}
 .icon {
     height: 2.1rem;
     filter: var(--svg-color);
 }
 
-/* Analysis */
-.analysis-box {
-    text-align: center;
-}
-.analysis-box-br {
-    border-right: 1px solid var(--muted-border-color);
-}
-.analysis-full {
-    font-size: 4rem;
-    font-weight: bold;
-    margin-top: 1rem;
-}
-.analysis-total {
-    font-size: 3rem;
-    font-weight: bold;
-}
-.analysis-details {
-    font-size: 2rem;
-}
-.small {
-    font-size: 0.8rem;
-    font-style: italic;
-}
-.history-graph {
-    margin-top: 1rem;
-    background-color: var(--muted-border-color);
-    width: 100%;
-    height: 30rem;
-}
-article {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-article {
-    padding: 0.5rem;
+/* Text utilities */
+.text-primary {
+    color: var(--color-text-primary);
 }
 
-.metric-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+.text-secondary {
+    color: var(--color-text-secondary);
 }
 
-.metric-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+.text-muted {
+    color: var(--color-text-muted);
 }
 
-.metric-card:hover .details-hint {
-    color: #ddd !important;
+/* Link utilities */
+.link {
+    color: var(--color-link);
+    text-decoration: underline;
 }
 
-/* Table Styles */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1rem 0;
-    background: inherit;
-    color: inherit;
-    font-size: 1rem;
-    border-radius: 6px;
-    overflow: hidden;
+.link:hover {
+    color: var(--color-link-hover);
 }
-th, td {
-    padding: 0.75rem 1rem;
-    text-align: left;
+
+/* Background utilities */
+.bg-card {
+    background-color: var(--color-card);
 }
-th {
-    cursor: pointer;
-    user-select: none;
-    font-weight: bold;
-    border-bottom: 2px solid var(--muted-border-color, #e5e7eb);
+
+.bg-card-light {
+    background-color: var(--color-card-light);
 }
-tr:nth-child(even) {
-    background-color: rgba(0, 0, 0, 0.03);
+
+.bg-sidebar {
+    background-color: var(--color-sidebar);
 }
-tr:hover {
-    background-color: rgba(100, 116, 139, 0.08);
+
+.bg-nav {
+    background-color: var(--color-nav);
 }
-table {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+
+.bg-body {
+    background-color: var(--color-body);
 }
+
+.bg-hover-card {
+    background-color: var(--color-hover-card);
+}
+
+/* Layout utilities */
+.layout-container {
+    @apply max-w-[1400px] mx-auto w-full px-4 flex flex-col min-h-screen;
+}
+
+.layout-main {
+    @apply flex-1 flex flex-col p-4;
+}
+
+.layout-sidebar {
+    @apply w-full lg:w-64 border-b lg:border-b-0 lg:border-r p-4;
+    background-color: var(--color-sidebar);
+    border-color: var(--color-border);
+}
+
+.layout-content {
+    @apply flex-1 flex flex-col lg:flex-row;
+}
+
+/* Border utilities */
+.border-card {
+    border-color: var(--color-border);
+}
+
+.border-card-light {
+    border-color: var(--color-border-light);
+}
+
+.border-input {
+    border-color: var(--color-input);
+}
+
+/* Form input utilities */
+.input-base {
+    @apply w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:border-transparent;
+    border: 1px solid var(--color-input);
+    background-color: var(--color-input-bg);
+    color: var(--color-input-text);
+    --tw-ring-color: var(--color-focus-ring);
+}
+
+/* Button utilities */
+.btn-primary {
+    @apply px-4 py-2 rounded-md transition-colors duration-200;
+    background-color: var(--color-btn-primary);
+    color: var(--color-btn-text-light);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-btn-primary-hover);
+}
+
+.btn-secondary {
+    @apply px-4 py-2 rounded-md transition-colors duration-200;
+    background-color: var(--color-btn-secondary);
+    color: var(--color-btn-secondary-text);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-btn-secondary-hover);
+}
+
+.btn-danger {
+    @apply px-4 py-2 rounded-md transition-colors duration-200;
+    background-color: var(--color-btn-danger);
+    color: var(--color-btn-text-light);
+}
+
+.btn-danger:hover {
+    background-color: var(--color-btn-danger-hover);
+}
+
+/* Card utilities */
+.card {
+    @apply rounded-xl p-6;
+    background-color: var(--color-card);
+}
+
+.card-light {
+    @apply rounded-xl p-6;
+    background-color: var(--color-card-light);
+}
+
+.card-metric {
+    @apply rounded-2xl shadow-lg p-5 min-w-[140px] max-w-[180px] flex-1 flex flex-col items-center text-center
+        transition-transform duration-200 hover:scale-105 hover:shadow-xl;
+    background-color: var(--color-card);
+}
+
+.card-nav {
+    @apply rounded-xl p-5 text-center font-semibold text-lg transition-colors duration-200;
+    background-color: var(--color-card-light);
+    border: 1px solid var(--color-border-light);
+    color: var(--color-text-primary);
+}
+
+.card-nav:hover {
+    background-color: var(--color-hover-nav);
+}
+
+/* Hover utilities */
+.hover-card {
+    transition: background-color 0.2s;
+}
+
+.hover-card:hover {
+    background-color: var(--color-hover-card);
+}
+
+.hover-nav {
+    transition: background-color 0.2s;
+}
+
+.hover-nav:hover {
+    background-color: var(--color-hover-nav);
+}
+
+.hover-card-light {
+    transition: background-color 0.2s;
+}
+
+.hover-card-light:hover {
+    background-color: var(--color-hover-card-light);
+}
+
+/* Active state utilities */
+.nav-active {
+    color: var(--color-text-primary);
+    background-color: var(--color-nav-active);
+}
+
+/* Form control utilities */
+.checkbox-base {
+    @apply w-4 h-4 rounded focus:ring-2;
+    background-color: var(--color-card-light);
+    border: 1px solid var(--color-input);
+    color: var(--color-btn-primary);
+    --tw-ring-color: var(--color-focus-ring);
+}
+
+/* Dropdown utilities */
+.dropdown-menu {
+    @apply absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg z-50 min-w-[12rem] max-w-[20rem] w-auto;
+    background-color: var(--color-dropdown-menu);
+    border: 1px solid var(--color-border);
+}
+
+.dropdown-menu-right {
+    right: 0;
+    left: auto;
+}
+
+.dropdown-item {
+    @apply block px-4 py-2 transition-colors duration-200;
+    color: var(--color-text-primary);
+    background-color: var(--color-dropdown-item);
+}
+
+.dropdown-item:hover {
+    background-color: var(--color-dropdown-hover);
+}
+
+.dropdown-item-active {
+    @apply text-white;
+    background-color: var(--color-btn-primary);
+}
+
+.dropdown-item-active:hover {
+    background-color: var(--color-btn-primary-hover);
+}
+
+/* Summary/dropdown trigger utilities */
+.summary-base {
+    @apply cursor-pointer px-4 py-2 rounded-md transition-colors duration-200 min-w-[12rem] max-w-[20rem] w-auto
+        truncate;
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+}
+
+.summary-base:hover {
+    background-color: var(--color-hover-card-light);
+}
+
+/* Responsive grid for main content */
+@media (min-width: 992px) {
+    main > .grid {
+        grid-template-columns: 25% auto;
+        gap: 2rem;
+    }
+}
+
+/* Mobile responsive table */
 @media (max-width: 600px) {
     table, thead, tbody, th, td, tr {
         display: block;

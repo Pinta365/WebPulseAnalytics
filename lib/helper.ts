@@ -19,3 +19,51 @@ export function genULID(seedTime: number = Date.now()): string {
 export function extractTimeFromULID(id: string): number {
     return decodeTime(id);
 }
+
+export function getPeriodEnd(startDate: string | number | Date, granularity: "day" | "week" | "month" | "quarter") {
+    const start = new Date(startDate);
+    let end = new Date(start);
+    switch (granularity) {
+        case "day":
+            // End is the same as start for a single day
+            break;
+        case "week": {
+            // Add 6 days to get the last day of the week
+            end.setDate(start.getDate() + 6);
+            break;
+        }
+        case "month": {
+            // Set to last day of the month
+            end = new Date(start.getFullYear(), start.getMonth() + 1, 0);
+            break;
+        }
+        case "quarter": {
+            // Quarters: Jan-Mar, Apr-Jun, Jul-Sep, Oct-Dec
+            const currentQuarter = Math.floor(start.getMonth() / 3);
+            const lastMonthOfQuarter = currentQuarter * 3 + 2;
+            end = new Date(start.getFullYear(), lastMonthOfQuarter + 1, 0);
+            break;
+        }
+        default:
+            break;
+    }
+    return end.toLocaleDateString();
+}
+
+/**
+ * Helper function to conditionally apply classes
+ */
+export function classNames(...classes: (string | undefined | null | false)[]): string {
+    return classes.filter(Boolean).join(" ");
+}
+
+/**
+ * Helper function to create responsive classes
+ */
+export function responsiveClass(base: string, responsive: Record<string, string>): string {
+    const classes = [base];
+    Object.entries(responsive).forEach(([breakpoint, className]) => {
+        classes.push(`${breakpoint}:${className}`);
+    });
+    return classes.join(" ");
+}
