@@ -1,5 +1,5 @@
 import { SessionUser } from "lib/commonTypes.ts";
-import { config } from "lib/config.ts";
+import { getConfig } from "lib/config.ts";
 
 export function NavTop(data: SessionUser) {
     return (
@@ -7,7 +7,7 @@ export function NavTop(data: SessionUser) {
             <div class="px-4 py-2 flex justify-between items-center">
                 {/* Left: Logo */}
                 <div>
-                    <a href={config.common.websiteBaseURL} class="flex items-center gap-2">
+                    <a href={getConfig().common.websiteBaseURL} class="flex items-center gap-2">
                         <img
                             src="/img/svg/logo-top.svg"
                             class="h-8 w-auto filter dark:invert"

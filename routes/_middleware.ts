@@ -3,13 +3,13 @@ import { FreshContext } from "$fresh/server.ts";
 import { SessionUser } from "lib/commonTypes.ts";
 import { getCookies } from "$std/http/cookie.ts";
 import { generateKey, validateJWT } from "@cross/jwt";
-import { config } from "lib/config.ts";
+import { getConfig } from "lib/config.ts";
 
 export async function handler(
     req: Request,
     ctx: FreshContext<SessionUser>,
 ) {
-    const { cookieName, secret } = config.jwt;
+    const { cookieName, secret } = getConfig().jwt;
     const cookies = getCookies(req.headers);
 
     if (cookies[cookieName]) {

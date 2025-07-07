@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 import { Db, InsertOneResult, MongoClient, ObjectId } from "mongodb";
 import { logError } from "./debug_logger.ts";
-import { config } from "./config.ts";
+import { getConfig } from "./config.ts";
 
 import type { Browser, Cpu, Device, Engine, Os } from "https://deno.land/std@0.204.0/http/user_agent.ts";
 
@@ -115,7 +115,7 @@ export interface DeviceObject {
     scrolls: number;
 }
 
-const mongoClient = new MongoClient(config.mongo.mongoUri!);
+const mongoClient = new MongoClient(getConfig().mongo.mongoUri!);
 let mongoDatabase: Db | null = null;
 
 export async function getDatabase(): Promise<Db> {

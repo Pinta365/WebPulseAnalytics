@@ -1,7 +1,7 @@
 import { Handlers } from "$fresh/server.ts";
 import { encodeBase64Url } from "$std/encoding/base64url.ts";
 import { setCookie } from "$std/http/cookie.ts";
-import { config } from "lib/config.ts";
+import { getConfig } from "lib/config.ts";
 
 function generateStateString(length: number): string {
     const randomBytes = new Uint8Array(length);
@@ -18,7 +18,7 @@ export const handler: Handlers = {
 
         // Set state cookie
         setCookie(headers, {
-            name: config.github.cookieName,
+            name: getConfig().github.cookieName,
             value: state,
             sameSite: "Lax",
             domain: url.hostname,
@@ -28,8 +28,8 @@ export const handler: Handlers = {
         // Construct GitHub OAuth authorization URL
         const authorizeUrl = new URL("https://github.com/login/oauth/authorize");
         authorizeUrl.search = new URLSearchParams({
-            client_id: config.github.clientId,
-            redirect_uri: config.github.callbackUrl,
+            client_id: getConfig().github.clientId,
+            redirect_uri: getConfig().github.callbackUrl,
             state: state,
         }).toString();
 

@@ -1,5 +1,5 @@
 import { encodeBase64Url } from "$std/encoding/base64url.ts";
-import { config } from "lib/config.ts";
+import { getConfig } from "lib/config.ts";
 
 async function fetchWithCheck(url: string, options: RequestInit) {
     const response = await fetch(url, options);
@@ -38,7 +38,7 @@ const createOAuthProvider = (authUrl: string, userEndpoint: string) => {
                 },
             };
 
-            return await fetchWithCheck(`${config.github.apiBaseUrl}${userEndpoint}`, options);
+            return await fetchWithCheck(`${getConfig().github.apiBaseUrl}${userEndpoint}`, options);
         },
     };
 };

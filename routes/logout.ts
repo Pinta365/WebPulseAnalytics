@@ -1,6 +1,6 @@
 import { Handlers } from "$fresh/server.ts";
 import { deleteCookie } from "$std/http/cookie.ts";
-import { config } from "lib/config.ts";
+import { getConfig } from "lib/config.ts";
 
 export const handler: Handlers = {
     GET(req) {
@@ -8,11 +8,11 @@ export const handler: Handlers = {
         const headers = new Headers(req.headers);
 
         // Clear JWT and GitHub cookies
-        deleteCookie(headers, config.jwt.cookieName, {
+        deleteCookie(headers, getConfig().jwt.cookieName, {
             path: "/",
             domain: url.hostname,
         });
-        deleteCookie(headers, config.github.cookieName, {
+        deleteCookie(headers, getConfig().github.cookieName, {
             path: "/",
             domain: url.hostname,
         });

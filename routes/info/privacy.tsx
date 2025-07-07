@@ -1,4 +1,4 @@
-import { config } from "lib/config.ts";
+import { getConfig } from "lib/config.ts";
 
 export default function Privacy() {
     return (
@@ -7,7 +7,7 @@ export default function Privacy() {
                 <div class="px-4 py-2 flex justify-between items-center">
                     {/* Left: Logo */}
                     <div>
-                        <a href={config.common.websiteBaseURL} class="flex items-center gap-2">
+                        <a href={getConfig().common.websiteBaseURL} class="flex items-center gap-2">
                             <img
                                 src="/img/svg/logo-top.svg"
                                 class="h-8 w-auto filter dark:invert"
@@ -30,7 +30,7 @@ export default function Privacy() {
                         </p>
                     </div>
                     <a
-                        href={config.common.websiteBaseURL}
+                        href={getConfig().common.websiteBaseURL}
                         class="no-underline text-inherit mb-6 inline-block link"
                     >
                         &larr; Back to Webpulse Analytics

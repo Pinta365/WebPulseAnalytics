@@ -5,7 +5,7 @@ import { generateKey, signJWT } from "@cross/jwt";
 import { createUser, getUserFromProviderId, updateUser } from "lib/db.ts";
 import { DBUser, ProviderProfile } from "lib/db.ts";
 
-import { config } from "lib/config.ts";
+import { getConfig } from "lib/config.ts";
 
 export const handler: Handlers = {
     async GET(req) {
@@ -15,7 +15,7 @@ export const handler: Handlers = {
 
         const code = params.get("code") || "";
         const state = params.get("state") || undefined;
-        const storedState = getCookies(req.headers)[config.github.cookieName] || undefined;
+        const storedState = getCookies(req.headers)[getConfig().github.cookieName] || undefined;
 
         // Validate OAuth state to prevent CSRF attacks
         if (!state || state !== storedState) {
@@ -23,16 +23,16 @@ export const handler: Handlers = {
         }
 
         // Clear stored state
-        deleteCookie(headers, config.github.cookieName, {
+        deleteCookie(headers, getConfig().github.cookieName, {
             path: "/",
             domain: url.hostname,
         });
 
         try {
             const auth = await GitHubProvider.authToken(
-                config.github.callbackUrl,
-                config.github.clientId,
-                config.github.clientSecret,
+                getConfig().github.callbackUrl,
+                getConfig().github.clientId,
+                getConfig().github.clientSecret,
                 code,
             );
 
@@ -73,7 +73,7 @@ export const handler: Handlers = {
                     return new Response("Error processing authentication", { status: 500 });
                 }
             }
-            const jwtSecret = await generateKey(config.jwt.secret);
+            const jwtSecret = await generateKey(getConfig().jwt.secret);
             const jwtContent = {
                 _id: sessionUser._id!.toString(),
                 displayName: sessionUser.displayName!,
@@ -81,7 +81,7 @@ export const handler: Handlers = {
             };
             const jwt = await signJWT(jwtContent, jwtSecret);
             setCookie(headers, {
-                name: config.jwt.cookieName,
+                name: getConfig().jwt.cookieName,
                 value: jwt,
                 sameSite: "Lax",
                 domain: url.hostname,

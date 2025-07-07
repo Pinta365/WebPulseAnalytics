@@ -1,5 +1,5 @@
 import { Head } from "$fresh/runtime.ts";
-import { config } from "lib/config.ts";
+import { getConfig } from "lib/config.ts";
 
 export default function Error404() {
     return (
@@ -9,7 +9,7 @@ export default function Error404() {
             </Head>
             <div class="container mx-auto px-4 flex flex-col justify-center min-h-[calc(100vh-9rem)] py-4">
                 <a
-                    href={config.common.websiteBaseURL}
+                    href={getConfig().common.websiteBaseURL}
                     class="text-secondary hover:text-primary"
                 >
                     <img
