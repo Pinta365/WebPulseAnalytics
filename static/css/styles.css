@@ -52,7 +52,6 @@
     --card-bg: #fff;
     --card-light-bg: #f7f7fa;
     --card-border: #eee;
-    --primary: #222;
     --hover-bg: #f0f0f5;
 }
 
@@ -105,7 +104,6 @@
     --card-bg: #181c24;
     --card-light-bg: #232837;
     --card-border: #232837;
-    --primary: #fff;
     --hover-bg: #232837;
 }
 
@@ -427,14 +425,14 @@ body {
 .compact-table td {
     padding: 0.25rem 0.5rem;
     text-align: left;
-    color: var(--primary);
+    color: var(--color-text-primary);
 }
 
 .compact-table th {
     font-weight: bold;
     background: var(--color-card-light);
     border-bottom: 2px solid var(--color-border);
-    color: var(--primary);
+    color: var(--color-text-primary);
     cursor: pointer;
     user-select: none;
 }
