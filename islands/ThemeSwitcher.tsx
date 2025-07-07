@@ -1,13 +1,19 @@
 import { useEffect, useState } from "preact/hooks";
+import { IS_BROWSER } from "$fresh/runtime.ts";
 
 const THEME_KEY = "theme-preference";
 type Theme = "auto" | "light" | "dark";
 
+function isTheme(value: any): value is Theme {
+    return value === "auto" || value === "light" || value === "dark";
+}
+
 function getSystemTheme(): Theme {
-    return globalThis.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    return IS_BROWSER && globalThis.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
 function applyTheme(theme: Theme) {
+    if (!IS_BROWSER) return;
     const root = document.documentElement;
     if (theme === "auto") {
         root.classList.remove("dark");
@@ -22,23 +28,30 @@ function applyTheme(theme: Theme) {
 }
 
 export default function ThemeSwitcher() {
-    const [theme, setTheme] = useState<Theme>(() => {
-        if (typeof window !== "undefined") {
-            return (localStorage.getItem(THEME_KEY) as Theme) || "auto";
-        }
-        return "auto";
-    });
+    const [theme, setTheme] = useState<Theme>("light"); // default theme
 
     useEffect(() => {
-        applyTheme(theme);
-        localStorage.setItem(THEME_KEY, theme);
+        if (IS_BROWSER) {
+            const storedTheme = localStorage.getItem(THEME_KEY);
+            if (isTheme(storedTheme)) setTheme(storedTheme);
+        }
+    }, []);
 
-        if (theme === "auto") {
-            const handler = () => applyTheme("auto");
-            globalThis.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", handler);
-            return () => globalThis.matchMedia("(prefers-color-scheme: dark)").removeEventListener("change", handler);
+    useEffect(() => {
+        if (IS_BROWSER) {
+            applyTheme(theme);
+            localStorage.setItem(THEME_KEY, theme);
+
+            if (theme === "auto") {
+                const handler = () => applyTheme("auto");
+                globalThis.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", handler);
+                return () =>
+                    globalThis.matchMedia("(prefers-color-scheme: dark)").removeEventListener("change", handler);
+            }
         }
     }, [theme]);
+
+    if (!IS_BROWSER) return <div />;
 
     return (
         <div class="flex gap-5 items-center" id="theme-switcher">
