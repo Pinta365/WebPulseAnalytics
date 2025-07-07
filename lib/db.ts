@@ -13,6 +13,10 @@ export interface ProviderProfile {
 
 export type SupportedProviders = "github"; //Add more providers.. google and apple?
 
+export interface UserSettings {
+    locale?: string; // e.g., "en-US", "en-GB", "sv-SE"
+}
+
 export interface DBUser {
     _id?: ObjectId;
     displayName: string;
@@ -21,6 +25,7 @@ export interface DBUser {
     providers: {
         [key in SupportedProviders]?: ProviderProfile;
     };
+    settings?: UserSettings;
 }
 
 export interface ProjectOptions {
@@ -205,9 +210,20 @@ export async function getUserFromProviderId(provider: SupportedProviders, id: nu
     }
 }
 
+export async function getUserById(userId: string): Promise<DBUser | null> {
+    try {
+        const collection = (await getDatabase()).collection<DBUser>("users");
+        const userDoc = await collection.findOne({ _id: new ObjectId(userId) });
+        return userDoc;
+    } catch (error) {
+        logError("Error retrieving user by ID", error);
+        return null;
+    }
+}
+
 export async function updateUser(
     userId: string,
-    user: DBUser,
+    user: Partial<DBUser>,
     provider?: SupportedProviders,
     providerProfile?: ProviderProfile,
 ): Promise<boolean> {
@@ -218,7 +234,20 @@ export async function updateUser(
             user.providers = user.providers || {};
             user.providers[provider] = providerProfile;
         }
-        await collection.updateOne({ _id: idObject }, { $set: user });
+        // Only update the settings field if that's all that's present
+        if (user.settings && Object.keys(user).length === 1) {
+            await collection.updateOne(
+                { _id: idObject },
+                { $set: { settings: user.settings } },
+            );
+        } else if (user.settings) {
+            await collection.updateOne(
+                { _id: idObject },
+                { $set: { ...user, settings: user.settings } },
+            );
+        } else {
+            await collection.updateOne({ _id: idObject }, { $set: user });
+        }
         return true;
     } catch (error) {
         logError("Error updating user", error);

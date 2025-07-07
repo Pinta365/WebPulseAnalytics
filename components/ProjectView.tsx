@@ -1,10 +1,5 @@
-import { AddProject } from "islands/AddProject.tsx";
 import { DelProjectButton } from "islands/DelProjectButton.tsx";
 import { Project } from "lib/db.ts";
-
-interface Projects {
-    projects: Project[];
-}
 
 function printProject(project: Project, onDelete: (id: string) => void, onError: (msg: string) => void) {
     return (

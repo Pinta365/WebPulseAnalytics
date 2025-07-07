@@ -36,10 +36,9 @@ export const handler: Handlers = {
                 code,
             );
 
-            const githubProfile: ProviderProfile = await GitHubProvider.profile(auth.access_token);
+            const githubProfile: any = await GitHubProvider.profile(auth.access_token);
 
             // closed beta check :P
-
             const betaAllowedAccounts = [19735646, 419737];
             if (!betaAllowedAccounts.includes(githubProfile.id)) {
                 console.log("Failed login:", githubProfile.id, githubProfile.name);
@@ -48,11 +47,10 @@ export const handler: Handlers = {
             }
 
             const alreadyUser: DBUser | null = await getUserFromProviderId("github", githubProfile.id);
-
             const sessionUser = {} as DBUser;
             const providerProfile: ProviderProfile = {
                 id: githubProfile.id,
-                name: githubProfile.name,
+                name: githubProfile.name && githubProfile.name.length > 0 ? githubProfile.name : githubProfile.login,
                 avatar_url: githubProfile.avatar_url,
             };
 
@@ -78,6 +76,7 @@ export const handler: Handlers = {
                 _id: sessionUser._id!.toString(),
                 displayName: sessionUser.displayName!,
                 avatar: sessionUser.avatar!,
+                settings: alreadyUser?.settings || {},
             };
             const jwt = await signJWT(jwtContent, jwtSecret);
             setCookie(headers, {

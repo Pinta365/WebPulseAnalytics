@@ -1,11 +1,37 @@
 import type { Handlers, PageProps } from "$fresh/server.ts";
 import ThemeSwitcher from "islands/ThemeSwitcher.tsx";
+import { getUserById, updateUser } from "lib/db.ts";
+import LocaleSelector from "islands/LocaleSelector.tsx";
 
 export const handler: Handlers = {
-    GET(_req, ctx) {
+    async GET(_req, ctx) {
+        // Fetch complete user data including settings from database
+        const user = ctx.state;
+        if (!user || !user._id) {
+            return new Response("Unauthorized", { status: 401 });
+        }
+
+        // Get the complete user data from database
+        const completeUser = await getUserById(user._id as string);
+
         return ctx.render({
-            state: ctx.state,
+            state: completeUser || user,
         });
+    },
+    async POST(req, ctx) {
+        const { locale } = await req.json();
+        const user = ctx.state;
+        if (!user || !user._id) {
+            return new Response("Unauthorized", { status: 401 });
+        }
+        const updated = await updateUser(user._id.toString(), {
+            settings: Object.assign({}, user.settings, { locale }),
+        } as any);
+        if (updated) {
+            return new Response(JSON.stringify({ success: true }), { status: 200 });
+        } else {
+            return new Response(JSON.stringify({ success: false }), { status: 500 });
+        }
     },
 };
 
@@ -34,6 +60,7 @@ export default function SettingsPage({ data }: PageProps) {
                                 "Auto" follows your system preference.
                             </div>
                         </div>
+                        <LocaleSelector initialLocale={state.settings?.locale || "en-US"} />
                     </div>
                     Manage your account and preferences. More settings coming soon!
                 </div>

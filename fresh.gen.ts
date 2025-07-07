@@ -22,6 +22,7 @@ import * as $AddProject from "./islands/AddProject.tsx";
 import * as $DataTable from "./islands/DataTable.tsx";
 import * as $DelProjectButton from "./islands/DelProjectButton.tsx";
 import * as $EditProject from "./islands/EditProject.tsx";
+import * as $LocaleSelector from "./islands/LocaleSelector.tsx";
 import * as $NavSide from "./islands/NavSide.tsx";
 import * as $ProjectsIsland from "./islands/ProjectsIsland.tsx";
 import * as $Sparkline from "./islands/Sparkline.tsx";
@@ -54,6 +55,7 @@ const manifest = {
         "./islands/DataTable.tsx": $DataTable,
         "./islands/DelProjectButton.tsx": $DelProjectButton,
         "./islands/EditProject.tsx": $EditProject,
+        "./islands/LocaleSelector.tsx": $LocaleSelector,
         "./islands/NavSide.tsx": $NavSide,
         "./islands/ProjectsIsland.tsx": $ProjectsIsland,
         "./islands/Sparkline.tsx": $Sparkline,
