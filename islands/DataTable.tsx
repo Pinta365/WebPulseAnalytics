@@ -58,16 +58,13 @@ export default function DataTable(
 
     return (
         <div class="overflow-x-auto">
-            <table class="w-full border-collapse my-4 bg-card text-base rounded-lg overflow-hidden shadow-sm text-primary">
-                <thead class="bg-card-light sticky top-0 z-10">
+            <table class="compact-table">
+                <thead>
                     <tr>
                         {columns.map((col) => (
                             <th
                                 key={col.key}
                                 onClick={() => handleSort(col.key)}
-                                class={`px-4 py-3 text-left font-bold border-b-2 border-card bg-card-light text-primary ${
-                                    sortable ? "cursor-pointer select-none" : "cursor-default"
-                                } hover-card`}
                             >
                                 {col.label}
                                 {sortable && sortCol === col.key ? (sortDir === "asc" ? " ▲" : " ▼") : ""}
@@ -81,12 +78,12 @@ export default function DataTable(
                             <tr>
                                 <td colSpan={columns.length} style={{ padding: 0 }}>
                                     <div style={{ maxHeight: "480px", overflowY: "auto" }}>
-                                        <table class="w-full border-collapse">
+                                        <table class="compact-table">
                                             <tbody>
                                                 {sorted.map((row, rowIdx) => (
-                                                    <tr key={rowIdx} class={rowIdx % 2 === 1 ? "bg-card-light" : ""}>
+                                                    <tr key={rowIdx}>
                                                         {columns.map((col) => (
-                                                            <td key={col.key} class="px-4 py-3 text-primary">
+                                                            <td key={col.key}>
                                                                 {col.render
                                                                     ? col.render(row[col.key], row)
                                                                     : (row[col.key] !== undefined &&
@@ -108,9 +105,9 @@ export default function DataTable(
                     : (
                         <tbody>
                             {sorted.map((row, rowIdx) => (
-                                <tr key={rowIdx} class={rowIdx % 2 === 1 ? "bg-card-light" : ""}>
+                                <tr key={rowIdx}>
                                     {columns.map((col) => (
-                                        <td key={col.key} class="px-4 py-3 text-primary">
+                                        <td key={col.key}>
                                             {col.render
                                                 ? col.render(row[col.key], row)
                                                 : (row[col.key] !== undefined && row[col.key] !== null &&

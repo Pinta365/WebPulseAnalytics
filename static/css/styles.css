@@ -47,6 +47,13 @@
     --svg-color-inverted: brightness(0) saturate(100%) invert(11%) sepia(13%) saturate(1681%) hue-rotate(163deg)
         brightness(92%) contrast(89%);
     --svg-color: invert(70%) sepia(89%) saturate(0%) hue-rotate(172deg) brightness(105%) contrast(105%);
+
+    /* Compact DataTable colors */
+    --card-bg: #fff;
+    --card-light-bg: #f7f7fa;
+    --card-border: #eee;
+    --primary: #222;
+    --hover-bg: #f0f0f5;
 }
 
 /* Dark Mode Colors */
@@ -93,6 +100,13 @@
     --svg-color-inverted: invert(70%) sepia(89%) saturate(0%) hue-rotate(172deg) brightness(105%) contrast(105%);
     --svg-color: brightness(0) saturate(100%) invert(11%) sepia(13%) saturate(1681%) hue-rotate(163deg) brightness(92%)
         contrast(89%);
+
+    /* Compact DataTable colors */
+    --card-bg: #181c24;
+    --card-light-bg: #232837;
+    --card-border: #232837;
+    --primary: #fff;
+    --hover-bg: #232837;
 }
 
 /* Legacy support for prefers-color-scheme */
@@ -395,4 +409,40 @@ body {
 .notification-warning {
     background-color: #fde047; /* Tailwind yellow-500 */
     color: #000;
+}
+
+/* Compact DataTable styles */
+.compact-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    background: var(--color-card);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    font-size: 1rem;
+}
+
+.compact-table th,
+.compact-table td {
+    padding: 0.25rem 0.5rem;
+    text-align: left;
+    color: var(--primary);
+}
+
+.compact-table th {
+    font-weight: bold;
+    background: var(--color-card-light);
+    border-bottom: 2px solid var(--color-border);
+    color: var(--primary);
+    cursor: pointer;
+    user-select: none;
+}
+
+.compact-table tr:nth-child(even) {
+    background: var(--color-card-light);
+}
+
+.compact-table tr:hover {
+    background: var(--color-hover-card);
 }
