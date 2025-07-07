@@ -173,6 +173,8 @@ export function RealTimeView(data: Projects) {
                         ]}
                         data={analyticsDataPerProject}
                         topN={100}
+                        defaultSortCol="visitors"
+                        defaultSortDir="desc"
                     />
                 </article>
             )}
