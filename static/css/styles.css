@@ -378,3 +378,21 @@ body {
         border-bottom: none;
     }
 }
+
+/* Notification banner styles */
+.notification-success {
+  background-color: #22c55e; /* Tailwind green-500 */
+  color: #fff;
+}
+.notification-error {
+  background-color: #ef4444; /* Tailwind red-500 */
+  color: #fff;
+}
+.notification-info {
+  background-color: #3b82f6; /* Tailwind blue-500 */
+  color: #fff;
+}
+.notification-warning {
+  background-color: #fde047; /* Tailwind yellow-500 */
+  color: #000;
+}
