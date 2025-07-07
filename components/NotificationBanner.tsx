@@ -9,7 +9,9 @@ const typeClassNames: Record<NotificationType, string> = {
     warning: "notification-warning",
 };
 
-export function NotificationBanner({ message, onClose, type = "success" }: { message: string; onClose: () => void; type?: NotificationType }) {
+export function NotificationBanner(
+    { message, onClose, type = "success" }: { message: string; onClose: () => void; type?: NotificationType },
+) {
     useEffect(() => {
         if (!message) return;
         const timer = setTimeout(() => {
@@ -20,7 +22,11 @@ export function NotificationBanner({ message, onClose, type = "success" }: { mes
 
     if (!message) return null;
     return (
-        <div class={`fixed top-4 left-1/2 transform -translate-x-1/2 ${typeClassNames[type]} px-6 py-3 rounded shadow-lg z-50 flex items-center space-x-4`}>
+        <div
+            class={`fixed top-4 left-1/2 transform -translate-x-1/2 ${
+                typeClassNames[type]
+            } px-6 py-3 rounded shadow-lg z-50 flex items-center space-x-4`}
+        >
             <span>{message}</span>
             <button type="button" onClick={onClose} class="ml-4 font-bold">&times;</button>
         </div>

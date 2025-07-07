@@ -21,7 +21,11 @@ export default function App({ Component, ...props }: PageProps) {
                     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                     <link rel="stylesheet" href="/css/styles.css" />
                     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
-                    <script async src="https://track.webpulseanalytics.com/client/653eb35b048754e8b13f0771" type="module">
+                    <script
+                        async
+                        src="https://track.webpulseanalytics.com/client/653eb35b048754e8b13f0771"
+                        type="module"
+                    >
                     </script>
                     <title>WebPulse Analytics</title>
                     <script src="/js/theme.js"></script>

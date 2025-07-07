@@ -61,7 +61,7 @@ export function LandingView({ projects = [], analytics, mostActiveProject }: Lan
             {/* Recent Activity & Add Project */}
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start mb-8">
                 <div class="bg-card-light border-card-light rounded-xl p-5 flex flex-col text-primary">
-                    <AddProject />
+                    <AddProject onProjectAdded={() => {}} onError={() => {}} />
                 </div>
             </div>
 

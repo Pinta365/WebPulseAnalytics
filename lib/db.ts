@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { Db, MongoClient, ObjectId, InsertOneResult } from "mongodb";
+import { Db, InsertOneResult, MongoClient, ObjectId } from "mongodb";
 import { logError } from "./debug_logger.ts";
 import { config } from "./config.ts";
 

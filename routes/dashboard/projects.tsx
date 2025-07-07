@@ -138,9 +138,7 @@ export default function Projects({ data }: PageProps) {
     const { editProject, projects } = data;
     return (
         <>
-            {editProject ? (
-                <EditProject project={editProject} />
-            ) : (
+            {editProject ? <EditProject project={editProject} /> : (
                 <NotificationProvider>
                     <ProjectsIsland initialProjects={projects} />
                 </NotificationProvider>
