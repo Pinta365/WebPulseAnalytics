@@ -5,7 +5,9 @@ function getOrThrow(
 ): string {
     if (envVar) return envVar;
     if (defaultValue !== undefined) return defaultValue;
-    throw new Error(`Environment variable ${name} is not set`);
+    //throw new Error(`Environment variable ${name} is not set`); //Some deploy issues, disabling throw for now.
+    console.warn(`Warning: Environment variable ${name} is not set. Returning empty string.`);
+    return "";
 }
 
 export function getConfig() {

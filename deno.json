@@ -7,8 +7,18 @@
         "preview": "deno run -A main.ts",
         "update": "deno run -A -r https://fresh.deno.dev/update ."
     },
-    "lint": { "rules": { "tags": ["fresh", "recommended"] } },
-    "fmt": { "lineWidth": 120, "indentWidth": 4 },
+    "lint": {
+        "rules": {
+            "tags": [
+                "fresh",
+                "recommended"
+            ]
+        }
+    },
+    "fmt": {
+        "lineWidth": 120,
+        "indentWidth": 4
+    },
     "imports": {
         "$fresh/": "https://deno.land/x/fresh@1.7.3/",
         "$std/": "https://deno.land/std@0.203.0/",
@@ -28,6 +38,11 @@
         "preact-render-to-string": "https://esm.sh/*preact-render-to-string@6.2.2",
         "preact/": "https://esm.sh/preact@10.22.0/"
     },
-    "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" },
-    "exclude": ["**/_fresh/*"]
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "jsxImportSource": "preact"
+    },
+    "exclude": [
+        "**/_fresh/*"
+    ]
 }
