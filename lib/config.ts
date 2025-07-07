@@ -42,7 +42,7 @@ export function getConfig() {
             websiteBaseURL: getOrThrow(WEBSITE_BASE_URL, "WEBSITE_BASE_URL", "http://localhost:8000"),
         },
         mongo: {
-            mongoUri: getOrThrow(MONGO_URI, "MONGO_URI"),
+            mongoUri: getOrThrow(MONGO_URI, "MONGO_URI", "mongodb://localhost:27017/"),
         },
     };
 }
