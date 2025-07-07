@@ -28,7 +28,7 @@ function applyTheme(theme: Theme) {
 }
 
 export default function ThemeSwitcher() {
-    const [theme, setTheme] = useState<Theme>("light"); // default theme
+    const [theme, setTheme] = useState<Theme>("auto"); // default theme
 
     useEffect(() => {
         if (IS_BROWSER) {
