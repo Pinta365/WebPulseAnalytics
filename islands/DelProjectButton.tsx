@@ -1,8 +1,10 @@
 interface ProjectData {
     id: string;
+    onDelete: (id: string) => void;
+    onError: (msg: string) => void;
 }
 
-export function DelProjectButton(data: ProjectData) {
+export function DelProjectButton({ id, onDelete, onError }: ProjectData) {
     const delButtonClick = async (id: string) => {
         const options = {
             method: "DELETE",
@@ -16,9 +18,9 @@ export function DelProjectButton(data: ProjectData) {
         };
         const response = await fetch("/dashboard/projects", options);
         if (response.ok) {
-            globalThis.location.href = "/dashboard/projects";
+            onDelete(id);
         } else {
-            //Poppa varningsruta med fel
+            onError("Failed to delete project");
             console.error("Post failed");
         }
     };
@@ -26,7 +28,7 @@ export function DelProjectButton(data: ProjectData) {
     return (
         <button
             type="button"
-            onClick={() => delButtonClick(data.id)}
+            onClick={() => delButtonClick(id)}
             class="btn-danger"
         >
             Delete

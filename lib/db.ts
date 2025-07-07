@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { Db, MongoClient, ObjectId } from "mongodb";
+import { Db, MongoClient, ObjectId, InsertOneResult } from "mongodb";
 import { logError } from "./debug_logger.ts";
 import { config } from "./config.ts";
 
@@ -145,27 +145,26 @@ export async function getProjects(userId: string): Promise<Project[]> {
     return projects;
 }
 
-export async function upsertProject(project: Project): Promise<boolean> {
+export async function upsertProject(project: Project): Promise<ObjectId | null> {
     try {
         const collection = (await getDatabase()).collection("projects");
 
         // If the project doesn't have an _id, MongoDB will automatically insert one
-        let idFilter = {};
+        let id: ObjectId;
         if (project._id) {
-            idFilter = { _id: new ObjectId(project._id) };
-            // Use the upsert option
+            id = new ObjectId(project._id);
             await collection.updateOne(
-                idFilter,
+                { _id: id },
                 { $set: project },
             );
         } else {
-            await collection.insertOne(project);
+            const result: InsertOneResult<Document> = await collection.insertOne(project);
+            id = result.insertedId as ObjectId;
         }
-
-        return true;
+        return id;
     } catch (error) {
         logError("Error upserting project", error);
-        return false;
+        return null;
     }
 }
 

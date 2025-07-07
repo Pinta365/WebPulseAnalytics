@@ -1,6 +1,6 @@
 import type { Handlers, PageProps } from "$fresh/server.ts";
-import { ProjectView } from "components/ProjectView.tsx";
 import { EditProject } from "islands/EditProject.tsx";
+import ProjectsIsland from "islands/ProjectsIsland.tsx";
 import { deleteProject, getProject, getProjects, upsertProject } from "lib/db.ts";
 import { ObjectId } from "mongodb";
 
@@ -30,11 +30,11 @@ export const handler: Handlers = {
         const captureAllClicks = params.get("captureAllClicks") === "true";
         const pageScrollsChecked = params.get("pageScrollsChecked") === "true";
         if (name && ownerId) {
-            const insert = await upsertProject({
+            const projectToInsert = {
                 ownerId,
                 name,
                 description,
-                //allowedOrigins,
+                //allowedOrigins, //Keep for later
                 options: {
                     storeUserAgent: storeUA,
                     storeLocation: storeLoc,
@@ -50,12 +50,20 @@ export const handler: Handlers = {
                         enabled: pageScrollsChecked,
                     },
                 },
-            });
-
-            if (insert) {
-                return new Response("Ok", { status: 201 });
+            };
+            const id = await upsertProject(projectToInsert);
+            if (id) {
+                const newProject = await getProject(ownerId, id.toString());
+                if (newProject) {
+                    return new Response(JSON.stringify(newProject), {
+                        status: 201,
+                        headers: { "Content-Type": "application/json" },
+                    });
+                } else {
+                    return new Response("Inserted but not found.", { status: 201 });
+                }
             } else {
-                return new Response("Not insterted.", { status: 422 });
+                return new Response("Not inserted.", { status: 422 });
             }
         }
 
@@ -129,7 +137,7 @@ export default function Projects({ data }: PageProps) {
     const { editProject, projects } = data;
     return (
         <>
-            {editProject ? <EditProject project={editProject} /> : <ProjectView projects={projects} />}
+            {editProject ? <EditProject project={editProject} /> : <ProjectsIsland initialProjects={projects} />}
         </>
     );
 }

@@ -1,6 +1,8 @@
 import { useState } from "preact/hooks";
 
-export function AddProject() {
+export function AddProject(
+    { onProjectAdded, onError }: { onProjectAdded: (project: any) => void; onError: (msg: string) => void },
+) {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [pageLoadsChecked, setPageLoadsChecked] = useState(true);
@@ -33,11 +35,15 @@ export function AddProject() {
 
         const response = await fetch("/dashboard/projects", options);
         if (response.ok) {
-            //clearForm();
-            //reloadar sidan så länge som en workaround för att få det nya projected
-            globalThis.location.href = "/dashboard/projects";
+            try {
+                const newProject = await response.json();
+                onProjectAdded(newProject);
+            } catch {
+                onProjectAdded(null); // fallback if no JSON
+            }
+            clearForm();
         } else {
-            //Poppa varningsruta med fel
+            onError("Failed to add project");
             console.error("Update failed");
         }
     };
@@ -197,6 +203,7 @@ export function AddProject() {
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <button
+                            type="button"
                             onClick={() => clearForm()}
                             class="btn-secondary w-full"
                         >
@@ -205,6 +212,7 @@ export function AddProject() {
                     </div>
                     <div>
                         <button
+                            type="button"
                             onClick={() => addProjectButton()}
                             class="btn-primary w-full"
                         >

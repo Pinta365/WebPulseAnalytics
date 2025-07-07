@@ -6,7 +6,7 @@ interface Projects {
     projects: Project[];
 }
 
-function printProject(project: Project) {
+function printProject(project: Project, onDelete: (id: string) => void, onError: (msg: string) => void) {
     return (
         <details class="max-w-2xl mb-4">
             <summary class="cursor-pointer text-secondary font-medium p-3 bg-card rounded-lg">
@@ -63,21 +63,25 @@ function printProject(project: Project) {
                     </a>
                 </div>
                 <div>
-                    <DelProjectButton id={project._id?.toString() ?? ""} />
+                    <DelProjectButton id={project._id?.toString() ?? ""} onDelete={onDelete} onError={onError} />
                 </div>
             </div>
         </details>
     );
 }
-export function ProjectView(data: Projects) {
-    const { projects } = data;
 
+export function ProjectView(
+    { projects, onDelete, onError }: {
+        projects: Project[];
+        onDelete: (id: string) => void;
+        onError: (msg: string) => void;
+    },
+) {
     return (
         <section class="space-y-6">
-            <AddProject />
             <h1 class="text-3xl font-bold text-primary mb-6">Projects</h1>
             {projects?.length > 0
-                ? projects.map((project) => printProject(project))
+                ? projects.map((project) => printProject(project, onDelete, onError))
                 : <p class="text-secondary">No projects</p>}
         </section>
     );

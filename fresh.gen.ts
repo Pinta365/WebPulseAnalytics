@@ -23,6 +23,7 @@ import * as $DataTable from "./islands/DataTable.tsx";
 import * as $DelProjectButton from "./islands/DelProjectButton.tsx";
 import * as $EditProject from "./islands/EditProject.tsx";
 import * as $NavSide from "./islands/NavSide.tsx";
+import * as $ProjectsIsland from "./islands/ProjectsIsland.tsx";
 import * as $Sparkline from "./islands/Sparkline.tsx";
 import * as $ThemeSwitcher from "./islands/ThemeSwitcher.tsx";
 import * as $TrendsChart from "./islands/TrendsChart.tsx";
@@ -54,6 +55,7 @@ const manifest = {
         "./islands/DelProjectButton.tsx": $DelProjectButton,
         "./islands/EditProject.tsx": $EditProject,
         "./islands/NavSide.tsx": $NavSide,
+        "./islands/ProjectsIsland.tsx": $ProjectsIsland,
         "./islands/Sparkline.tsx": $Sparkline,
         "./islands/ThemeSwitcher.tsx": $ThemeSwitcher,
         "./islands/TrendsChart.tsx": $TrendsChart,
