@@ -4,7 +4,7 @@ import { AddProject } from "../islands/AddProject.tsx";
 interface LandingViewProps {
     projects?: any[];
     analytics?: any;
-    mostActiveProject?: { name: string; pageLoads: number; sessions: number } | null;
+    mostActiveProject?: { id: string; name: string; pageLoads: number; sessions: number } | null;
 }
 
 // Color palette from Trends/History page
@@ -16,29 +16,52 @@ const metricColors = [
     "#14b8a6", // teal
 ];
 
-function MetricCard({ icon, label, value, color }: { icon: string; label: string; value: any; color: string }) {
-    return (
-        <div class="card-metric">
+function MetricCard(
+    { icon, label, value, color, href }: { icon: string; label: string; value: any; color: string; href?: string },
+) {
+    const content = (
+        <div class="card-metric cursor-pointer hover:shadow-lg transition-shadow">
             <div class="text-4xl mb-1">{icon}</div>
             <div class="text-4xl font-bold mb-1" style={{ color }}>{value}</div>
             <div class="text-base text-muted mb-1">{label}</div>
         </div>
     );
+    return href ? <a href={href} class="block">{content}</a> : content;
 }
 
 export function LandingView({ projects = [], analytics, mostActiveProject }: LandingViewProps) {
     // Stats from analytics or fallback
     const stats = [
-        { icon: "📁", label: "Total Projects", value: projects.length, color: metricColors[0] },
-        { icon: "👁️", label: "Recent Traffic", value: analytics?.pageLoads ?? 0, color: metricColors[2] },
+        {
+            icon: "📁",
+            label: "Total Projects",
+            value: projects.length,
+            color: metricColors[0],
+            href: "/dashboard/projects",
+        },
+        {
+            icon: "👁️",
+            label: "Recent Traffic",
+            value: analytics?.pageLoads ?? 0,
+            color: metricColors[2],
+            href: "/dashboard/trends/all/month?span=this-year",
+        },
         mostActiveProject
             ? {
                 icon: "🔥",
                 label: `Most Active: ${mostActiveProject.name || "N/A"}`,
                 value: mostActiveProject.pageLoads + " loads",
                 color: metricColors[3],
+                href: mostActiveProject.id
+                    ? `/dashboard/trends/${encodeURIComponent(mostActiveProject.id)}/month?span=this-year`
+                    : undefined,
             }
-            : { icon: "🔥", label: "Most Active Project", value: "N/A", color: metricColors[3] },
+            : {
+                icon: "🔥",
+                label: "Most Active Project",
+                value: "N/A",
+                color: metricColors[3],
+            },
     ];
 
     return (
@@ -54,7 +77,13 @@ export function LandingView({ projects = [], analytics, mostActiveProject }: Lan
             {/* Key Metrics */}
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-9">
                 {stats.map((stat) => (
-                    <MetricCard icon={stat.icon} label={stat.label} value={stat.value} color={stat.color} />
+                    <MetricCard
+                        icon={stat.icon}
+                        label={stat.label}
+                        value={stat.value}
+                        color={stat.color}
+                        href={stat.href}
+                    />
                 ))}
             </div>
 

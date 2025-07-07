@@ -26,6 +26,7 @@ export const handler: Handlers = {
             if (analyticsArr.length > 0) {
                 const top = analyticsArr.reduce((a: any, b: any) => (a.pageLoads > b.pageLoads ? a : b));
                 mostActiveProject = {
+                    id: top._id?.toString?.() ?? (top._id + ""),
                     name: top.projectName,
                     pageLoads: top.pageLoads,
                     sessions: top.sessions,
