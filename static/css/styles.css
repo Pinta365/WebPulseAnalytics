@@ -268,12 +268,19 @@ body {
 
 .card-metric {
     @apply rounded-2xl shadow-lg p-5 min-w-[140px] max-w-[180px] flex-1 flex flex-col items-center text-center
-        transition-transform duration-200 hover:scale-105 hover:shadow-xl;
+        transition-all duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-1;
     background-color: var(--color-card);
+    border: 1px solid var(--color-border-light);
+}
+
+.card-metric:hover {
+    border-color: var(--color-border);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .card-nav {
-    @apply rounded-xl p-5 text-center font-semibold text-lg transition-colors duration-200;
+    @apply rounded-xl p-6 text-center font-semibold text-lg transition-all duration-300 hover:scale-105
+        hover:-translate-y-1;
     background-color: var(--color-card-light);
     border: 1px solid var(--color-border-light);
     color: var(--color-text-primary);
@@ -281,6 +288,8 @@ body {
 
 .card-nav:hover {
     background-color: var(--color-hover-nav);
+    border-color: var(--color-border);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 /* Hover utilities */
