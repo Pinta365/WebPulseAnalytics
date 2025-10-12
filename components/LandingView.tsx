@@ -28,18 +28,22 @@ function MetricCard(
 ) {
     const content = (
         <div class="card-metric cursor-pointer hover:shadow-lg transition-shadow">
-            <div class="text-4xl font-bold mb-1" style={{ color }}>{value}</div>
-            <div class="text-xs mb-2 text-secondary font-medium">
-                {label}
-            </div>
-            {sparklineData && sparklineData.length > 0 && (
-                <Sparkline data={sparklineData} color={color} height={32} width={120} />
-            )}
-            {href && (
-                <div class="text-xs mt-2 text-secondary hover:text-primary">
-                    View Details &rarr;
+            <div class="flex flex-col items-center flex-1">
+                <div class="text-4xl font-bold mb-1" style={{ color }}>{value}</div>
+                <div class="text-xs mb-2 text-secondary font-medium text-center leading-tight min-h-[2.5rem] flex items-center">
+                    {label}
                 </div>
-            )}
+            </div>
+            <div class="flex flex-col items-center">
+                {sparklineData && sparklineData.length > 0 && (
+                    <Sparkline data={sparklineData} color={color} height={32} width={120} />
+                )}
+                {href && (
+                    <div class="text-xs mt-2 text-secondary hover:text-primary">
+                        View Details &rarr;
+                    </div>
+                )}
+            </div>
         </div>
     );
     return href
