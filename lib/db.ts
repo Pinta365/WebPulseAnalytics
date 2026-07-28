@@ -54,17 +54,44 @@ export interface Project {
 }
 
 export interface EventPayload {
-    // Fixed types
+    // Present on every event
     timestamp: number;
     projectId: ObjectId;
-    type: string;
+    type: "pageInit" | "pageLoad" | "pageHide" | "pageClick" | "pageScroll";
     pageLoadId: ObjectId;
     deviceId: ObjectId;
     sessionId: ObjectId;
+
+    /**
+     * These are session-scoped and normally absent here: the backend only keeps
+     * an event's own copy when it differs from the session's (a bot reusing a
+     * sessionId, a visitor whose country changed mid-session). Read user agent
+     * and location from SessionObject, not from events.
+     */
     userAgent?: UserAgentData;
     location?: LocationData;
-    // eventtype specific types.. should be typed at some point
-    [key: string]: string | number | undefined | ObjectId | LocationData | UserAgentData;
+    utm?: Record<string, string>;
+
+    // Event-type specific — which of these exist depends on `type`:
+    url?: string; // pageLoad, pageHide, pageClick, pageScroll
+    title?: string; // pageLoad, pageHide
+    referrer?: string; // pageLoad
+    depth?: number; // pageScroll — percentage, one of 25/50/75/100
+    targetTag?: string; // pageClick
+    targetId?: string; // pageClick
+    targetHref?: string; // pageClick — only present for anchor targets
+    targetClass?: string; // pageClick
+    x?: number; // pageClick
+    y?: number; // pageClick
+
+    [key: string]:
+        | string
+        | number
+        | undefined
+        | ObjectId
+        | LocationData
+        | UserAgentData
+        | Record<string, string>;
 }
 
 export interface UserAgentData {
@@ -85,7 +112,10 @@ interface PageLoad {
     timestamp: number;
     firstEventAt: number;
     lastEventAt: number;
-    referer: string | undefined;
+    referrer?: string;
+    /** Absent when the entry was created by a click/scroll before its pageLoad. */
+    title?: string;
+    url?: string;
     clicks: number;
     scrolls: number;
 }
@@ -99,6 +129,7 @@ export interface SessionObject {
     lastEventAt: number;
     userAgent?: UserAgentData;
     location?: LocationData;
+    utm?: Record<string, string>;
 
     loads: number;
     clicks: number;
@@ -485,25 +516,33 @@ export async function getReferrers(
     const addFieldsStage = {
         $addFields: {
             "domain": {
-                $arrayElemAt: [
-                    {
-                        $split: [
-                            {
-                                $arrayElemAt: [
-                                    {
-                                        $split: [
-                                            "$pageLoads.referer",
-                                            "//",
-                                        ],
-                                    },
-                                    1,
-                                ],
-                            },
-                            "/",
-                        ],
+                $let: {
+                    vars: {
+                        host: {
+                            $arrayElemAt: [
+                                {
+                                    $split: [
+                                        {
+                                            $arrayElemAt: [
+                                                {
+                                                    $split: [
+                                                        "$pageLoads.referrer",
+                                                        "//",
+                                                    ],
+                                                },
+                                                1,
+                                            ],
+                                        },
+                                        "/",
+                                    ],
+                                },
+                                0,
+                            ],
+                        },
                     },
-                    0,
-                ],
+                    // An empty or absent referrer means the visitor arrived directly.
+                    in: { $ifNull: ["$$host", "(direct)"] },
+                },
             },
         },
     };
@@ -616,24 +655,19 @@ export async function getPageMetricCounts(
     const database = await getDatabase();
     const eventsCollection = database.collection("events");
 
+    const eventType = metric === "pageLoads" ? "pageLoad" : metric === "clicks" ? "pageClick" : "pageScroll";
+
     const matchStage: any = {
         projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
         timestamp: { $gte: startDate, $lte: endDate },
+        type: eventType,
     };
-    let groupStage: any;
-    if (metric === "pageLoads") {
-        matchStage.type = "pageLoad";
-        groupStage = {
-            _id: { url: "$url", title: "$title" },
-            count: { $sum: 1 },
-        };
-    } else {
-        matchStage.type = metric.slice(0, -1);
-        groupStage = {
-            _id: { url: "$url", title: "$title" },
-            count: { $sum: 1 },
-        };
-    }
+
+    const groupStage = {
+        _id: { url: "$url", title: "$title" },
+        count: { $sum: 1 },
+    };
+
     const pipeline = [
         { $match: matchStage },
         { $group: groupStage },
