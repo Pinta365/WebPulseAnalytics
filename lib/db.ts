@@ -702,6 +702,40 @@ export async function getPageMetricCounts(
     return results;
 }
 
+/**
+ * Picks a session's landing page.
+ *
+ * Not simply pageLoads[0]: an entry is appended to that array by whichever event
+ * arrives first, so a click or scroll landing before its own pageLoad creates an
+ * entry with no url — 4,568 sessions have one, and they all collapsed into a
+ * single "(no url)" row. Taking the earliest entry that actually has a url
+ * recovers the real landing page, and also fixes the 189 sessions whose array is
+ * not in chronological order. Falls back to the first entry when none has a url.
+ */
+const landingPageStage = {
+    $addFields: {
+        landingPage: {
+            $let: {
+                vars: {
+                    withUrl: {
+                        $filter: {
+                            input: "$pageLoads",
+                            as: "p",
+                            cond: { $gt: ["$$p.url", null] },
+                        },
+                    },
+                },
+                in: {
+                    $ifNull: [
+                        { $first: { $sortArray: { input: "$$withUrl", sortBy: { timestamp: 1 } } } },
+                        { $arrayElemAt: ["$pageLoads", 0] },
+                    ],
+                },
+            },
+        },
+    },
+};
+
 export async function getSessionsPerLandingPage(
     projectId: ObjectId | ObjectId[],
     startDate: number,
@@ -717,11 +751,11 @@ export async function getSessionsPerLandingPage(
                 pageLoads: { $exists: true, $ne: [] },
             },
         },
-        {
-            $addFields: {
-                landingPage: { $arrayElemAt: ["$pageLoads", 0] },
-            },
-        },
+        landingPageStage,
+        // Two-stage grouping so one URL is one row. Grouping by url *and* title
+        // splits a page whose title changed into several rows; grouping by url
+        // alone loses the title. So: count by url+title, then merge by url and
+        // keep whichever title was seen most often.
         {
             $group: {
                 _id: { url: "$landingPage.url", title: "$landingPage.title" },
@@ -729,6 +763,16 @@ export async function getSessionsPerLandingPage(
             },
         },
         { $sort: { count: -1 } },
+        {
+            $group: {
+                _id: "$_id.url",
+                count: { $sum: "$count" },
+                title: { $first: "$_id.title" },
+            },
+        },
+        { $sort: { count: -1 } },
+        // Restore the shape the dashboard reads: row._id.url / row._id.title
+        { $project: { _id: { url: "$_id", title: "$title" }, count: 1 } },
     ];
     return await sessionsCollection.aggregate(pipeline).toArray();
 }
@@ -748,24 +792,41 @@ export async function getUniqueVisitorsPerLandingPage(
                 pageLoads: { $exists: true, $ne: [] },
             },
         },
-        {
-            $addFields: {
-                landingPage: { $arrayElemAt: ["$pageLoads", 0] },
-            },
-        },
+        landingPageStage,
         {
             $group: {
                 _id: { url: "$landingPage.url", title: "$landingPage.title" },
                 uniqueVisitors: { $addToSet: "$deviceId" },
             },
         },
+        { $addFields: { seen: { $size: "$uniqueVisitors" } } },
+        { $sort: { seen: -1 } },
+        // Merge the per-title groups back into one row per url. The visitor sets
+        // are unioned rather than added up, so someone who saw the page under two
+        // different titles is still counted once.
+        {
+            $group: {
+                _id: "$_id.url",
+                visitorSets: { $push: "$uniqueVisitors" },
+                title: { $first: "$_id.title" },
+            },
+        },
         {
             $project: {
-                _id: 1,
-                count: { $size: "$uniqueVisitors" },
+                title: 1,
+                count: {
+                    $size: {
+                        $reduce: {
+                            input: "$visitorSets",
+                            initialValue: [],
+                            in: { $setUnion: ["$$value", "$$this"] },
+                        },
+                    },
+                },
             },
         },
         { $sort: { count: -1 } },
+        { $project: { _id: { url: "$_id", title: "$title" }, count: 1 } },
     ];
     return await sessionsCollection.aggregate(pipeline).toArray();
 }
