@@ -97,6 +97,51 @@ export default function Privacy() {
                                 analytics while ensuring user privacy remains uncompromised.
                             </p>
                         </div>
+
+                        {/* IP Addresses and Country Detection */}
+                        <div class="bg-card-light rounded-lg p-6 space-y-4">
+                            <h2 class="text-2xl font-semibold text-primary flex items-center">
+                                <svg class="w-6 h-6 mr-3 text-accent" fill="currentColor" viewBox="0 0 20 20">
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                                        clip-rule="evenodd"
+                                    >
+                                    </path>
+                                </svg>
+                                IP Addresses and Country Detection
+                            </h2>
+                            <p class="text-secondary leading-relaxed">
+                                When a project enables location tracking, a visitor's IP address is used once, at the
+                                start of their session, to determine a country. The lookup runs entirely on our own
+                                server against a local database — the address is never sent to any external service.
+                            </p>
+                            <p class="text-secondary leading-relaxed">
+                                The IP address itself is never written to our database. Only the resulting country is
+                                stored, and only for as long as the session record exists. Projects that do not enable
+                                location tracking have no country determined at all.
+                            </p>
+                            <p class="text-secondary leading-relaxed">
+                                Country data is derived from{" "}
+                                <a
+                                    href="https://db-ip.com"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="link"
+                                >
+                                    DB-IP
+                                </a>, used under the{" "}
+                                <a
+                                    href="https://creativecommons.org/licenses/by/4.0/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="link"
+                                >
+                                    Creative Commons Attribution 4.0
+                                </a>{" "}
+                                licence.
+                            </p>
+                        </div>
                     </div>
 
                     {/* Contact Information */}

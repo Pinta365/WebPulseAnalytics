@@ -78,7 +78,7 @@ export function Footer() {
             <div class="mt-6 pt-4 border-t border-card">
                 <div class="max-w-6xl mx-auto px-4">
                     <p class="text-xs text-muted text-center">
-                        © 2024 WebPulse Analytics. All rights reserved.
+                        © 2026 WebPulse Analytics. All rights reserved.
                     </p>
                 </div>
             </div>
