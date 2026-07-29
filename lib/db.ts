@@ -407,7 +407,7 @@ export async function getCountries(
 
     const groupStage = {
         $group: {
-            _id: "$location.countryLong",
+            _id: "$location.countryShort",
             count: { $sum: 1 },
         },
     };
@@ -422,7 +422,22 @@ export async function getCountries(
 
     const results = await sessionsCollection.aggregate(pipeline).toArray();
 
-    return results;
+    return results.map((row) => ({
+        _id: countryName(row._id),
+        countryShort: row._id ?? null,
+        count: row.count,
+    }));
+}
+
+const regionDisplayNames = new Intl.DisplayNames(["en"], { type: "region" });
+
+function countryName(code: unknown): string {
+    if (typeof code !== "string" || code.length !== 2) return "(unknown)";
+    try {
+        return regionDisplayNames.of(code.toUpperCase()) ?? code;
+    } catch {
+        return code;
+    }
 }
 
 export async function getOperatingSystems(
