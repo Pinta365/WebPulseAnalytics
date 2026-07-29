@@ -528,43 +528,45 @@ export async function getReferrers(
         $unwind: "$pageLoads",
     };
 
+    const windowStage = {
+        $match: {
+            "pageLoads.timestamp": { $gte: startDate, $lte: endDate },
+        },
+    };
+
+    const hostOf = (field: string) => ({
+        $arrayElemAt: [
+            { $split: [{ $arrayElemAt: [{ $split: [field, "//"] }, 1] }, "/"] },
+            0,
+        ],
+    });
+
     const addFieldsStage = {
         $addFields: {
-            "domain": {
-                $let: {
-                    vars: {
-                        host: {
-                            $arrayElemAt: [
-                                {
-                                    $split: [
-                                        {
-                                            $arrayElemAt: [
-                                                {
-                                                    $split: [
-                                                        "$pageLoads.referrer",
-                                                        "//",
-                                                    ],
-                                                },
-                                                1,
-                                            ],
-                                        },
-                                        "/",
-                                    ],
-                                },
-                                0,
-                            ],
-                        },
-                    },
-                    // An empty or absent referrer means the visitor arrived directly.
-                    in: { $ifNull: ["$$host", "(direct)"] },
-                },
+            referrerHost: hostOf("$pageLoads.referrer"),
+            pageHost: hostOf("$pageLoads.url"),
+        },
+    };
+
+    // Navigating between two pages of the same site reports the site itself as
+    // the referrer. Those are not traffic sources.
+    const excludeSelfReferralsStage = {
+        $match: {
+            $expr: {
+                $not: [{
+                    $and: [
+                        { $gt: ["$referrerHost", null] },
+                        { $eq: ["$referrerHost", "$pageHost"] },
+                    ],
+                }],
             },
         },
     };
 
     const groupStage = {
         $group: {
-            _id: "$domain",
+            // An empty or absent referrer means the visitor arrived directly.
+            _id: { $ifNull: ["$referrerHost", "(direct)"] },
             count: { $sum: 1 },
         },
     };
@@ -575,7 +577,15 @@ export async function getReferrers(
         },
     };
 
-    const pipeline = [matchStage, unwindStage, addFieldsStage, groupStage, sortStage];
+    const pipeline = [
+        matchStage,
+        unwindStage,
+        windowStage,
+        addFieldsStage,
+        excludeSelfReferralsStage,
+        groupStage,
+        sortStage,
+    ];
 
     const results = await sessionsCollection.aggregate(pipeline).toArray();
 
