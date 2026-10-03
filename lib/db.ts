@@ -136,6 +136,21 @@ export interface SessionObject {
     scrolls: number;
 
     pageLoads: PageLoad[];
+
+    /** Bot classification set by the backend at ingest. Absent on legacy sessions. */
+    bot?: SessionBot;
+}
+
+export type BotCategory = "search" | "ai" | "social" | "seo" | "monitoring" | "automation" | "unknown";
+
+export interface SessionBot {
+    isBot: boolean;
+    /** Only when isBot */
+    name?: string;
+    /** Only when isBot */
+    category?: BotCategory;
+    /** Signals that fired, e.g. ["ua"]; empty for humans */
+    reasons: string[];
 }
 
 export interface DeviceObject {
@@ -308,8 +323,10 @@ export async function createUser(
 // ---------------------------------------------------------------------------
 // Bot filtering
 //
-// Sessions whose user agent announces automation (crawlers, spiders, headless
-// browsers, HTTP libraries). Bots that spoof a normal browser are not caught.
+// The backend classifies sessions at ingest into session.bot (see SessionBot).
+// Sessions stored before that have no bot field; for those we fall back to
+// matching the stored user agent against BOT_USER_AGENT. Bots that spoof a
+// normal browser are not caught by either.
 // ---------------------------------------------------------------------------
 
 export type BotMode = "exclude" | "include" | "only";
@@ -317,10 +334,19 @@ export type BotMode = "exclude" | "include" | "only";
 export const BOT_USER_AGENT =
     /bot\b|bot\/|crawl|spider|slurp|headless|lighthouse|pagespeed|python-|python\/|curl\/|wget|go-http|java\/|axios|node-fetch|phantomjs|puppeteer|playwright|selenium/i;
 
-/** $match fragment selecting sessions by bot status. */
+/**
+ * $match fragment selecting sessions by bot status. Uses the backend's
+ * bot.isBot where present, and the user agent regex for legacy sessions.
+ */
 export function botMatch(mode: BotMode): Record<string, unknown> {
     if (mode === "include") return {};
-    return { "userAgent.ua": mode === "only" ? BOT_USER_AGENT : { $not: BOT_USER_AGENT } };
+    const isBot = mode === "only";
+    return {
+        $or: [
+            { "bot.isBot": isBot },
+            { bot: { $exists: false }, "userAgent.ua": isBot ? BOT_USER_AGENT : { $not: BOT_USER_AGENT } },
+        ],
+    };
 }
 
 export async function getCountries(
@@ -869,22 +895,43 @@ export async function getSessionCounts(
     ]).toArray();
 }
 
+export interface BotCountRow extends CountRow {
+    /** From the backend classification; absent for legacy sessions */
+    category?: BotCategory;
+}
+
 /**
- * Bot sessions grouped by a readable crawler name taken from the user agent,
- * e.g. "Googlebot", "HeadlessChrome", "AhrefsBot".
+ * Bot sessions grouped by crawler name. Classified sessions carry bot.name;
+ * for legacy sessions the name is derived from the stored user agent.
  */
-export async function getBotCounts(projectIds: ObjectId[], from: number, to: number): Promise<CountRow[]> {
+export async function getBotCounts(projectIds: ObjectId[], from: number, to: number): Promise<BotCountRow[]> {
     if (projectIds.length === 0) return [];
-    const byUa = await (await sessions()).aggregate<{ _id: string | null; count: number }>([
+    const groups = await (await sessions()).aggregate<{
+        _id: { name?: string; category?: BotCategory; ua?: string | null };
+        count: number;
+    }>([
         sessionsInRange(projectIds, from, to, "only"),
-        { $group: { _id: "$userAgent.ua", count: { $sum: 1 } } },
+        {
+            $group: {
+                _id: {
+                    name: "$bot.name",
+                    category: "$bot.category",
+                    // Only legacy sessions need their user agent to be named.
+                    ua: { $cond: [{ $eq: [{ $type: "$bot" }, "missing"] }, "$userAgent.ua", null] },
+                },
+                count: { $sum: 1 },
+            },
+        },
     ]).toArray();
-    const counts = new Map<string, number>();
-    for (const row of byUa) {
-        const name = botName(row._id ?? "");
-        counts.set(name, (counts.get(name) ?? 0) + row.count);
+    const byName = new Map<string, BotCountRow>();
+    for (const { _id, count } of groups) {
+        const key = _id.name ?? botName(_id.ua ?? "");
+        const row = byName.get(key) ?? { key, count: 0 };
+        row.count += count;
+        row.category ??= _id.category;
+        byName.set(key, row);
     }
-    return [...counts].map(([key, count]) => ({ key, count })).sort((a, b) => b.count - a.count);
+    return [...byName.values()].sort((a, b) => b.count - a.count);
 }
 
 /** "Mozilla/5.0 (compatible; Googlebot/2.1; ...)" -> "Googlebot" */

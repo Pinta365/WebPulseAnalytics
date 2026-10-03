@@ -36,6 +36,11 @@ function RowLabel({ row, kind }: { row: BreakdownRow; kind: BarListTab["kind"] }
         ? <Favicon label={row.label} />
         : null;
     const text = <span class="truncate">{row.label}</span>;
+    const tag = row.tag && (
+        <span class="shrink-0 h-[18px] px-1.5 inline-flex items-center rounded bg-sunken text-[10px] font-medium text-fg-3">
+            {row.tag}
+        </span>
+    );
     return (
         <span class="relative flex items-center gap-2 min-w-0" title={row.detail ?? row.label}>
             {lead}
@@ -51,6 +56,7 @@ function RowLabel({ row, kind }: { row: BreakdownRow; kind: BarListTab["kind"] }
                     </a>
                 )
                 : text}
+            {tag}
         </span>
     );
 }

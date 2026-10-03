@@ -55,9 +55,13 @@ Old `/dashboard/realtime/...` and `/dashboard/trends/...` URLs redirect to the A
 
 ### Bot traffic
 
-Sessions whose user agent identifies a crawler, spider, headless browser or HTTP library are excluded from all numbers
-by default. A toolbar chip shows how many were hidden and toggles them back in, and the **Bots** tab lists them by name.
-The matching rule is `BOT_USER_AGENT` in `lib/db.ts`. Bots that pretend to be a regular browser are not caught.
+Bot sessions are excluded from all numbers by default. A toolbar chip shows how many were hidden and toggles them back
+in, and the **Bots** tab lists them by name and category.
+
+The [backend](https://github.com/pinta365/webpulsebackend) classifies each session at ingest into `session.bot`
+(`{ isBot, name?, category?, reasons }`), from the raw request user agent, even when the project does not store user
+agents. Sessions recorded before that have no `bot` field; for those the dashboard falls back to matching the stored
+user agent against `BOT_USER_AGENT` in `lib/db.ts`. Bots that pretend to be a regular browser are not caught yet.
 
 ### Time zones
 

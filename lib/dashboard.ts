@@ -3,6 +3,7 @@
  */
 import { ObjectId } from "mongodb";
 import {
+    type BotCategory,
     type BotMode,
     getActiveVisitors,
     getBotCounts,
@@ -102,7 +103,19 @@ export interface BreakdownRow {
     href?: string;
     /** Country code for a flag, etc. */
     code?: string;
+    /** Short label shown beside the row, e.g. a bot category */
+    tag?: string;
 }
+
+const BOT_CATEGORY_LABELS: Record<BotCategory, string> = {
+    search: "Search engine",
+    ai: "AI crawler",
+    social: "Social preview",
+    seo: "SEO tool",
+    monitoring: "Monitoring",
+    automation: "Automation",
+    unknown: "Unknown",
+};
 
 export interface ProjectRow {
     id: string;
@@ -255,7 +268,11 @@ export async function loadAnalytics(
             browsers: rows(browsers),
             os: rows(os),
             devices: rows(devices).map((r) => ({ ...r, label: capitalize(r.label) })),
-            bots: rows(botCounts),
+            bots: botCounts.slice(0, LIMIT).map((r) => ({
+                label: r.key,
+                value: r.count,
+                tag: r.category ? BOT_CATEGORY_LABELS[r.category] : undefined,
+            })),
         },
         bots: { included: includeBots, sessions: botCounts.reduce((a, r) => a + r.count, 0) },
         perProject: project ? [] : projects.map((p) => {
