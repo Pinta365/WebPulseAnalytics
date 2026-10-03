@@ -28,8 +28,8 @@ GITHUB_CALLBACK_URL=http://localhost:8000/api/auth/github/callback
 # Base URL for your website
 WEBSITE_BASE_URL=http://localhost:8000
 
-# MongoDBconfiguration
-MONGO_URI="mongodb://localhost:27017/
+# MongoDB configuration
+MONGO_URI=mongodb://localhost:27017/
 ```
 
 ... and starting the server using this command:
@@ -40,15 +40,52 @@ deno task start
 
 Then you will reach the front-end at [http://localhost:8000/](http://localhost:8000/)
 
-## Custom CSS Classes & Color System
+## The dashboard
 
-This project uses a centralized color system defined in `static/css/styles.css` using CSS custom properties (variables)
-for both light and dark modes. You can easily customize the appearance of the site, including light and dark mode
-colors, by editing these variables.
+- **Overview** (`/dashboard`): headline metrics across all projects, a visitors chart compared with the previous period,
+  a card per site, and top pages and sources.
+- **Analytics** (`/dashboard/analytics/all` or `/dashboard/analytics/<projectId>`): one page per project or for all
+  projects. Query parameters:
+  - `range`: `30m`, `today`, `yesterday`, `7d` (default), `30d`, `90d`, `ytd`, `12m` or `last-year`
+  - `metric`: the metric to chart, e.g. `visitors`, `pageLoads`, `bounceRate`
+  - `bots=1`: include bot traffic (see below)
+- **Projects** and **Settings**: manage tracked sites, theme and date/number locale.
 
-A set of utility classes (e.g., `.bg-card`, `.text-primary`, `.btn-primary`, etc.) are provided to apply these colors
-throughout the app. To change the color scheme, simply update the values in the `:root` and `.dark` selectors in the CSS
-file.
+Old `/dashboard/realtime/...` and `/dashboard/trends/...` URLs redirect to the Analytics page.
 
-This approach makes it easy to maintain a consistent look and feel, and to quickly adjust the color palette for branding
-or accessibility needs.
+### Bot traffic
+
+Sessions whose user agent identifies a crawler, spider, headless browser or HTTP library are excluded from all numbers
+by default. A toolbar chip shows how many were hidden and toggles them back in, and the **Bots** tab lists them by name.
+The matching rule is `BOT_USER_AGENT` in `lib/db.ts`. Bots that pretend to be a regular browser are not caught.
+
+### Time zones
+
+Days and hours are bucketed in the server's time zone (`TZ`), so "Today" starts at the server's midnight.
+
+## Styling
+
+Colors are design tokens defined as CSS custom properties in `static/css/styles.css`, with one set for light mode
+(`:root`) and one for dark mode (`.dark`). Values are RGB channels (e.g. `--accent: 42 120 214`) so Tailwind opacity
+modifiers work. `tailwind.config.ts` maps them to utilities:
+
+| Token                | Utility examples                           | Used for                          |
+| -------------------- | ------------------------------------------ | --------------------------------- |
+| `canvas`             | `bg-canvas`                                | page background                   |
+| `surface`            | `bg-surface`                               | cards, sidebar                    |
+| `sunken`             | `bg-sunken`                                | hover washes, inputs, tracks      |
+| `line`               | `border-line`                              | hairline borders                  |
+| `fg`, `fg-2`, `fg-3` | `text-fg`, `text-fg-2`, `text-fg-3`        | primary, secondary and muted text |
+| `accent`             | `bg-accent`, `text-accent`, `bg-accent/10` | brand and data color              |
+| `good`, `bad`        | `text-good`, `text-bad`                    | positive and negative changes     |
+
+Reusable component classes (`card`, `btn-primary`, `btn-secondary`, `input-base`, `segmented`, `menu`, `table`, `chip`,
+…) live in the same file. To rebrand, change the token values; components pick them up automatically.
+
+## Contributing
+
+Before opening a pull request, make sure formatting, lint and type checks pass:
+
+```bash
+deno task check
+```
