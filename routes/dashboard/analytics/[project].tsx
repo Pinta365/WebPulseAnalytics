@@ -130,7 +130,13 @@ export default function AnalyticsPage({ data, url }: PageProps<Data>) {
                     <BarList
                         tabs={[
                             { key: "browsers", label: "Browsers", valueLabel: "Sessions", rows: b.browsers },
-                            { key: "os", label: "Operating systems", valueLabel: "Sessions", rows: b.os },
+                            {
+                                key: "os",
+                                label: "Operating systems",
+                                shortLabel: "OS",
+                                valueLabel: "Sessions",
+                                rows: b.os,
+                            },
                             { key: "devices", label: "Devices", valueLabel: "Sessions", rows: b.devices },
                             { key: "bots", label: "Bots", valueLabel: "Sessions", rows: b.bots },
                         ]}

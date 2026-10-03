@@ -5,6 +5,8 @@ import { flagEmoji, formatExact, formatNumber, formatPercent } from "lib/format.
 export interface BarListTab {
     key: string;
     label: string;
+    /** Used instead of `label` on narrow screens, e.g. "OS" */
+    shortLabel?: string;
     /** Column heading for the values, e.g. "Sessions" */
     valueLabel: string;
     rows: BreakdownRow[];
@@ -84,13 +86,20 @@ export default function BarList({ tabs, limit = 8 }: Props) {
                                             : "text-fg-3 hover:text-fg-2 border-transparent"
                                     }`}
                                 >
-                                    {t.label}
+                                    {t.shortLabel
+                                        ? (
+                                            <>
+                                                <span class="sm:hidden">{t.shortLabel}</span>
+                                                <span class="hidden sm:inline">{t.label}</span>
+                                            </>
+                                        )
+                                        : t.label}
                                 </button>
                             ))}
                         </div>
                     )
                     : <h2 class="card-title">{tab.label}</h2>}
-                <span class="eyebrow shrink-0">{tab.valueLabel}</span>
+                <span class={`eyebrow shrink-0 ${tabs.length > 1 ? "hidden sm:inline" : ""}`}>{tab.valueLabel}</span>
             </div>
 
             {tab.rows.length === 0 ? <p class="px-5 pb-6 pt-2 text-[13px] text-fg-3">No data for this period</p> : (
