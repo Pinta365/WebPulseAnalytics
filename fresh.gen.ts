@@ -9,26 +9,24 @@ import * as $api_auth_github_callback from "./routes/api/auth/github/callback.ts
 import * as $api_auth_github_login from "./routes/api/auth/github/login.ts";
 import * as $closedBeta from "./routes/closedBeta.tsx";
 import * as $dashboard_middleware from "./routes/dashboard/_middleware.ts";
+import * as $dashboard_analytics_project_ from "./routes/dashboard/analytics/[project].tsx";
 import * as $dashboard_index from "./routes/dashboard/index.tsx";
 import * as $dashboard_projects from "./routes/dashboard/projects.tsx";
-import * as $dashboard_realtime_project_period_ from "./routes/dashboard/realtime/[project]/[period].tsx";
+import * as $dashboard_realtime_project_period_ from "./routes/dashboard/realtime/[project]/[period].ts";
 import * as $dashboard_settings from "./routes/dashboard/settings.tsx";
-import * as $dashboard_trends_project_agg_ from "./routes/dashboard/trends/[project]/[agg].tsx";
-import * as $dashboard_trends_project_agg_metric_ from "./routes/dashboard/trends/[project]/[agg]/[metric].tsx";
+import * as $dashboard_trends_project_agg_ from "./routes/dashboard/trends/[project]/[agg].ts";
+import * as $dashboard_trends_project_agg_metric_ from "./routes/dashboard/trends/[project]/[agg]/[metric].ts";
 import * as $index from "./routes/index.tsx";
 import * as $info_privacy from "./routes/info/privacy.tsx";
 import * as $logout from "./routes/logout.ts";
 import * as $AddProject from "./islands/AddProject.tsx";
-import * as $DataTable from "./islands/DataTable.tsx";
+import * as $BarList from "./islands/BarList.tsx";
 import * as $DelProjectButton from "./islands/DelProjectButton.tsx";
 import * as $EditProject from "./islands/EditProject.tsx";
 import * as $LocaleSelector from "./islands/LocaleSelector.tsx";
-import * as $NavSide from "./islands/NavSide.tsx";
+import * as $MetricExplorer from "./islands/MetricExplorer.tsx";
 import * as $ProjectsIsland from "./islands/ProjectsIsland.tsx";
-import * as $Sparkline from "./islands/Sparkline.tsx";
 import * as $ThemeSwitcher from "./islands/ThemeSwitcher.tsx";
-import * as $TrendsChart from "./islands/TrendsChart.tsx";
-import * as $analysis_AnalysisBox from "./islands/analysis/AnalysisBox.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -40,28 +38,26 @@ const manifest = {
         "./routes/api/auth/github/login.ts": $api_auth_github_login,
         "./routes/closedBeta.tsx": $closedBeta,
         "./routes/dashboard/_middleware.ts": $dashboard_middleware,
+        "./routes/dashboard/analytics/[project].tsx": $dashboard_analytics_project_,
         "./routes/dashboard/index.tsx": $dashboard_index,
         "./routes/dashboard/projects.tsx": $dashboard_projects,
-        "./routes/dashboard/realtime/[project]/[period].tsx": $dashboard_realtime_project_period_,
+        "./routes/dashboard/realtime/[project]/[period].ts": $dashboard_realtime_project_period_,
         "./routes/dashboard/settings.tsx": $dashboard_settings,
-        "./routes/dashboard/trends/[project]/[agg].tsx": $dashboard_trends_project_agg_,
-        "./routes/dashboard/trends/[project]/[agg]/[metric].tsx": $dashboard_trends_project_agg_metric_,
+        "./routes/dashboard/trends/[project]/[agg].ts": $dashboard_trends_project_agg_,
+        "./routes/dashboard/trends/[project]/[agg]/[metric].ts": $dashboard_trends_project_agg_metric_,
         "./routes/index.tsx": $index,
         "./routes/info/privacy.tsx": $info_privacy,
         "./routes/logout.ts": $logout,
     },
     islands: {
         "./islands/AddProject.tsx": $AddProject,
-        "./islands/DataTable.tsx": $DataTable,
+        "./islands/BarList.tsx": $BarList,
         "./islands/DelProjectButton.tsx": $DelProjectButton,
         "./islands/EditProject.tsx": $EditProject,
         "./islands/LocaleSelector.tsx": $LocaleSelector,
-        "./islands/NavSide.tsx": $NavSide,
+        "./islands/MetricExplorer.tsx": $MetricExplorer,
         "./islands/ProjectsIsland.tsx": $ProjectsIsland,
-        "./islands/Sparkline.tsx": $Sparkline,
         "./islands/ThemeSwitcher.tsx": $ThemeSwitcher,
-        "./islands/TrendsChart.tsx": $TrendsChart,
-        "./islands/analysis/AnalysisBox.tsx": $analysis_AnalysisBox,
     },
     baseUrl: import.meta.url,
 } satisfies Manifest;

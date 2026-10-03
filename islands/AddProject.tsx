@@ -1,226 +1,121 @@
 import { useState } from "preact/hooks";
+import { Icon } from "components/ui/Icon.tsx";
+import { defaultProjectOptions, ProjectOptionsForm, type ProjectOptionsValue } from "components/ProjectOptionsForm.tsx";
 
 export function AddProject(
-    { onProjectAdded, onError }: { onProjectAdded: (project: any) => void; onError: (msg: string) => void },
+    { onProjectAdded, onError, onClose }: {
+        onProjectAdded: (project: unknown) => void;
+        onError: (msg: string) => void;
+        onClose?: () => void;
+    },
 ) {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [pageLoadsChecked, setPageLoadsChecked] = useState(true);
-    const [storeUA, setStoreUA] = useState(true);
-    const [storeLoc, setStoreLoc] = useState(true);
-    const [storeUTM, setStoreUTM] = useState(false);
-    const [pageClicksChecked, setPageClicksChecked] = useState(true);
-    const [captureAllClicks, setCaptureAllClicks] = useState(false);
-    const [pageScrollsChecked, setPageScrollsChecked] = useState(true);
+    const [options, setOptions] = useState<ProjectOptionsValue>(defaultProjectOptions);
+    const [submitting, setSubmitting] = useState(false);
 
-    const addProjectButton = async () => {
-        const options = {
-            method: "POST",
-            body: new URLSearchParams(Object.entries({
-                name,
-                description,
-                pageLoadsChecked: pageLoadsChecked.toString(),
-                storeUA: storeUA.toString(),
-                storeLoc: storeLoc.toString(),
-                storeUTM: storeUTM.toString(),
-                pageClicksChecked: pageClicksChecked.toString(),
-                captureAllClicks: captureAllClicks.toString(),
-                pageScrollsChecked: pageScrollsChecked.toString(),
-            })),
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Accept": "application/json",
-            },
-        };
-
-        const response = await fetch("/dashboard/projects", options);
-        if (response.ok) {
-            try {
-                const newProject = await response.json();
-                onProjectAdded(newProject);
-            } catch {
-                onProjectAdded(null); // fallback if no JSON
-            }
-            clearForm();
-        } else {
-            onError("Failed to add project");
-            console.error("Update failed");
-        }
+    const updateOptions = (patch: Partial<ProjectOptionsValue>) => {
+        setOptions((prev) => ({ ...prev, ...patch }));
     };
 
-    const clearForm = () => {
-        // Reset form input values
+    const resetForm = () => {
         setName("");
         setDescription("");
+        setOptions(defaultProjectOptions);
+    };
 
-        // Reset checkbox states
-        setPageLoadsChecked(true);
-        setStoreUA(true);
-        setStoreLoc(true);
-        setStoreUTM(false);
-        setPageClicksChecked(true);
-        setCaptureAllClicks(false);
-        setPageScrollsChecked(true);
-        const addProjectPane = document.getElementById("addProjectPane");
-        if (addProjectPane) {
-            addProjectPane.removeAttribute("open");
+    const submit = async (e: Event) => {
+        e.preventDefault();
+        if (!name.trim() || submitting) return;
+        setSubmitting(true);
+
+        const body = new URLSearchParams(Object.entries({
+            name,
+            description,
+            pageLoadsChecked: options.pageLoadsChecked.toString(),
+            storeUA: options.storeUA.toString(),
+            storeLoc: options.storeLoc.toString(),
+            storeUTM: options.storeUTM.toString(),
+            pageClicksChecked: options.pageClicksChecked.toString(),
+            captureAllClicks: options.captureAllClicks.toString(),
+            pageScrollsChecked: options.pageScrollsChecked.toString(),
+        }));
+
+        try {
+            const response = await fetch("/dashboard/projects", {
+                method: "POST",
+                body,
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Accept": "application/json",
+                },
+            });
+            if (response.ok) {
+                let newProject: unknown = null;
+                try {
+                    newProject = await response.json();
+                } catch {
+                    newProject = null; // fallback if no JSON
+                }
+                resetForm();
+                onProjectAdded(newProject);
+            } else {
+                onError("Failed to add project");
+            }
+        } catch {
+            onError("Failed to add project");
+        } finally {
+            setSubmitting(false);
         }
     };
 
     return (
-        <details id="addProjectPane" class="mb-4">
-            <summary class="cursor-pointer text-primary font-medium">+ Add Project</summary>
-            <div class="mt-4 space-y-4">
-                <input
-                    type="text"
-                    placeholder="Project Name"
-                    value={name}
-                    onChange={(e) => setName((e.target as HTMLInputElement).value)}
-                    class="input-base"
-                />
-                <textarea
-                    placeholder="Project Description"
-                    value={description}
-                    onChange={(e) => setDescription((e.target as HTMLInputElement).value)}
-                    rows={4}
-                    class="input-base"
-                />
-                <p class="text-secondary font-medium">Tracking options for this project</p>
-                <fieldset class="space-y-4">
-                    <hr class="border-input" />
-                    <ul class="space-y-3">
-                        <li>
-                            <label for="StoreUA" class="flex items-center space-x-2 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    id="StoreUA"
-                                    name="StoreUA"
-                                    checked={storeUA}
-                                    disabled={!pageLoadsChecked}
-                                    onChange={() => setStoreUA(!storeUA)}
-                                    class="checkbox-base"
-                                />
-                                <span class="text-secondary">Store user agent</span>
-                            </label>
-                        </li>
-                        <li>
-                            <label for="StoreLoc" class="flex items-center space-x-2 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    id="StoreLoc"
-                                    name="StoreLoc"
-                                    checked={storeLoc}
-                                    disabled={!pageLoadsChecked}
-                                    onChange={() => setStoreLoc(!storeLoc)}
-                                    class="checkbox-base"
-                                />
-                                <span class="text-secondary">Store user location</span>
-                            </label>
-                        </li>
-                        <li>
-                            <label for="StoreUTM" class="flex items-center space-x-2 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    id="StoreUTM"
-                                    name="StoreUTM"
-                                    checked={storeUTM}
-                                    disabled={!pageLoadsChecked}
-                                    onChange={() => setStoreUTM(!storeUTM)}
-                                    class="checkbox-base"
-                                />
-                                <span class="text-secondary">Store UTM parameters</span>
-                            </label>
-                        </li>
-                        <hr class="border-input" />
-                        <li>
-                            <label for="PageLoads" class="flex items-center space-x-2 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    id="PageLoads"
-                                    name="PageLoads"
-                                    role="switch"
-                                    checked={pageLoadsChecked}
-                                    onChange={() => setPageLoadsChecked(!pageLoadsChecked)}
-                                    class="checkbox-base"
-                                />
-                                <span class="text-secondary">Track page loads</span>
-                            </label>
-                        </li>
-                        <hr class="border-input" />
-                        <li>
-                            <label for="PageClicks" class="flex items-center space-x-2 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    id="PageClicks"
-                                    name="PageClicks"
-                                    role="switch"
-                                    checked={pageClicksChecked}
-                                    onChange={() => setPageClicksChecked(!pageClicksChecked)}
-                                    class="checkbox-base"
-                                />
-                                <span class="text-secondary">
-                                    Track page clicks. The default is to only track clicks made to link elements
-                                </span>
-                            </label>
+        <form onSubmit={submit} class="flex flex-col">
+            <div class="card-header border-b border-line">
+                <h2 class="card-title">New project</h2>
+                <button type="button" class="icon-btn" onClick={onClose} aria-label="Close dialog">
+                    <Icon name="close" />
+                </button>
+            </div>
 
-                            <ul class="ml-6 mt-2 space-y-2">
-                                <li>
-                                    <label
-                                        for="PageClicksCaptureAll"
-                                        class="flex items-center space-x-2 cursor-pointer"
-                                    >
-                                        <input
-                                            type="checkbox"
-                                            id="PageClicksCaptureAll"
-                                            name="PageClicksCaptureAll"
-                                            checked={captureAllClicks}
-                                            disabled={!pageClicksChecked}
-                                            onChange={() => setCaptureAllClicks(!captureAllClicks)}
-                                            class="checkbox-base"
-                                        />
-                                        <span class="text-secondary">Capture all page clicks</span>
-                                    </label>
-                                </li>
-                            </ul>
-                        </li>
-                        <hr class="border-input" />
-                        <li>
-                            <label for="PageScrolls" class="flex items-center space-x-2 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    id="PageScrolls"
-                                    name="PageScrolls"
-                                    role="switch"
-                                    checked={pageScrollsChecked}
-                                    onChange={() => setPageScrollsChecked(!pageScrollsChecked)}
-                                    class="checkbox-base"
-                                />
-                                <span class="text-secondary">Track page scrolls</span>
-                            </label>
-                        </li>
-                    </ul>
-                </fieldset>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <button
-                            type="button"
-                            onClick={() => clearForm()}
-                            class="btn-secondary w-full"
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                    <div>
-                        <button
-                            type="button"
-                            onClick={() => addProjectButton()}
-                            class="btn-primary w-full"
-                        >
-                            Add
-                        </button>
-                    </div>
+            <div class="px-5 py-4 space-y-4 overflow-y-auto max-h-[70vh]">
+                <div>
+                    <label class="label" for="project-name">Name</label>
+                    <input
+                        id="project-name"
+                        type="text"
+                        class="input-base"
+                        value={name}
+                        placeholder="My website"
+                        required
+                        onInput={(e) => setName((e.target as HTMLInputElement).value)}
+                    />
+                </div>
+
+                <div>
+                    <label class="label" for="project-description">Description</label>
+                    <textarea
+                        id="project-description"
+                        class="input-base"
+                        rows={3}
+                        value={description}
+                        placeholder="Optional notes about this site"
+                        onInput={(e) => setDescription((e.target as HTMLInputElement).value)}
+                    />
+                </div>
+
+                <div>
+                    <h3 class="card-title mb-1">Tracking</h3>
+                    <ProjectOptionsForm value={options} onChange={updateOptions} />
                 </div>
             </div>
-        </details>
+
+            <div class="px-5 py-4 border-t border-line flex justify-end gap-2">
+                <button type="button" class="btn-secondary" onClick={onClose}>Cancel</button>
+                <button type="submit" class="btn-primary" disabled={!name.trim() || submitting}>
+                    Create project
+                </button>
+            </div>
+        </form>
     );
 }

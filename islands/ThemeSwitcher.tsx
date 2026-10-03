@@ -1,10 +1,17 @@
 import { useEffect, useState } from "preact/hooks";
 import { IS_BROWSER } from "$fresh/runtime.ts";
+import { Icon, type IconName } from "components/ui/Icon.tsx";
 
 const THEME_KEY = "theme-preference";
 type Theme = "auto" | "light" | "dark";
 
-function isTheme(value: any): value is Theme {
+const OPTIONS: { value: Theme; label: string; icon: IconName }[] = [
+    { value: "auto", label: "System", icon: "laptop" },
+    { value: "light", label: "Light", icon: "sun" },
+    { value: "dark", label: "Dark", icon: "moon" },
+];
+
+function isTheme(value: unknown): value is Theme {
     return value === "auto" || value === "light" || value === "dark";
 }
 
@@ -51,24 +58,19 @@ export default function ThemeSwitcher() {
         }
     }, [theme]);
 
-    if (!IS_BROWSER) return <div />;
-
     return (
-        <div class="flex gap-5 items-center" id="theme-switcher">
-            {["auto", "light", "dark"].map((value) => (
-                <label class="flex items-center gap-2 cursor-pointer" key={value}>
-                    <input
-                        type="radio"
-                        name="theme"
-                        value={value}
-                        checked={theme === value}
-                        onChange={() => setTheme(value as Theme)}
-                        class="checkbox-base"
-                    />
-                    <span class="text-secondary">
-                        {value.charAt(0).toUpperCase() + value.slice(1)}
-                    </span>
-                </label>
+        <div class="segmented" id="theme-switcher" role="group" aria-label="Theme">
+            {OPTIONS.map((option) => (
+                <button
+                    type="button"
+                    key={option.value}
+                    class="gap-1.5"
+                    aria-pressed={IS_BROWSER ? theme === option.value : undefined}
+                    onClick={() => setTheme(option.value)}
+                >
+                    <Icon name={option.icon} class="w-3.5 h-3.5" />
+                    {option.label}
+                </button>
             ))}
         </div>
     );

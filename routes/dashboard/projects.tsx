@@ -3,7 +3,6 @@ import { EditProject } from "islands/EditProject.tsx";
 import ProjectsIsland from "islands/ProjectsIsland.tsx";
 import { deleteProject, getProject, getProjects, upsertProject } from "lib/db.ts";
 import { ObjectId } from "mongodb";
-import { NotificationProvider } from "../../components/NotificationContext.tsx";
 
 export const handler: Handlers = {
     async GET(req, ctx) {
@@ -136,13 +135,5 @@ export const handler: Handlers = {
 
 export default function Projects({ data }: PageProps) {
     const { editProject, projects } = data;
-    return (
-        <>
-            {editProject ? <EditProject project={editProject} /> : (
-                <NotificationProvider>
-                    <ProjectsIsland initialProjects={projects} />
-                </NotificationProvider>
-            )}
-        </>
-    );
+    return editProject ? <EditProject project={editProject} /> : <ProjectsIsland initialProjects={projects} />;
 }

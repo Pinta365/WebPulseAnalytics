@@ -1,208 +1,143 @@
 import { useState } from "preact/hooks";
-import { Project } from "lib/db.ts";
+import { PageHeader } from "components/layout/AppShell.tsx";
+import { Icon } from "components/ui/Icon.tsx";
+import { NotificationProvider, useNotification } from "components/NotificationContext.tsx";
+import { NotificationBanner } from "components/NotificationBanner.tsx";
+import { ProjectOptionsForm, type ProjectOptionsValue } from "components/ProjectOptionsForm.tsx";
+import type { Project } from "lib/db.ts";
 
-interface ProjectData {
-    project: Project;
+export function EditProject({ project }: { project: Project }) {
+    return (
+        <NotificationProvider>
+            <EditProjectContent project={project} />
+        </NotificationProvider>
+    );
 }
 
-export function EditProject(data: ProjectData) {
-    const { project } = data;
-    const _id = project._id;
+function EditProjectContent({ project }: { project: Project }) {
+    const { showNotification } = useNotification();
+    const id = project._id?.toString() ?? "";
     const [name, setName] = useState(project.name);
     const [description, setDescription] = useState(project.description || "");
-    const [pageLoadsChecked, setPageLoadsChecked] = useState(project.options.pageLoads.enabled || false);
-    const [storeUA, setStoreUA] = useState(project.options.storeUserAgent || false);
-    const [storeLoc, setStoreLoc] = useState(project.options.storeLocation || false);
-    const [storeUTM, setStoreUTM] = useState(project.options.storeUTM ?? false);
-    const [pageClicksChecked, setPageClicksChecked] = useState(project.options.pageClicks.enabled || false);
-    const [captureAllClicks, setCaptureAllClicks] = useState(project.options.pageClicks.captureAllClicks || false);
-    const [pageScrollsChecked, setPageScrollsChecked] = useState(project.options.pageScrolls.enabled || false);
+    const [options, setOptions] = useState<ProjectOptionsValue>({
+        pageLoadsChecked: project.options?.pageLoads?.enabled ?? false,
+        storeUA: project.options?.storeUserAgent ?? false,
+        storeLoc: project.options?.storeLocation ?? false,
+        storeUTM: project.options?.storeUTM ?? false,
+        pageClicksChecked: project.options?.pageClicks?.enabled ?? false,
+        captureAllClicks: project.options?.pageClicks?.captureAllClicks ?? false,
+        pageScrollsChecked: project.options?.pageScrolls?.enabled ?? false,
+    });
+    const [saving, setSaving] = useState(false);
 
-    const updateProjectButton = async () => {
-        //Kontroller på indatat?
+    const updateOptions = (patch: Partial<ProjectOptionsValue>) => {
+        setOptions((prev) => ({ ...prev, ...patch }));
+    };
 
-        const options = {
-            method: "PUT",
-            body: new URLSearchParams(Object.entries({
-                _id: _id?.toString() ?? "",
-                name,
-                description,
-                pageLoadsChecked: pageLoadsChecked.toString(),
-                storeUA: storeUA.toString(),
-                storeLoc: storeLoc.toString(),
-                storeUTM: storeUTM.toString(),
-                pageClicksChecked: pageClicksChecked.toString(),
-                captureAllClicks: captureAllClicks.toString(),
-                pageScrollsChecked: pageScrollsChecked.toString(),
-            })),
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Accept": "application/json",
-            },
-        };
+    const save = async (e: Event) => {
+        e.preventDefault();
+        if (!name.trim() || saving) return;
+        setSaving(true);
 
-        const response = await fetch("/dashboard/projects", options);
-        if (response.ok) {
-            //clearForm();
-            //reloadar sidan så länge som en workaround för att få det nya projected
-            globalThis.location.href = "/dashboard/projects";
-        } else {
-            //Poppa varningsruta med fel
-            console.error("Update failed");
+        const body = new URLSearchParams(Object.entries({
+            _id: id,
+            name,
+            description,
+            pageLoadsChecked: options.pageLoadsChecked.toString(),
+            storeUA: options.storeUA.toString(),
+            storeLoc: options.storeLoc.toString(),
+            storeUTM: options.storeUTM.toString(),
+            pageClicksChecked: options.pageClicksChecked.toString(),
+            captureAllClicks: options.captureAllClicks.toString(),
+            pageScrollsChecked: options.pageScrollsChecked.toString(),
+        }));
+
+        try {
+            const response = await fetch("/dashboard/projects", {
+                method: "PUT",
+                body,
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Accept": "application/json",
+                },
+            });
+            if (response.ok) {
+                globalThis.location.href = "/dashboard/projects";
+            } else {
+                showNotification("Failed to update project.", "error");
+            }
+        } catch {
+            showNotification("Failed to update project.", "error");
+        } finally {
+            setSaving(false);
         }
     };
 
-    const clearForm = () => {
-        // Bye
-        globalThis.location.href = "/dashboard/projects";
-    };
-
     return (
-        <div class="space-y-4">
-            <input
-                type="text"
-                placeholder="Project Name"
-                value={name}
-                onChange={(e) => setName((e.target as HTMLInputElement).value)}
-                class="input-base"
-            />
-            <textarea
-                placeholder="Project Description"
-                value={description}
-                onChange={(e) => setDescription((e.target as HTMLInputElement).value)}
-                rows={4}
-                class="input-base"
-            />
-            <p class="text-secondary font-medium">Tracking options for this project</p>
-            <fieldset class="space-y-4">
-                <hr class="border-input" />
-                <ul class="space-y-3">
-                    <li>
-                        <label for="StoreUA" class="flex items-center space-x-2 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                id="StoreUA"
-                                name="StoreUA"
-                                checked={storeUA}
-                                disabled={!pageLoadsChecked}
-                                onChange={() => setStoreUA(!storeUA)}
-                                class="checkbox-base"
-                            />
-                            <span class="text-secondary">Store user agent</span>
-                        </label>
-                    </li>
-                    <li>
-                        <label for="StoreLoc" class="flex items-center space-x-2 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                id="StoreLoc"
-                                name="StoreLoc"
-                                checked={storeLoc}
-                                disabled={!pageLoadsChecked}
-                                onChange={() => setStoreLoc(!storeLoc)}
-                                class="checkbox-base"
-                            />
-                            <span class="text-secondary">Store user location</span>
-                        </label>
-                    </li>
-                    <li>
-                        <label for="StoreUTM" class="flex items-center space-x-2 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                id="StoreUTM"
-                                name="StoreUTM"
-                                checked={storeUTM}
-                                disabled={!pageLoadsChecked}
-                                onChange={() => setStoreUTM(!storeUTM)}
-                                class="checkbox-base"
-                            />
-                            <span class="text-secondary">Store UTM parameters</span>
-                        </label>
-                    </li>
-                    <hr class="border-input" />
-                    <li>
-                        <label for="PageLoads" class="flex items-center space-x-2 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                id="PageLoads"
-                                name="PageLoads"
-                                role="switch"
-                                checked={pageLoadsChecked}
-                                onChange={() => setPageLoadsChecked(!pageLoadsChecked)}
-                                class="checkbox-base"
-                            />
-                            <span class="text-secondary">Track page loads</span>
-                        </label>
-                    </li>
-                    <hr class="border-input" />
-                    <li>
-                        <label for="PageClicks" class="flex items-center space-x-2 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                id="PageClicks"
-                                name="PageClicks"
-                                role="switch"
-                                checked={pageClicksChecked}
-                                onChange={() => setPageClicksChecked(!pageClicksChecked)}
-                                class="checkbox-base"
-                            />
-                            <span class="text-secondary">
-                                Track page clicks. The default is to only track clicks made to link elements
-                            </span>
-                        </label>
+        <>
+            <NotificationBannerWrapper />
+            <PageHeader title="Edit project" subtitle={project.name} />
+            <a
+                href="/dashboard/projects"
+                class="inline-flex items-center gap-1.5 mb-4 text-[13px] text-fg-2 hover:text-fg transition-colors"
+            >
+                <Icon name="arrowRight" class="w-4 h-4 rotate-180" />
+                Back to projects
+            </a>
 
-                        <ul class="ml-6 mt-2 space-y-2">
-                            <li>
-                                <label for="PageClicksCaptureAll" class="flex items-center space-x-2 cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        id="PageClicksCaptureAll"
-                                        name="PageClicksCaptureAll"
-                                        checked={captureAllClicks}
-                                        disabled={!pageClicksChecked}
-                                        onChange={() => setCaptureAllClicks(!captureAllClicks)}
-                                        class="checkbox-base"
-                                    />
-                                    <span class="text-secondary">Capture all page clicks</span>
-                                </label>
-                            </li>
-                        </ul>
-                    </li>
-                    <hr class="border-input" />
-                    <li>
-                        <label for="PageScrolls" class="flex items-center space-x-2 cursor-pointer">
+            <div class="card max-w-2xl">
+                <form onSubmit={save}>
+                    <div class="card-header border-b border-line">
+                        <h2 class="card-title">Details</h2>
+                    </div>
+
+                    <div class="px-5 py-4 space-y-4">
+                        <div>
+                            <label class="label" for="project-name">Name</label>
                             <input
-                                type="checkbox"
-                                id="PageScrolls"
-                                name="PageScrolls"
-                                role="switch"
-                                checked={pageScrollsChecked}
-                                onChange={() => setPageScrollsChecked(!pageScrollsChecked)}
-                                class="checkbox-base"
+                                id="project-name"
+                                type="text"
+                                class="input-base"
+                                value={name}
+                                required
+                                onInput={(e) => setName((e.target as HTMLInputElement).value)}
                             />
-                            <span class="text-secondary">Track page scrolls</span>
-                        </label>
-                    </li>
-                </ul>
-            </fieldset>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <button
-                        onClick={() => clearForm()}
-                        class="btn-secondary w-full"
-                    >
-                        Cancel
-                    </button>
-                </div>
-                <div>
-                    <button
-                        onClick={() => updateProjectButton()}
-                        class="btn-primary w-full"
-                    >
-                        Update
-                    </button>
-                </div>
+                        </div>
+                        <div>
+                            <label class="label" for="project-description">Description</label>
+                            <textarea
+                                id="project-description"
+                                class="input-base"
+                                rows={3}
+                                value={description}
+                                placeholder="Optional notes about this site"
+                                onInput={(e) => setDescription((e.target as HTMLInputElement).value)}
+                            />
+                        </div>
+                    </div>
+
+                    <div class="border-t border-line">
+                        <div class="px-5 pt-4">
+                            <h3 class="card-title mb-1">Tracking</h3>
+                        </div>
+                        <div class="px-5 pb-2">
+                            <ProjectOptionsForm value={options} onChange={updateOptions} />
+                        </div>
+                    </div>
+
+                    <div class="px-5 py-4 border-t border-line flex justify-end gap-2">
+                        <a href="/dashboard/projects" class="btn-secondary">Cancel</a>
+                        <button type="submit" class="btn-primary" disabled={!name.trim() || saving}>
+                            Save changes
+                        </button>
+                    </div>
+                </form>
             </div>
-        </div>
+        </>
     );
+}
+
+function NotificationBannerWrapper() {
+    const { message, type, clearNotification } = useNotification();
+    return <NotificationBanner message={message} type={type} onClose={clearNotification} />;
 }

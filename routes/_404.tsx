@@ -1,5 +1,5 @@
 import { Head } from "$fresh/runtime.ts";
-import { getConfig } from "lib/config.ts";
+import { PublicShell } from "components/layout/Footer.tsx";
 
 export default function Error404() {
     return (
@@ -7,23 +7,14 @@ export default function Error404() {
             <Head>
                 <title>404 - Page not found</title>
             </Head>
-            <div class="container mx-auto px-4 flex flex-col justify-center min-h-[calc(100vh-9rem)] py-4">
-                <a
-                    href={getConfig().common.websiteBaseURL}
-                    class="text-secondary hover:text-primary"
-                >
-                    <img
-                        src="/img/svg/logo-top-slogan.svg"
-                        class="w-96 pb-8 filter dark:invert mx-auto"
-                        alt="the webpulse logo"
-                    />
-                </a>
-
-                <div class="container mx-auto text-center">
-                    <h1 class="text-4xl font-bold text-primary mb-4">404 - Page not found</h1>
-                    <p class="text-secondary">The page you're looking for doesn't exist.</p>
+            <PublicShell>
+                <div class="max-w-6xl mx-auto px-4 sm:px-6 py-24 flex flex-col items-center text-center">
+                    <p class="text-6xl font-semibold tracking-tight text-fg-3">404</p>
+                    <h1 class="mt-4 text-2xl font-semibold tracking-tight text-fg">Page not found</h1>
+                    <p class="mt-2 text-[13px] text-fg-2">The page you're looking for doesn't exist.</p>
+                    <a href="/" class="btn-primary mt-8">Back to home</a>
                 </div>
-            </div>
+            </PublicShell>
         </>
     );
 }

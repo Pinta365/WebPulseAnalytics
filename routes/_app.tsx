@@ -1,62 +1,36 @@
 import { PageProps } from "$fresh/server.ts";
-import { NavTop } from "components/layout/NavTop.tsx";
-import { NavSide } from "islands/NavSide.tsx";
-import { Footer } from "components/layout/Footer.tsx";
-import { NotificationProvider, useNotification } from "../components/NotificationContext.tsx";
-import { NotificationBanner } from "../components/NotificationBanner.tsx";
+import type { SessionUser } from "lib/commonTypes.ts";
+import { AppShell } from "components/layout/AppShell.tsx";
 
-function NotificationBannerWrapper() {
-    const { message, type, clearNotification } = useNotification();
-    return <NotificationBanner message={message} type={type} onClose={clearNotification} />;
-}
-
-export default function App({ Component, ...props }: PageProps) {
-    const { state } = props.data || {};
+export default function App({ Component, state, url }: PageProps<unknown, SessionUser>) {
+    const inDashboard = !!state?._id && url.pathname.startsWith("/dashboard");
     return (
-        <NotificationProvider>
-            <NotificationBannerWrapper />
-            <html lang="en">
-                <head>
-                    <meta charSet="utf-8" />
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                    <link rel="stylesheet" href="/css/styles.css" />
-                    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
-                    <script
-                        async
-                        src="https://track.webpulseanalytics.com/client/653eb35b048754e8b13f0771"
-                        type="module"
-                    >
-                    </script>
-                    <title>WebPulse Analytics</title>
-                    <script src="/js/theme.js"></script>
-                </head>
-                <body class="min-h-screen flex flex-col bg-body">
-                    <div class="layout-container">
-                        {state?._id
-                            ? (
-                                <div>
-                                    <NavTop {...state} />
-                                    <div class="layout-content">
-                                        <aside class="layout-sidebar">
-                                            <NavSide />
-                                        </aside>
-                                        <main class="layout-main">
-                                            <Component {...props.data} />
-                                        </main>
-                                    </div>
-                                </div>
-                            )
-                            : (
-                                <div>
-                                    <main class="layout-main">
-                                        <Component {...props.data} />
-                                    </main>
-                                </div>
-                            )}
-                        <Footer />
-                    </div>
-                </body>
-            </html>
-        </NotificationProvider>
+        <html lang="en">
+            <head>
+                <meta charSet="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <meta name="color-scheme" content="light dark" />
+                <title>WebPulse Analytics</title>
+                {/* Applies the stored theme before first paint to avoid a flash. */}
+                <script src="/js/theme.js"></script>
+                <link rel="stylesheet" href="/css/styles.css" />
+                <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+                <script
+                    async
+                    src="https://track.webpulseanalytics.com/client/653eb35b048754e8b13f0771"
+                    type="module"
+                >
+                </script>
+            </head>
+            <body>
+                {inDashboard
+                    ? (
+                        <AppShell user={state} path={url.pathname}>
+                            <Component />
+                        </AppShell>
+                    )
+                    : <Component />}
+            </body>
+        </html>
     );
 }

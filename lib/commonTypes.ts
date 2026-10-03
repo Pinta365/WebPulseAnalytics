@@ -2,6 +2,13 @@ export interface SessionUser {
     _id: string;
     displayName: string;
     avatar: string;
+    /** Set by routes/dashboard/_middleware.ts for the sidebar; not part of the JWT. */
+    navProjects?: NavProject[];
+}
+
+export interface NavProject {
+    id: string;
+    name: string;
 }
 
 // Get stats for selected project/view

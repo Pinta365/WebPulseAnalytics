@@ -6,6 +6,15 @@ import { createUser, getUserFromProviderId, updateUser } from "lib/db.ts";
 import { DBUser, ProviderProfile } from "lib/db.ts";
 
 import { getConfig } from "lib/config.ts";
+import { ObjectId } from "mongodb";
+
+/** The fields used from GitHub's GET /user response. */
+interface GitHubProfile {
+    id: number;
+    login: string;
+    name: string | null;
+    avatar_url: string;
+}
 
 export const handler: Handlers = {
     async GET(req) {
@@ -36,7 +45,7 @@ export const handler: Handlers = {
                 code,
             );
 
-            const githubProfile: any = await GitHubProvider.profile(auth.access_token);
+            const githubProfile: GitHubProfile = await GitHubProvider.profile(auth.access_token);
 
             // closed beta check :P
             const betaAllowedAccounts = [19735646, 419737];
@@ -66,7 +75,7 @@ export const handler: Handlers = {
                 const createdId = await createUser(sessionUser, "github", providerProfile);
                 console.log(createdId);
                 if (createdId) {
-                    sessionUser._id = createdId as any;
+                    sessionUser._id = new ObjectId(createdId);
                 } else {
                     return new Response("Error processing authentication", { status: 500 });
                 }

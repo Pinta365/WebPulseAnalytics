@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { Db, InsertOneResult, MongoClient, ObjectId } from "mongodb";
+import { Db, type Document, InsertOneResult, MongoClient, ObjectId } from "mongodb";
 import { logError } from "./debug_logger.ts";
 import { getConfig } from "./config.ts";
 
@@ -305,95 +305,29 @@ export async function createUser(
     }
 }
 
-export async function getAnalytics(
-    projectId: ObjectId | ObjectId[],
-    startDate: number,
-    endDate: number,
-    total: boolean = false,
-): Promise<any> {
-    const database = await getDatabase();
-    const sessionsCollection = database.collection<SessionObject>("sessions");
+// ---------------------------------------------------------------------------
+// Bot filtering
+//
+// Sessions whose user agent announces automation (crawlers, spiders, headless
+// browsers, HTTP libraries). Bots that spoof a normal browser are not caught.
+// ---------------------------------------------------------------------------
 
-    const matchStage = {
-        $match: {
-            projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
-            timestamp: { $gte: startDate, $lte: endDate },
-        },
-    };
+export type BotMode = "exclude" | "include" | "only";
 
-    const groupStage = {
-        $group: {
-            _id: "$projectId",
-            uniqueDevices: { $addToSet: "$deviceId" },
-            clicks: { $sum: "$clicks" },
-            scrolls: { $sum: "$scrolls" },
-            uniqueSessions: { $addToSet: "$_id" },
-            pageLoads: { $sum: "$loads" },
-        },
-    };
+export const BOT_USER_AGENT =
+    /bot\b|bot\/|crawl|spider|slurp|headless|lighthouse|pagespeed|python-|python\/|curl\/|wget|go-http|java\/|axios|node-fetch|phantomjs|puppeteer|playwright|selenium/i;
 
-    const lookupDevicesStage = {
-        $lookup: {
-            from: "devices",
-            localField: "uniqueDevices",
-            foreignField: "_id",
-            as: "devices",
-        },
-    };
-
-    const lookupProjectsStage = {
-        $lookup: {
-            from: "projects",
-            localField: "_id",
-            foreignField: "_id",
-            as: "project",
-        },
-    };
-
-    const projectStage = {
-        $project: {
-            projectName: { $arrayElemAt: ["$project.name", 0] },
-            visitors: { $size: "$uniqueDevices" },
-            clicks: 1,
-            scrolls: 1,
-            sessions: { $size: "$uniqueSessions" },
-            pageLoads: 1,
-        },
-    };
-
-    const sortStage = {
-        $sort: {
-            visitors: -1,
-            sessions: -1,
-            pageLoads: -1,
-        },
-    };
-
-    const totalStage = {
-        $group: {
-            _id: null,
-            visitors: { $sum: "$visitors" },
-            clicks: { $sum: "$clicks" },
-            scrolls: { $sum: "$scrolls" },
-            sessions: { $sum: "$sessions" },
-            pageLoads: { $sum: "$pageLoads" },
-        },
-    };
-
-    const pipeline: any[] = [matchStage, groupStage, lookupDevicesStage, lookupProjectsStage, projectStage, sortStage];
-    if (total) {
-        pipeline.push(totalStage);
-    }
-
-    const results = await sessionsCollection.aggregate(pipeline).toArray();
-
-    return results;
+/** $match fragment selecting sessions by bot status. */
+export function botMatch(mode: BotMode): Record<string, unknown> {
+    if (mode === "include") return {};
+    return { "userAgent.ua": mode === "only" ? BOT_USER_AGENT : { $not: BOT_USER_AGENT } };
 }
 
 export async function getCountries(
     projectId: ObjectId | ObjectId[],
     startDate: number,
     endDate: number,
+    bots: BotMode = "exclude",
 ): Promise<any> {
     const database = await getDatabase();
     const sessionsCollection = database.collection<SessionObject>("sessions");
@@ -401,6 +335,7 @@ export async function getCountries(
     const matchStage = {
         $match: {
             projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
+            ...botMatch(bots),
             timestamp: { $gte: startDate, $lte: endDate },
         },
     };
@@ -444,6 +379,7 @@ export async function getOperatingSystems(
     projectId: ObjectId | ObjectId[],
     startDate: number,
     endDate: number,
+    bots: BotMode = "exclude",
 ): Promise<any> {
     const database = await getDatabase();
     const sessionsCollection = database.collection<SessionObject>("sessions");
@@ -451,6 +387,7 @@ export async function getOperatingSystems(
     const matchStage = {
         $match: {
             projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
+            ...botMatch(bots),
             timestamp: { $gte: startDate, $lte: endDate },
         },
     };
@@ -479,6 +416,7 @@ export async function getBrowsers(
     projectId: ObjectId | ObjectId[],
     startDate: number,
     endDate: number,
+    bots: BotMode = "exclude",
 ): Promise<any> {
     const database = await getDatabase();
     const sessionsCollection = database.collection<SessionObject>("sessions");
@@ -486,6 +424,7 @@ export async function getBrowsers(
     const matchStage = {
         $match: {
             projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
+            ...botMatch(bots),
             timestamp: { $gte: startDate, $lte: endDate },
         },
     };
@@ -513,6 +452,7 @@ export async function getReferrers(
     projectId: ObjectId | ObjectId[],
     startDate: number,
     endDate: number,
+    bots: BotMode = "exclude",
 ): Promise<any> {
     const database = await getDatabase();
     const sessionsCollection = database.collection<SessionObject>("sessions");
@@ -520,6 +460,7 @@ export async function getReferrers(
     const matchStage = {
         $match: {
             projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
+            ...botMatch(bots),
             "pageLoads.timestamp": { $gte: startDate, $lte: endDate },
         },
     };
@@ -592,116 +533,6 @@ export async function getReferrers(
     return results;
 }
 
-export async function getPagesVisited(
-    projectId: ObjectId | ObjectId[],
-    startDate: number,
-    endDate: number,
-): Promise<any> {
-    const database = await getDatabase();
-    const eventsCollection = database.collection("events");
-
-    const matchStage = {
-        $match: {
-            projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
-            type: "pageLoad",
-            timestamp: { $gte: startDate, $lte: endDate },
-        },
-    };
-    const groupStage = {
-        $group: {
-            _id: { url: "$url", title: "$title" },
-            count: { $sum: 1 },
-        },
-    };
-    const sortStage = { $sort: { count: -1 } };
-    const pipeline = [matchStage, groupStage, sortStage];
-    const results = await eventsCollection.aggregate(pipeline).toArray();
-    return results;
-}
-
-export async function getTrendsData(
-    projectId: ObjectId | ObjectId[],
-    startDate: number,
-    endDate: number,
-    granularity: "day" | "week" | "month" = "day",
-): Promise<any[]> {
-    const database = await getDatabase();
-    const sessionsCollection = database.collection<SessionObject>("sessions");
-
-    const matchStage = {
-        $match: {
-            projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
-            timestamp: { $gte: startDate, $lte: endDate },
-        },
-    };
-    const addFieldsStage = {
-        $addFields: {
-            period: {
-                $dateTrunc: {
-                    date: { $toDate: "$timestamp" },
-                    unit: granularity,
-                },
-            },
-        },
-    };
-    const groupStage = {
-        $group: {
-            _id: "$period",
-            visitors: { $addToSet: "$deviceId" },
-            sessions: { $addToSet: "$_id" },
-            pageLoads: { $sum: "$loads" },
-            clicks: { $sum: "$clicks" },
-            scrolls: { $sum: "$scrolls" },
-        },
-    };
-    const projectStage = {
-        $project: {
-            date: { $dateToString: { format: "%Y-%m-%d", date: "$_id" } },
-            visitors: { $size: "$visitors" },
-            sessions: { $size: "$sessions" },
-            pageLoads: 1,
-            clicks: 1,
-            scrolls: 1,
-            _id: 0,
-        },
-    };
-    const sortStage = { $sort: { date: 1 } };
-    const pipeline = [matchStage, addFieldsStage, groupStage, projectStage, sortStage];
-    const results = await sessionsCollection.aggregate(pipeline).toArray();
-    return results;
-}
-
-export async function getPageMetricCounts(
-    projectId: ObjectId | ObjectId[],
-    startDate: number,
-    endDate: number,
-    metric: "clicks" | "scrolls" | "pageLoads",
-): Promise<any> {
-    const database = await getDatabase();
-    const eventsCollection = database.collection("events");
-
-    const eventType = metric === "pageLoads" ? "pageLoad" : metric === "clicks" ? "pageClick" : "pageScroll";
-
-    const matchStage: any = {
-        projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
-        timestamp: { $gte: startDate, $lte: endDate },
-        type: eventType,
-    };
-
-    const groupStage = {
-        _id: { url: "$url", title: "$title" },
-        count: { $sum: 1 },
-    };
-
-    const pipeline = [
-        { $match: matchStage },
-        { $group: groupStage },
-        { $sort: { count: -1 } },
-    ];
-    const results = await eventsCollection.aggregate(pipeline).toArray();
-    return results;
-}
-
 /**
  * Picks a session's landing page.
  *
@@ -740,6 +571,7 @@ export async function getSessionsPerLandingPage(
     projectId: ObjectId | ObjectId[],
     startDate: number,
     endDate: number,
+    bots: BotMode = "exclude",
 ): Promise<any> {
     const database = await getDatabase();
     const sessionsCollection = database.collection<SessionObject>("sessions");
@@ -747,6 +579,7 @@ export async function getSessionsPerLandingPage(
         {
             $match: {
                 projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
+                ...botMatch(bots),
                 timestamp: { $gte: startDate, $lte: endDate },
                 pageLoads: { $exists: true, $ne: [] },
             },
@@ -777,56 +610,297 @@ export async function getSessionsPerLandingPage(
     return await sessionsCollection.aggregate(pipeline).toArray();
 }
 
-export async function getUniqueVisitorsPerLandingPage(
-    projectId: ObjectId | ObjectId[],
-    startDate: number,
-    endDate: number,
-): Promise<any> {
-    const database = await getDatabase();
-    const sessionsCollection = database.collection<SessionObject>("sessions");
-    const pipeline = [
+// ---------------------------------------------------------------------------
+// Dashboard queries (read-only)
+//
+// Visitors are distinct devices. Pipelines group by device first and then
+// count, rather than collecting every device id into one array per group.
+// ---------------------------------------------------------------------------
+
+export interface Summary {
+    visitors: number;
+    sessions: number;
+    pageLoads: number;
+    clicks: number;
+    scrolls: number;
+    /** Sessions with at most one page load */
+    bounces: number;
+    /** Sum of session durations in ms (each capped, see SESSION_DURATION_CAP) */
+    duration: number;
+}
+
+export interface SeriesPoint {
+    visitors: number;
+    sessions: number;
+    pageLoads: number;
+    bounces: number;
+    duration: number;
+}
+
+export interface SeriesRow extends SeriesPoint {
+    projectId?: string;
+    bucket: string;
+}
+
+export interface ProjectSummary extends Summary {
+    projectId: string;
+}
+
+export interface CountRow {
+    key: string;
+    count: number;
+}
+
+export interface PageRow {
+    url: string;
+    title: string;
+    count: number;
+}
+
+/** A session left open for hours (a tab never closed) should not dominate the average. */
+const SESSION_DURATION_CAP = 4 * 60 * 60 * 1000;
+
+const EMPTY_SUMMARY: Summary = {
+    visitors: 0,
+    sessions: 0,
+    pageLoads: 0,
+    clicks: 0,
+    scrolls: 0,
+    bounces: 0,
+    duration: 0,
+};
+
+function sessionsInRange(projectIds: ObjectId[], from: number, to: number, bots: BotMode) {
+    return { $match: { projectId: { $in: projectIds }, timestamp: { $gte: from, $lt: to }, ...botMatch(bots) } };
+}
+
+const perSessionSums = {
+    sessions: { $sum: 1 },
+    pageLoads: { $sum: "$loads" },
+    clicks: { $sum: "$clicks" },
+    scrolls: { $sum: "$scrolls" },
+    bounces: { $sum: { $cond: [{ $lte: ["$loads", 1] }, 1, 0] } },
+    duration: {
+        $sum: {
+            $min: [{ $max: [{ $subtract: ["$lastEventAt", "$firstEventAt"] }, 0] }, SESSION_DURATION_CAP],
+        },
+    },
+};
+
+const rollUpDevices = {
+    visitors: { $sum: 1 },
+    sessions: { $sum: "$sessions" },
+    pageLoads: { $sum: "$pageLoads" },
+    clicks: { $sum: "$clicks" },
+    scrolls: { $sum: "$scrolls" },
+    bounces: { $sum: "$bounces" },
+    duration: { $sum: "$duration" },
+};
+
+async function sessions() {
+    return (await getDatabase()).collection<SessionObject>("sessions");
+}
+
+/** Totals for a set of projects over [from, to). */
+export async function getSummary(
+    projectIds: ObjectId[],
+    from: number,
+    to: number,
+    bots: BotMode = "exclude",
+): Promise<Summary> {
+    if (projectIds.length === 0) return { ...EMPTY_SUMMARY };
+    const [row] = await (await sessions()).aggregate<Summary>([
+        sessionsInRange(projectIds, from, to, bots),
+        { $group: { _id: "$deviceId", ...perSessionSums } },
+        { $group: { _id: null, ...rollUpDevices } },
+        { $project: { _id: 0 } },
+    ]).toArray();
+    return row ?? { ...EMPTY_SUMMARY };
+}
+
+/** Totals per project over [from, to). Projects without sessions are absent. */
+export async function getProjectSummaries(
+    projectIds: ObjectId[],
+    from: number,
+    to: number,
+    bots: BotMode = "exclude",
+): Promise<ProjectSummary[]> {
+    if (projectIds.length === 0) return [];
+    return await (await sessions()).aggregate<ProjectSummary>([
+        sessionsInRange(projectIds, from, to, bots),
+        { $group: { _id: { projectId: "$projectId", deviceId: "$deviceId" }, ...perSessionSums } },
+        { $group: { _id: "$_id.projectId", ...rollUpDevices } },
         {
-            $match: {
-                projectId: Array.isArray(projectId) ? { $in: projectId } : projectId,
-                timestamp: { $gte: startDate, $lte: endDate },
-                pageLoads: { $exists: true, $ne: [] },
+            $project: {
+                _id: 0,
+                projectId: { $toString: "$_id" },
+                ...Object.fromEntries(Object.keys(rollUpDevices).map((k) => [k, 1])),
             },
         },
-        landingPageStage,
-        {
-            $group: {
-                _id: { url: "$landingPage.url", title: "$landingPage.title" },
-                uniqueVisitors: { $addToSet: "$deviceId" },
+    ]).toArray();
+}
+
+/**
+ * Time series keyed by bucket start (see lib/ranges.ts bucketKey), optionally
+ * split per project. Buckets without sessions are absent; callers fill gaps.
+ */
+export async function getSeries(
+    projectIds: ObjectId[],
+    from: number,
+    to: number,
+    unit: "minute" | "hour" | "day" | "week" | "month",
+    binSize: number,
+    timezone: string,
+    perProject = false,
+    bots: BotMode = "exclude",
+): Promise<SeriesRow[]> {
+    if (projectIds.length === 0) return [];
+    const bucket = {
+        $dateToString: {
+            format: "%Y-%m-%dT%H:%M",
+            timezone,
+            date: {
+                $dateTrunc: {
+                    date: { $toDate: "$timestamp" },
+                    unit,
+                    binSize,
+                    timezone,
+                    ...(unit === "week" ? { startOfWeek: "monday" } : {}),
+                },
             },
         },
-        { $addFields: { seen: { $size: "$uniqueVisitors" } } },
-        { $sort: { seen: -1 } },
-        // Merge the per-title groups back into one row per url. The visitor sets
-        // are unioned rather than added up, so someone who saw the page under two
-        // different titles is still counted once.
+    };
+    const groupKey = perProject ? { projectId: "$projectId", bucket } : { bucket };
+    return await (await sessions()).aggregate<SeriesRow>([
+        sessionsInRange(projectIds, from, to, bots),
         {
             $group: {
-                _id: "$_id.url",
-                visitorSets: { $push: "$uniqueVisitors" },
-                title: { $first: "$_id.title" },
+                _id: { ...groupKey, deviceId: "$deviceId" },
+                sessions: perSessionSums.sessions,
+                pageLoads: perSessionSums.pageLoads,
+                bounces: perSessionSums.bounces,
+                duration: perSessionSums.duration,
+            },
+        },
+        {
+            $group: {
+                _id: perProject ? { projectId: "$_id.projectId", bucket: "$_id.bucket" } : "$_id.bucket",
+                visitors: { $sum: 1 },
+                sessions: { $sum: "$sessions" },
+                pageLoads: { $sum: "$pageLoads" },
+                bounces: { $sum: "$bounces" },
+                duration: { $sum: "$duration" },
             },
         },
         {
             $project: {
-                title: 1,
-                count: {
-                    $size: {
-                        $reduce: {
-                            input: "$visitorSets",
-                            initialValue: [],
-                            in: { $setUnion: ["$$value", "$$this"] },
-                        },
-                    },
-                },
+                _id: 0,
+                ...(perProject
+                    ? { projectId: { $toString: "$_id.projectId" }, bucket: "$_id.bucket" }
+                    : { bucket: "$_id" }),
+                visitors: 1,
+                sessions: 1,
+                pageLoads: 1,
+                bounces: 1,
+                duration: 1,
             },
         },
+    ]).toArray();
+}
+
+/** Distinct devices with any activity since `since`, per project. */
+export async function getActiveVisitors(
+    projectIds: ObjectId[],
+    since: number,
+    bots: BotMode = "exclude",
+): Promise<Record<string, number>> {
+    if (projectIds.length === 0) return {};
+    const rows = await (await sessions()).aggregate<{ _id: ObjectId; visitors: number }>([
+        { $match: { projectId: { $in: projectIds }, lastEventAt: { $gte: since }, ...botMatch(bots) } },
+        { $group: { _id: { projectId: "$projectId", deviceId: "$deviceId" } } },
+        { $group: { _id: "$_id.projectId", visitors: { $sum: 1 } } },
+    ]).toArray();
+    return Object.fromEntries(rows.map((r) => [r._id.toString(), r.visitors]));
+}
+
+/** Page views per URL, using each URL's most frequent title. */
+export async function getTopPages(
+    projectIds: ObjectId[],
+    from: number,
+    to: number,
+    limit = 100,
+    bots: BotMode = "exclude",
+): Promise<PageRow[]> {
+    if (projectIds.length === 0) return [];
+    return await (await sessions()).aggregate<PageRow>([
+        {
+            $match: {
+                projectId: { $in: projectIds },
+                "pageLoads.timestamp": { $gte: from, $lt: to },
+                ...botMatch(bots),
+            },
+        },
+        { $unwind: "$pageLoads" },
+        { $match: { "pageLoads.timestamp": { $gte: from, $lt: to }, "pageLoads.url": { $type: "string" } } },
+        { $group: { _id: { url: "$pageLoads.url", title: "$pageLoads.title" }, count: { $sum: 1 } } },
         { $sort: { count: -1 } },
-        { $project: { _id: { url: "$_id", title: "$title" }, count: 1 } },
-    ];
-    return await sessionsCollection.aggregate(pipeline).toArray();
+        { $group: { _id: "$_id.url", count: { $sum: "$count" }, title: { $first: "$_id.title" } } },
+        { $sort: { count: -1 } },
+        { $limit: limit },
+        { $project: { _id: 0, url: "$_id", title: { $ifNull: ["$title", ""] }, count: 1 } },
+    ]).toArray();
+}
+
+/** Sessions grouped by an arbitrary session field, e.g. "userAgent.device.type". */
+export async function getSessionCounts(
+    projectIds: ObjectId[],
+    from: number,
+    to: number,
+    field: string,
+    fallback = "(unknown)",
+    bots: BotMode = "exclude",
+): Promise<CountRow[]> {
+    if (projectIds.length === 0) return [];
+    return await (await sessions()).aggregate<CountRow>([
+        sessionsInRange(projectIds, from, to, bots),
+        { $group: { _id: { $ifNull: [`$${field}`, fallback] }, count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $project: { _id: 0, key: "$_id", count: 1 } },
+    ]).toArray();
+}
+
+/**
+ * Bot sessions grouped by a readable crawler name taken from the user agent,
+ * e.g. "Googlebot", "HeadlessChrome", "AhrefsBot".
+ */
+export async function getBotCounts(projectIds: ObjectId[], from: number, to: number): Promise<CountRow[]> {
+    if (projectIds.length === 0) return [];
+    const byUa = await (await sessions()).aggregate<{ _id: string | null; count: number }>([
+        sessionsInRange(projectIds, from, to, "only"),
+        { $group: { _id: "$userAgent.ua", count: { $sum: 1 } } },
+    ]).toArray();
+    const counts = new Map<string, number>();
+    for (const row of byUa) {
+        const name = botName(row._id ?? "");
+        counts.set(name, (counts.get(name) ?? 0) + row.count);
+    }
+    return [...counts].map(([key, count]) => ({ key, count })).sort((a, b) => b.count - a.count);
+}
+
+/** "Mozilla/5.0 (compatible; Googlebot/2.1; ...)" -> "Googlebot" */
+export function botName(ua: string): string {
+    // Well-behaved crawlers name themselves in a "compatible; Name/1.0" token.
+    const compatible = ua.match(/compatible;\s*([A-Za-z][\w.-]*)/i)?.[1];
+    if (compatible && !/^MSIE$/i.test(compatible)) return compatible;
+    // "Sogou web spider/4.0" -> "Sogou spider"
+    const webSpider = ua.match(/^(\w+) web spider/i)?.[1];
+    if (webSpider) return `${webSpider} spider`;
+    // Otherwise a product token that calls itself a bot/crawler/spider.
+    const token = ua.match(/[A-Za-z][\w.-]*?(?:bot|crawler|spider)[\w-]*/i)?.[0];
+    if (token) return token.replace(/[-_.]$/, "");
+    if (/headless/i.test(ua)) return ua.match(/Headless\w+/i)?.[0] ?? "Headless browser";
+    const lib = ua.match(
+        /(python-requests|python-urllib|aiohttp|curl|wget|go-http-client|axios|node-fetch|java|lighthouse|pagespeed|puppeteer|playwright|selenium|phantomjs)/i,
+    )?.[0];
+    return lib ?? "Other automated";
 }
